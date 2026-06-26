@@ -13,6 +13,8 @@ export default function AuthLayout() {
                         <ThemeButton />
                     </Container>
                 </Navbar>
+            </section>
+            <section>
                 <div className="container mt-5 d-flex justify-content-center">
                     <Outlet />
                 </div>

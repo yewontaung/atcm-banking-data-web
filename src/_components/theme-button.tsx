@@ -6,8 +6,8 @@ export default function ThemeButton() {
     const {theme, toggleTheme} = useTheme()
     return (
         <Button onClick={toggleTheme} variant="link">
-            {theme === "light" && <MoonIcon size={"1.1rem"} />}
-            {theme === "dark" && <SunIcon size={"1.1rem"} />}
+            {theme === "light" && <MoonIcon size={20} />}
+            {theme === "dark" && <SunIcon size={20} />}
         </Button>
     )
 }
