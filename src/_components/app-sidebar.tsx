@@ -16,31 +16,31 @@ const sideBarMenuItems:SideBarMenuItem[] = [
     {
         id:1,
         label:"Dashboard",
-        link:"",
+        link:"dashboard",
         icon: <LayoutDashboardIcon size={iconSize} />,
     },
     {
         id:2,
         label:"Dataset",
-        link:"",
+        link:"dataset",
         icon: <DatabaseIcon size={iconSize} />,
     },
     {
         id:3,
         label:"Intents",
-        link:"",
+        link:"intents",
         icon: <BrainCircuitIcon size={iconSize} />
     },
     {
         id:4,
         label:"Named Entites",
-        link:"",
+        link:"ners",
         icon: <TagsIcon size={iconSize} />
     },
     {
         id:5,
         label:"Members",
-        link:"",
+        link:"members",
         icon: <Users2Icon size={iconSize} />,
     },
 ] 
@@ -63,6 +63,6 @@ export default function AppSidebar() {
 
 function AppSidebarItem({label, link, icon}:SideBarMenuItem) {
     return (
-        <Link className="d-block py-2 px-3 sidebar-item text-decoration-none" to="#">{icon ?? icon} <span className="me-2"></span>{label}</Link>
+        <Link className="d-block py-2 px-3 sidebar-item text-decoration-none" to={link}>{icon ?? icon} <span className="me-2"></span>{label}</Link>
     )
 }
