@@ -17,6 +17,7 @@ function App() {
         <Route path='sign-in' element={<SignInPage />} />
       </Route>
       <Route path='/' element={<MainLayout />}>
+        <Route index element={<DashboardAnalysisPage />} />
         <Route path='dashboard' element={<DashboardAnalysisPage />} />
         <Route path='dataset' element={<DatasetListPage />} />
         <Route path='intents' element={<IntentsListPage />} />
