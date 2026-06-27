@@ -6,6 +6,7 @@ import type { MemberListItem } from "../../_models/outputs";
 import { FormsInput } from "../../_components/ui/forms.input";
 import MemberForm from "../../_components/modals/member.form";
 import { useModals } from "../../_hooks/use-modals";
+import FormsSelect from "../../_components/ui/forms.select";
 
 export default function MemberListPage() {
     const modalState = useModals()
@@ -14,14 +15,20 @@ export default function MemberListPage() {
             {/* Member Add Form */}
             <MemberForm {...modalState} />
             {/* Member Search Form */}
-            <div className="row mt-3">
+            <div className="container row mt-3">
+                <FormsSelect className="col-auto" label="Role">
+                    <option value={"all"}>All</option>
+                    <option value={"collector"}>Collector</option>
+                    <option value={"supervisor"}>Supervisor</option>
+                    <option value={"admin"}>Admin</option>
+                </FormsSelect>
                 <FormsInput className="col-auto" label="Keyword" placeholder="Enter keyword" />
-                <Button className="col-auto align-self-end">Search</Button>
+                <Button className="col-auto ms-2 align-self-end">Search</Button>
                 <Button onClick={modalState.openModal} variant="danger" className="col-auto align-self-end ms-2">Add Member</Button>
             </div>
 
             {/* Member List Table */}
-            <div className="mt-3">
+            <div className="mt-3 container">
                 <Table hover>
                     <thead>
                         <tr>
