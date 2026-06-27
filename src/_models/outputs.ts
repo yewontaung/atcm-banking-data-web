@@ -5,3 +5,11 @@ export type MemberListItem = {
     dataset:number,
     role:"admin" | "supervison" | "collector"
 }
+
+export type IntentListItem = {
+    id:number,
+    intent:string,
+    lastUpdated:Date,
+    dataset:number,
+    namedEntities:{id:number, label:string}[]
+}
