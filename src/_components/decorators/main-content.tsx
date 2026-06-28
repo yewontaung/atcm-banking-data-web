@@ -12,7 +12,7 @@ export default function MainContentDecorator({title, children}:{title:string, ch
                 <span className="fw-semibold fs-5">{title}</span>
                 <div className="align-self-start">
                     <ThemeButton />
-                    <Link to={""} className="ms-3">
+                    <Link to="/me/profile" className="ms-3">
                         <AppProfile img={defaultProfile} />
                     </Link>
                 </div>
