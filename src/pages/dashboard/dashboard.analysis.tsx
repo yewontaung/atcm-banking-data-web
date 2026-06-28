@@ -2,6 +2,7 @@ import MainContentDecorator from "../../_components/decorators/main-content";
 import { Badge, Container, Form, ListGroup } from "react-bootstrap";
 import { AppProfile } from "../../_components/app-profile";
 import { defaultProfile } from "../../_utils/constants";
+import TotalDataCard from "../../_components/totaldata-card";
 
 export default function DashboardAnalysisPage() {
     return (
@@ -81,15 +82,6 @@ function CollectRate({className}:{className?:string}) {
                     ))}
                 </ListGroup>
             </div>
-        </div>
-    )
-}
-
-function TotalDataCard({className, label, total}:{className?:string, label?:string, total:number}) {
-    return (
-        <div className={`border p-3 text-center shadow-sm ${className}`}>
-            <h6>{label}</h6>
-            <h2>{total}</h2>
         </div>
     )
 }
