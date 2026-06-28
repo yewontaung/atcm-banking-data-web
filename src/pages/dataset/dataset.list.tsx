@@ -2,9 +2,7 @@ import { Badge, Button, ButtonGroup, Container, Form, Row, Table } from "react-b
 import MainContentDecorator from "../../_components/decorators/main-content";
 import SquareBadge from "../../_components/square-badge";
 import { Edit2Icon, EyeIcon } from "lucide-react";
-import { defaultProfile, iconSize } from "../../_utils/constants";
-import { AppProfile } from "../../_components/app-profile";
-import AppTooltip from "../../_components/app-tooltip";
+import { iconSize } from "../../_utils/constants";
 import FormsSelect from "../../_components/ui/forms.select";
 import InputsGroup from "../../_components/ui/inputs.group";
 import { Link } from "react-router-dom";
@@ -41,7 +39,7 @@ export default function DatasetListPage() {
                             <th>ID</th>
                             <th>Command</th>
                             <th>Intents</th>
-                            <th className="text-center">Member</th>
+                            <th>Member</th>
                             <th>Status</th>
                             <th>Last Updated</th>
                             <th></th>
@@ -72,11 +70,7 @@ function IntentListItemRow() {
                     <SquareBadge text="transfer_fund" />
                 </div>
             </td>
-            <td className="text-center">
-                <AppTooltip id="" title="Ye Wont Aung">
-                    <AppProfile img={defaultProfile} />
-                </AppTooltip>
-            </td>
+            <td>Ye Wont Aung</td>
             <td>
                 <Badge bg="warning" text="dark">Pending</Badge>
             </td>
