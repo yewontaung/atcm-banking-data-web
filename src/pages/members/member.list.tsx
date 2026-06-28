@@ -15,16 +15,16 @@ export default function MemberListPage() {
             {/* Member Add Form */}
             <MemberForm {...modalState} />
             {/* Member Search Form */}
-            <div className="container row mt-3">
-                <FormsSelect className="col-auto" label="Role">
+            <div className="container row mt-3 gap-2">
+                <FormsSelect className="col-auto px-0" label="Role">
                     <option value={"all"}>All</option>
                     <option value={"collector"}>Collector</option>
                     <option value={"supervisor"}>Supervisor</option>
                     <option value={"admin"}>Admin</option>
                 </FormsSelect>
-                <FormsInput className="col-auto" label="Keyword" placeholder="Enter keyword" />
-                <Button className="col-auto ms-2 align-self-end">Search</Button>
-                <Button onClick={modalState.openModal} variant="danger" className="col-auto align-self-end ms-2">Add Member</Button>
+                <FormsInput className="col-auto px-0" label="Keyword" placeholder="Enter keyword" />
+                <Button className="col-auto align-self-end">Search</Button>
+                <Button onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Member</Button>
             </div>
 
             {/* Member List Table */}
