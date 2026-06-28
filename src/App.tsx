@@ -10,6 +10,8 @@ import IntentsListPage from './pages/intents/intents.list'
 import NersListPage from './pages/ners/ners.list'
 import DashboardAnalysisPage from './pages/dashboard/dashboard.analysis'
 import MeProfilePage from './pages/me/me.profile'
+import DatasetEditPage from './pages/dataset/dataset.add'
+import DatasetDetailPage from './pages/dataset/dataset.detail'
 
 function App() {
   return (
@@ -20,7 +22,11 @@ function App() {
       <Route path='/' element={<MainLayout />}>
         <Route index element={<DashboardAnalysisPage />} />
         <Route path='dashboard' element={<DashboardAnalysisPage />} />
-        <Route path='dataset' element={<DatasetListPage />} />
+        <Route path='dataset'>
+          <Route index element={<DatasetListPage />} />
+          <Route path='add' element={<DatasetEditPage />} />
+          <Route path=':id' element={<DatasetDetailPage />} />
+        </Route>
         <Route path='intents' element={<IntentsListPage />} />
         <Route path='ners' element={<NersListPage />} />
         <Route path='members' element={<MemberListPage />} />

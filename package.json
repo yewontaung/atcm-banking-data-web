@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@alenaksu/json-viewer": "^2.1.1",
+    "@microlink/react-json-view": "^1.31.20",
     "bootstrap": "^5.3.8",
     "lucide-react": "^1.21.0",
     "react": "^19.2.7",

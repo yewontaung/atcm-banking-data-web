@@ -13,3 +13,25 @@ export type IntentListItem = {
     dataset:number,
     namedEntities:{id:number, label:string}[]
 }
+
+export type DatasetIntentData = {
+    id:number,
+    label:string,
+    start:number,
+    end:number,
+}
+
+export type NERAlignmentData = {
+    id:number,
+    label:string,
+    start:number,
+    end:number,
+    intentId:number,
+}
+
+export type DatasetDetail = {
+    id:number,
+    command:string,
+    intents: DatasetIntentData[],
+    alignments:NERAlignmentData[],
+}

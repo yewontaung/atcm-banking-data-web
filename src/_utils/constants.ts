@@ -1,4 +1,4 @@
-import type { IntentListItem } from "../_models/outputs"
+import type { DatasetDetail, IntentListItem } from "../_models/outputs"
 
 export const iconSize = 15
 
@@ -23,3 +23,32 @@ export const intentItemSeed:IntentListItem[] = [
         namedEntities: []
     },
 ]
+
+export const demoDataset:DatasetDetail = {
+    id: 1,
+    command: "Transfer 4000 to my mom account.",
+    intents: [
+        {
+            id: 1,
+            label: "transfer_fund",
+            start: 0,
+            end: 10,
+        },
+    ],
+    alignments: [
+        {
+            id: 1,
+            label: "TO_ACCOUNT",
+            start: 20,
+            end: 30,
+            intentId: 1,
+        },
+        {
+            id: 2,
+            label: "MONEY_AMOUNT",
+            start: 10,
+            end: 14,
+            intentId: 1,
+        }
+    ]
+}

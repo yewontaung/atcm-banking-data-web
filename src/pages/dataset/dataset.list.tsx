@@ -28,7 +28,7 @@ export default function DatasetListPage() {
                         <Form.Control placeholder="Enter search key" className="w-auto" />
                     </InputsGroup>
                     <Button className="col-auto align-self-end">Search</Button>
-                    <Link to={""} className="btn btn-danger col-auto align-self-end ms-2">Add Data</Link>
+                    <Link to="/dataset/add" className="btn btn-danger col-auto align-self-end ms-2">Add Data</Link>
                 </Row>
             </Container>
             {/* Dataset List Table */}
@@ -77,7 +77,9 @@ function IntentListItemRow() {
             <td>12 July, 2026</td>
             <td>
                 <ButtonGroup>
-                    <Button size="sm" variant="outline-primary"><EyeIcon size={iconSize} /></Button>
+                    <Link to="/dataset/12">
+                        <Button size="sm" variant="outline-primary"><EyeIcon size={iconSize} /></Button>
+                    </Link>
                     <Button size="sm" variant="outline-primary"><Edit2Icon size={iconSize} /></Button>
                 </ButtonGroup>
             </td>
