@@ -1,7 +1,7 @@
 import MainContentDecorator from "../../_components/decorators/main-content"
 import { Accordion, Badge, Button, Container, Row, Tab, Tabs } from "react-bootstrap"
 import { GroupLabelInfo } from "../../_components/label-info"
-import { Calendar1Icon, ClipboardIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
+import { Calendar1Icon, ClipboardIcon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
 import { demoDataset, iconSize } from "../../_utils/constants"
 import type { DatasetDetail, DatasetIntentData, NERAlignmentData } from "../../_models/outputs"
 import JsonView from "@microlink/react-json-view"
@@ -12,7 +12,6 @@ export default function DatasetDetailPage() {
             <Tabs defaultActiveKey="info-view">
                 <Tab eventKey="info-view" title="Information View">
                     <DefaultDatasetView dataset={demoDataset} />
-                    <Button variant="success" className="w-100 mt-3">Approve Dataset</Button>
                 </Tab>
                 <Tab eventKey="json-view" title="Json View">
                     <JsonDatasetView dataset={demoDataset} />
@@ -27,21 +26,21 @@ function JsonDatasetView({dataset}:{dataset:DatasetDetail}) {
         <Container className="p-3">
             <Row>
                 <div className="col-8">
-                    <div className="h-100 border">
-                        <div className="bg-body-tertiary justify-content-between align-items-center d-flex p-1">
-                            <span className="fs-6 fw-semibold px-2">Json data</span>
-                            <Button variant="link"><ClipboardIcon size={iconSize} /></Button>
-                        </div>
-                        <div className="p-2 overflow-scroll" style={{maxHeight: 600}}>
+                    <div className="h-100 position-relative border">
+                        <Button className="z-3 position-absolute end-0 me-4 text-white" variant="link"><ClipboardIcon size={iconSize} /></Button>
+                        <div className="overflow-y-auto overflow-x-auto" style={{maxHeight: 600}}>
                             <JsonView 
                                 src={dataset} 
                                 name="dataset" 
                                 enableClipboard={false} 
                                 displayDataTypes={false}
+                                displayArrayKey={false}
+                                displayObjectSize={false}
                                 theme="ocean"
                                 style={{
                                     fontFamily: '"JetBrains Mono"',
                                     fontSize: 12,
+                                    padding: 20,
                                 }} />
                         </div>
                     </div>
@@ -59,18 +58,19 @@ function DefaultDatasetView({dataset}:{dataset:DatasetDetail}) {
     return (
         <Container className="p-3">
             <Row>
-                <div className="col-7">
+                <div className="col-8">
                     <div className="border p-3">
                         <label>User Command</label>
                         <hr />
                         <p className="p-2 mt-2">{dataset.command}</p>
                     </div>
+                    <IntentDetailList intents={dataset.intents} alignments={dataset.alignments} className="mt-3" />
                 </div>
                 <div className="col-auto flex-grow-1">
                     <MetadataCard />
+                    <Button variant="success" className="w-100 mt-3">Approve Dataset</Button>
                 </div>
             </Row>
-            <IntentDetailList intents={dataset.intents} alignments={dataset.alignments} className="mt-3" />
         </Container>
     )
 }
@@ -80,6 +80,7 @@ function MetadataCard() {
         <div className="border p-3 d-flex flex-column row-gap-3">
             <div><User2Icon size={iconSize} className="me-3" /> Ye Wont Aung</div>
             <div><TagIcon size={iconSize} className="me-3" /> Collector</div>
+            <div><InfoIcon size={iconSize} className="me-3" /> <Badge>Training</Badge></div>
             <div><TriangleAlertIcon size={iconSize} className="me-3" /> <Badge bg="warning" text="dark">Pending</Badge></div>
             <div><Calendar1Icon size={iconSize} className="me-3" /> 12 July, 2026</div>
         </div>

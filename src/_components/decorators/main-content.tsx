@@ -8,7 +8,7 @@ import { Container } from "react-bootstrap";
 export default function MainContentDecorator({title, children}:{title:string, children:ReactNode}) {
     return (
         <div>
-            <Container className="d-flex justify-content-between">
+            <Container fluid className="d-flex justify-content-between">
                 <span className="fw-semibold fs-5">{title}</span>
                 <div className="align-self-start">
                     <ThemeButton />

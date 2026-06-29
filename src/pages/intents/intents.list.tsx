@@ -13,7 +13,7 @@ export default function IntentsListPage() {
         <MainContentDecorator title="Intetns Management">
             <IntentForm {...modalState} />
             {/* Intent Search */}
-            <Container>
+            <Container className="mt-3">
                 <Row className="gap-2">
                     <FormsInput label="Keyword" placeholder="Enter keyword" className="col-auto px-0" />
                     <Button className="col-auto align-self-end">Search</Button>

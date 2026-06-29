@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Table } from "react-bootstrap";
+import { Button, ButtonGroup, Container, Row, Table } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { EyeIcon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
@@ -15,17 +15,19 @@ export default function MemberListPage() {
             {/* Member Add Form */}
             <MemberForm {...modalState} />
             {/* Member Search Form */}
-            <div className="container row mt-3 gap-2">
-                <FormsSelect className="col-auto px-0" label="Role">
-                    <option value={"all"}>All</option>
-                    <option value={"collector"}>Collector</option>
-                    <option value={"supervisor"}>Supervisor</option>
-                    <option value={"admin"}>Admin</option>
-                </FormsSelect>
-                <FormsInput className="col-auto px-0" label="Keyword" placeholder="Enter keyword" />
-                <Button className="col-auto align-self-end">Search</Button>
-                <Button onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Member</Button>
-            </div>
+            <Container className="mt-3">
+                <Row className="gap-2">
+                    <FormsSelect className="col-auto px-0" label="Role">
+                        <option value={"all"}>All</option>
+                        <option value={"collector"}>Collector</option>
+                        <option value={"supervisor"}>Supervisor</option>
+                        <option value={"admin"}>Admin</option>
+                    </FormsSelect>
+                    <FormsInput className="col-auto px-0" label="Keyword" placeholder="Enter keyword" />
+                    <Button className="col-auto align-self-end">Search</Button>
+                    <Button onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Member</Button>
+                </Row>
+            </Container>
 
             {/* Member List Table */}
             <div className="mt-3 container">

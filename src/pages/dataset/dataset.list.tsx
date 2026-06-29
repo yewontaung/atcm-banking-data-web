@@ -1,6 +1,5 @@
 import { Badge, Button, ButtonGroup, Container, Form, Row, Table } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
-import SquareBadge from "../../_components/square-badge";
 import { Edit2Icon, EyeIcon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
 import FormsSelect from "../../_components/ui/forms.select";
@@ -12,14 +11,14 @@ export default function DatasetListPage() {
         <MainContentDecorator title="Dataset Management">
             {/* Dataset Search Form */}
             <Container className="mt-3">
-                <Row>
+                <Row className="row-gap-2">
                     <FormsSelect label="Status" className="col-auto px-0">
                         <option>All</option>
                         <option>Pending</option>
                         <option>Reviewd</option>
                     </FormsSelect>
                     <InputsGroup label="Search Strategy" className="col-auto px-auto">
-                        <Form.Select style={{width: "35%"}}>
+                        <Form.Select className="w-auto" style={{width: "35%"}}>
                             <option>All</option>
                             <option>Intent</option>
                             <option>Collector</option>
@@ -38,9 +37,9 @@ export default function DatasetListPage() {
                         <tr>
                             <th>ID</th>
                             <th>Command</th>
-                            <th>Intents</th>
-                            <th>Member</th>
+                            <th>Type</th>
                             <th>Status</th>
+                            <th>Member</th>
                             <th>Last Updated</th>
                             <th></th>
                         </tr>
@@ -61,19 +60,13 @@ function IntentListItemRow() {
         <tr className="align-middle">
             <td>1</td>
             <td>Transfer 3000 to my mom.</td>
-            <td className="col-4">
-                <div className="d-flex gap-1 flex-wrap">
-                    <SquareBadge text="transfer_fund" />
-                    <SquareBadge text="find_account" />
-                    <SquareBadge text="transfer_fund" />
-                    <SquareBadge text="find_account" />
-                    <SquareBadge text="transfer_fund" />
-                </div>
+            <td>
+                <Badge>Training</Badge>
             </td>
-            <td>Ye Wont Aung</td>
             <td>
                 <Badge bg="warning" text="dark">Pending</Badge>
             </td>
+            <td>Ye Wont Aung</td>
             <td>12 July, 2026</td>
             <td>
                 <ButtonGroup>
