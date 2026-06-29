@@ -14,6 +14,12 @@ export type IntentListItem = {
     namedEntities:{id:number, label:string}[]
 }
 
+export type IntentData = {
+    id:string,
+    label:string,
+    namedEntities:{id:string, label:string}[]
+}
+
 export type DatasetIntentData = {
     id:number,
     label:string,
