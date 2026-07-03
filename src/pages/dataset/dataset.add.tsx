@@ -1,18 +1,20 @@
-import { Accordion, Button, ButtonGroup, Container, Form, InputGroup, Row } from "react-bootstrap";
+import { Accordion, Button, ButtonGroup, Container, Form, InputGroup, Row, Tab, Tabs } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
-import FormsSelect from "../../_components/ui/forms.select";
-import { TrashIcon } from "lucide-react";
+import { ClipboardIcon, TrashIcon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
-import { GroupLabelInfo, LabelInfo } from "../../_components/label-info";
+import { GroupLabelInfo } from "../../_components/label-info";
 import InputsGroup from "../../_components/ui/inputs.group";
 import type { DatasetForm } from "../../_models/schemas";
 import { useControls, type DataControls } from "../../_hooks/use-controls";
 import { getIntents } from "../../services/intents.service";
 import { useEffect, useState } from "react";
 import { FormsInput } from "../../_components/ui/forms.input";
+import { useModals } from "../../_hooks/use-modals";
+import FormPreview from "../../_components/modals/form.preview";
 
 export default function DatasetEditPage() {
 
+    const state = useModals()
     const [editCommand, setEditCommand] = useState(true)
     const [selected, setSelected] = useState<{ start: number, end: number }>()
 
@@ -32,20 +34,62 @@ export default function DatasetEditPage() {
 
     return (
         <MainContentDecorator title="Add Data">
-            <div>{JSON.stringify(form)}</div>
-            <Container className="mt-3">
-                <Form>
-                    <div>
-                        <label>Command</label><Form.Check onChange={e => setEditCommand(e.target.checked)} checked={editCommand} className="d-inline ms-4 me-2" id="editCommand" /><label htmlFor="editCommand">Edit Text</label>
-                        {editCommand && <Form.Control as="textarea" className="mt-2" placeholder="Enter command text" value={form.command} onChange={e => setForm(prev => ({ ...prev, "command": e.target.value }))} />}
-                        {editCommand || <p onMouseUp={onSelected} className="form-control p-3">{form.command}</p>}
-                    </div>
-                    <SelectIntentForm selected={selected} className="mt-3" controls={controls} />
-                    <div className="mt-4">
-                        <Button className="w-100">Save for review</Button>
-                    </div>
-                </Form>
-            </Container>
+            {/* <div>{JSON.stringify(form)}</div> */}
+            <Tabs defaultActiveKey="manual-form">
+                <Tab title="Manual Form" eventKey="manual-form">
+                    <Container className="mt-3">
+                        <Form className="row">
+                            <div className="col-auto flex-grow-1">
+                                <div className="mb-3 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <label>Command</label><Form.Check onChange={e => setEditCommand(e.target.checked)} checked={editCommand} className="d-inline ms-4 me-2" id="editCommand" /><label htmlFor="editCommand">Edit Text</label>
+                                    </div>
+                                    <Form.Select className="w-auto">
+                                        <option>Training</option>
+                                        <option>Validation</option>
+                                        <option>Testing</option>
+                                    </Form.Select>
+                                </div>
+                                {editCommand && <Form.Control as="textarea" className="mt-2" placeholder="Enter command text" value={form.command} onChange={e => setForm(prev => ({ ...prev, "command": e.target.value }))} />}
+                                {editCommand || <p onMouseUp={onSelected} className="form-control p-3">{form.command}</p>}
+                                <SelectIntentForm selected={selected} className="mt-3" controls={controls} />
+                            </div>
+
+                            <div className="col-auto">
+                                <Button onClick={state.openModal} className="w-100 mb-3" variant="outline-primary">Preview form</Button>
+                                <Button className="w-100">Save for review</Button>
+                            </div>
+                        </Form>
+                    </Container>
+                </Tab>
+
+                <Tab title="Json Input" eventKey="json-input">
+                    <Container className="p-2">
+                        <Row>
+                            <div className="col-auto flex-grow-1">
+                                <div>
+                                    <div className="d-flex justify-content-end gap-2">
+                                        <Button variant="secondary"><ClipboardIcon size={iconSize} /> Paste</Button>
+                                        <Form.Select className="w-auto">
+                                            <option>Training</option>
+                                            <option>Validation</option>
+                                            <option>Testing</option>
+                                        </Form.Select>
+                                    </div>
+                                    <Form.Control rows={16} as="textarea" placeholder="Paste" className="mt-3" />
+                                </div>
+                            </div>
+                            <div className="col-auto">
+                                <div>
+                                    {/* <Button onClick={state.openModal} variant="outline-primary" className="w-100 mb-3">Preview form</Button> */}
+                                    <Button className="w-100">Save for review</Button>
+                                </div>
+                            </div>
+                        </Row>
+                    </Container>
+                </Tab>
+            </Tabs>
+            <FormPreview form={form} state={state} />
         </MainContentDecorator>
     )
 }
@@ -128,10 +172,11 @@ function SelectIntentForm({ controls, className, selected }: { className?: strin
                 nameEntitesForm.setData(prev => (prev.map(i => i.id === checkedTarget.id ? { ...entity, start: start, end: end } : i)))
             }
         }
-        if(selected) {
+        if (selected) {
             onSelection(selected.start, selected.end)
         }
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selected])
 
     return (
@@ -196,7 +241,7 @@ function SelectIntentForm({ controls, className, selected }: { className?: strin
                                 <Accordion.Body>
                                     <Container fluid>
                                         {intent.namedEntities.map((ne, idx) => (
-                                            <Row key={idx} className="gap-1">
+                                            <Row key={idx} className="gap-1 mb-1">
                                                 <GroupLabelInfo label="NER" className="col-4 px-0" info={ne.label} />
                                                 <GroupLabelInfo label="Start" className="col-2 px-0" info={ne.start} />
                                                 <GroupLabelInfo label="End" className="col-2 px-0" info={ne.end} />
