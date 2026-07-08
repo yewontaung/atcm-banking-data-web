@@ -23,12 +23,12 @@ export default function DatasetDetailPage() {
 
 function JsonDatasetView({dataset}:{dataset:DatasetDetail}) {
     return (
-        <Container className="p-3">
+        <Container className="p-2">
             <Row>
                 <div className="col-8">
                     <div className="h-100 position-relative border">
                         <Button className="z-3 position-absolute end-0 me-4 text-white" variant="link"><ClipboardIcon size={iconSize} /></Button>
-                        <div className="overflow-y-auto overflow-x-auto" style={{maxHeight: 600}}>
+                        <div className="overflow-y-auto overflow-x-auto" style={{maxHeight: 500}}>
                             <JsonView 
                                 src={dataset} 
                                 name="dataset" 

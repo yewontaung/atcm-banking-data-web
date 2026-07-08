@@ -5,6 +5,7 @@ import { iconSize } from "../../_utils/constants";
 import FormsSelect from "../../_components/ui/forms.select";
 import InputsGroup from "../../_components/ui/inputs.group";
 import { Link } from "react-router-dom";
+import Pagination from "../../_components/ui/pagination";
 
 export default function DatasetListPage() {
     return (
@@ -50,6 +51,7 @@ export default function DatasetListPage() {
                         <IntentListItemRow />
                     </tbody>
                 </Table>
+                <Pagination previous={1} next={3} page={5} pages={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} onClick={() => {}} total={10} size={10} sizes={[10, 15, 20]} />
             </Container>
         </MainContentDecorator>
     )
