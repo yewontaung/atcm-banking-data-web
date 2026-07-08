@@ -25,7 +25,7 @@ export default function NersListPage() {
                 <Row>
                     <Table hover>
                         <thead>
-                            <tr>
+                            <tr className="align-middle">
                                 <th>ID</th>
                                 <th>Label</th>
                                 <th>Last Updated</th>
@@ -34,7 +34,7 @@ export default function NersListPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr className="align-middle">
                                 <td>1</td>
                                 <td>To_ACCOUNT_ID</td>
                                 <td>12 July, 2026</td>
