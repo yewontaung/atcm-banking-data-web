@@ -27,7 +27,7 @@ export default function IntentsListPage() {
                         <tr className="align-middle">
                             <th>ID</th>
                             <th>Intent</th>
-                            <th>Last Update</th>
+                            <th>Last Updated</th>
                             <th>Dataset</th>
                             <th>Named Entities</th>
                             <th></th>
