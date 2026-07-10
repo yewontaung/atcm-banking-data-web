@@ -41,3 +41,21 @@ export type DatasetDetail = {
     intents: DatasetIntentData[],
     alignments:NERAlignmentData[],
 }
+
+
+export type AuthProfile = {
+    account_id:string,
+    account_name:string,
+    account_email:string,
+    account_role:string,
+    profile_url:string,    
+}
+
+export type AuthToken = {
+    access_token:string,
+    access_type:string,
+}
+
+export type AuthResult = {
+    profile:AuthProfile,
+} & AuthToken

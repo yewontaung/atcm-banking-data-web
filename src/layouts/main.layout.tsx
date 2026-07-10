@@ -1,7 +1,12 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import AppSidebar from "../_components/app-sidebar";
+import { getToken } from "../_utils/auth.utils";
 
 export default function MainLayout() {
+    const {access_token} = getToken()
+    if(!access_token) {
+        return <Navigate to="/auth/sign-in" replace />
+    }
     return (
         <>
             <div className="container-fluid">
@@ -16,9 +21,6 @@ export default function MainLayout() {
                     </div>
                 </div>
             </div>
-            <section>
-
-            </section>
         </>
     )
 }

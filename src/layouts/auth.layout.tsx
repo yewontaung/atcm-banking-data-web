@@ -1,9 +1,14 @@
 import { Container, Navbar } from "react-bootstrap";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import ThemeButton from "../_components/theme-button";
+import { getToken } from "../_utils/auth.utils";
 
 export default function AuthLayout() {
 
+    const {access_token} = getToken()
+    if (access_token) {
+        return <Navigate to="/" replace />
+    }
     return (
         <>
             <section>

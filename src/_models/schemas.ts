@@ -18,3 +18,10 @@ export type DatasetForm = {
     command:string,
     intents:DatasetFormIntent[]
 }
+
+
+// sign in schema
+export type SignInForm = {
+    account_email:string,
+    password:string,
+}
