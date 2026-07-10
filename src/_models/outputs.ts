@@ -1,9 +1,9 @@
 export type MemberListItem = {
-    id:number,
-    name:string,
-    email:string,
-    dataset:number,
+    member_id:number
+    member_name:string
+    member_email:string
     role:"admin" | "supervison" | "collector"
+    datasets:number
 }
 
 export type IntentListItem = {
@@ -42,12 +42,17 @@ export type DatasetDetail = {
     alignments:NERAlignmentData[],
 }
 
+// binding backend
+
+export type ModificationResult<T> = {
+    result_data:T
+}
 
 export type AuthProfile = {
     account_id:string,
     account_name:string,
     account_email:string,
-    account_role:string,
+    account_role:"Admin" | "Supervisor" | "Collector",
     profile_url:string,    
 }
 

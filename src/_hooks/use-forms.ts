@@ -13,7 +13,7 @@ export function useForms<T extends Record<string, unknown>>(t:T, validation?:(da
 
     const validate = () => {
         validation?.(form, errorMessages)
-        setErrors(errorMessages);
+        setErrors(errorMessages)
         return (Object.keys(form) as (keyof T)[]).filter(i => errorMessages[i] !== undefined).length === 0
     }
     
@@ -27,6 +27,6 @@ export function useForms<T extends Record<string, unknown>>(t:T, validation?:(da
         }
     }
 
-    const reset = () => setForm(t)
+    const reset = () => setForm(prev => ({...prev, ...t}))
     return {form, onChange, controls, reset, setForm, validate, errors}
 }

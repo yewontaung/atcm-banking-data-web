@@ -1,8 +1,13 @@
-import type { AuthResult, AuthToken } from "../_models/outputs";
+import type { AuthProfile, AuthResult, AuthToken } from "../_models/outputs";
 
-export function getToken():AuthToken {
+export function getAuthToken():AuthToken {
     const access_token = localStorage.getItem(import.meta.env.VITE_TOKEN) ?? ""
     return {access_token, access_type: "Bearer"}
+}
+
+export function getAuthProfile():AuthProfile {
+    const profile = localStorage.getItem(`${import.meta.env.VITE_TOKEN}_profile`) ?? ""
+    return JSON.parse(profile) as AuthProfile
 }
 
 export function setAuthResult(result:AuthResult) {

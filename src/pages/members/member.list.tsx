@@ -1,65 +1,103 @@
-import { Button, ButtonGroup, Container, Row, Table } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, Container, Form, Table } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { EyeIcon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
-import type { MemberListItem } from "../../_models/outputs";
+import type { MemberListItem, ModificationResult } from "../../_models/outputs";
 import { FormsInput } from "../../_components/ui/forms.input";
 import MemberForm from "../../_components/modals/member.form";
 import { useModals } from "../../_hooks/use-modals";
 import FormsSelect from "../../_components/ui/forms.select";
+import { useForms } from "../../_hooks/use-forms";
+import type { MemberSearch } from "../../_models/searches";
+import * as memberService from "../../services/member.service"
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 export default function MemberListPage() {
     const modalState = useModals()
+    const [loading, setLoading] = useState(true)
+    const [params, setParams] = useSearchParams()
+    const {onChange, controls, ...form} = useForms<MemberSearch>({keyword: params.get("keyword") ?? "", role: params.get("role") ?? ""})
+
+    const [members, setMembers] = useState<MemberListItem[]>([])
+    useEffect(() => {
+        const loadMembers = async () => {
+            try {
+                const items = await memberService.search({keyword: params.get("keyword") as string, role: params.get("role") ?? ""})
+                setMembers(items)
+            } finally {
+                setLoading(false)
+            }
+        }
+        loadMembers()
+    }, [setMembers, params])
+
+    const onSearch = async (e?:React.SubmitEvent) => {
+        e?.preventDefault()
+        setParams(form.form)
+        const items = await memberService.search(form.form)
+        setMembers(items)
+    }
+
+    const onSaved = (result:ModificationResult<number>) => {
+        console.log(result)
+        modalState.closeModal()
+        onSearch()
+    }
+    
     return (
         <MainContentDecorator title="Members Management">
             {/* Member Add Form */}
-            <MemberForm {...modalState} />
+            <MemberForm state={modalState} onSaved={onSaved} />
             {/* Member Search Form */}
             <Container className="mt-3">
-                <Row className="gap-2">
-                    <FormsSelect className="col-auto px-0" label="Role">
-                        <option value={"all"}>All</option>
-                        <option value={"collector"}>Collector</option>
-                        <option value={"supervisor"}>Supervisor</option>
-                        <option value={"admin"}>Admin</option>
+                <Form onSubmit={onSearch} className="row gap-2">
+                    <FormsSelect name={controls.role} onChange={onChange} value={form.form.role} className="col-auto px-0" label="Role">
+                        <option value="">All</option>
+                        <option value={"Collector"}>Collector</option>
+                        <option value={"Supervisor"}>Supervisor</option>
+                        <option value={"Admin"}>Admin</option>
                     </FormsSelect>
-                    <FormsInput className="col-auto px-0" label="Keyword" placeholder="Enter keyword" />
-                    <Button className="col-auto align-self-end">Search</Button>
-                    <Button onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Member</Button>
-                </Row>
+                    <FormsInput name={controls.keyword} onChange={onChange} value={form.form.keyword} className="col-auto px-0" label="Keyword" placeholder="Enter keyword" />
+                    <Button type="submit" className="col-auto align-self-end">Search</Button>
+                    <Button type="button" onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Member</Button>
+                </Form>
             </Container>
 
             {/* Member List Table */}
             <div className="mt-3 container">
-                <Table hover>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Dataset</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {[1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13].map(i => <MemberListTableRow key={i} id={1} name="Ye Wont Aung" email="yewontaung@gmail.com" role="admin" dataset={100} />)}
-                        
-                    </tbody>
-                </Table>
+                {!loading && (
+                    <Table hover>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Dataset</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {members.map(i => <MemberListTableRow key={i.member_id} member={i} />)}
+                        </tbody>
+                    </Table>
+                )}
+                {!loading && members.length == 0 && <Alert className="text-center w-100" variant="light">Add a member.</Alert>}
             </div>
         </MainContentDecorator>
     )
 }
 
-function MemberListTableRow({ id, name, email, role, dataset }: MemberListItem) {
+function MemberListTableRow({member}: {member:MemberListItem}) {
+    const { member_id, member_name, member_email, role, datasets } = member
     return (
         <tr className="align-middle">
-            <td>{id}</td>
-            <td>{name}</td>
-            <td>{email}</td>
+            <td>{member_id}</td>
+            <td>{member_name}</td>
+            <td>{member_email}</td>
             <td>{role}</td>
-            <td>{dataset}</td>
+            <td>{datasets}</td>
             <td>
                 <ButtonGroup>
                     <Button variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>

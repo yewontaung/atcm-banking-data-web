@@ -1,11 +1,11 @@
 import { Container, Navbar } from "react-bootstrap";
 import { Navigate, Outlet } from "react-router-dom";
 import ThemeButton from "../_components/theme-button";
-import { getToken } from "../_utils/auth.utils";
+import { getAuthToken } from "../_utils/auth.utils";
 
 export default function AuthLayout() {
 
-    const {access_token} = getToken()
+    const {access_token} = getAuthToken()
     if (access_token) {
         return <Navigate to="/" replace />
     }

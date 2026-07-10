@@ -25,3 +25,10 @@ export type SignInForm = {
     account_email:string,
     password:string,
 }
+
+// member schema
+export type MemberForm = {
+    name:string,
+    role:"Admin" | "Supervisor" | "Collector"
+    member_email:string
+}
