@@ -13,11 +13,11 @@ export default function MeProfilePage() {
             <Row>
                 <div className="col-auto">
                     <div className="py-3">
-                        <Image src={profile.profile_url ?? defaultProfile} className="d-block mx-auto" roundedCircle width={200} height={200} style={{objectFit: "cover"}} />
+                        <Image src={profile.profileUrl ?? defaultProfile} className="d-block mx-auto" roundedCircle width={200} height={200} style={{objectFit: "cover"}} />
                         <div className="p-2 mt-3 d-flex flex-column row-gap-2">
-                            <div><User2Icon className="me-3" size={iconSize} /> {profile.account_name}</div>
-                            <div><MailIcon className="me-3" size={iconSize} /> {profile.account_email}</div>
-                            <div><TagIcon className="me-3" size={iconSize} /> {profile.account_role}</div>
+                            <div><User2Icon className="me-3" size={iconSize} /> {profile.accountName}</div>
+                            <div><MailIcon className="me-3" size={iconSize} /> {profile.accountEmail}</div>
+                            <div><TagIcon className="me-3" size={iconSize} /> {profile.accountRole}</div>
                             <Button className="mt-3"><CloudUploadIcon size={iconSize} /> Upload Profile</Button>
                             <Button variant="outline-primary" className=""><SettingsIcon size={iconSize} /> Change Password</Button>
                         </div>
@@ -38,10 +38,10 @@ export default function MeProfilePage() {
                         <h5>Permissions</h5>
                         <ul>
                             <li>Collect data</li>
-                            {profile.account_role === "Supervisor" && (
+                            {profile.accountRole === "Supervisor" && (
                                 <li>Review & approve pending dataset</li>
                             )}
-                            {profile.account_role === "Admin" && (
+                            {profile.accountRole === "Admin" && (
                                 <>
                                     <li>Manage memebers (add members, change roles)</li>
                                     <li>Add & edit intent data</li>

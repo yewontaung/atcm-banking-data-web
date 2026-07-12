@@ -10,10 +10,10 @@ export default function SignInPage() {
     const navigate = useNavigate()
     const [alert, setAlert] = useState<string>()
     const {controls, onChange, errors, ...form} = useForms<SignInForm>(
-        {account_email: "", password: ""},
+        {accountEmail: "", password: ""},
         (data, errors) => {
-            if(!data.account_email || data.account_email === "") {
-                errors.account_email = "Please enter email"
+            if(!data.accountEmail || data.accountEmail === "") {
+                errors.accountEmail = "Please enter email"
             }
             if(!data.password || data.password === "") {
                 errors.password = "Please enter password."
@@ -47,7 +47,7 @@ export default function SignInPage() {
             <h4 className="text-center">Login</h4>
             <form onSubmit={onSubmit} className="border p-4">
                 {alert && <Alert variant="info">{alert}</Alert>}
-                <FormsInput label="Email" error={errors.account_email} name={controls.account_email} onChange={onChange} placeholder="Enter Email" className="mb-3"/>
+                <FormsInput label="Email" error={errors.accountEmail} name={controls.accountEmail} onChange={onChange} placeholder="Enter Email" className="mb-3"/>
 
                 <FormsInput label="Password" error={errors.password} type="password" name={controls.password} onChange={onChange} placeholder="Enter Password" className="mb-3" />
 

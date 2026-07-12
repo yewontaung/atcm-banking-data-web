@@ -22,7 +22,7 @@ export type DatasetForm = {
 
 // sign in schema
 export type SignInForm = {
-    account_email:string,
+    accountEmail:string,
     password:string,
 }
 
@@ -30,5 +30,5 @@ export type SignInForm = {
 export type MemberForm = {
     name:string,
     role:"Admin" | "Supervisor" | "Collector"
-    member_email:string
+    memberEmail:string
 }

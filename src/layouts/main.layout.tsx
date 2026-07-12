@@ -3,7 +3,7 @@ import AppSidebar from "../_components/app-sidebar";
 import { getAuthToken } from "../_utils/auth.utils";
 
 export default function MainLayout() {
-    const {access_token} = getAuthToken()
+    const {accessToken: access_token} = getAuthToken()
     if(!access_token) {
         return <Navigate to="/auth/sign-in" replace />
     }

@@ -18,7 +18,7 @@ export async function publicRequest(url:string, init?:RequestInit) {
 }
 
 export async function protectedRequest(url:string, init?:RequestInit) {
-    const {access_type, access_token} = getAuthToken()
+    const {accessType: access_type, accessToken: access_token} = getAuthToken()
 
     const api = import.meta.env.VITE_API_URL
 

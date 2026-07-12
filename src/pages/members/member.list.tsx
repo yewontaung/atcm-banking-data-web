@@ -79,7 +79,7 @@ export default function MemberListPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {members.map(i => <MemberListTableRow key={i.member_id} member={i} />)}
+                            {members.map(i => <MemberListTableRow key={i.memberId} member={i} />)}
                         </tbody>
                     </Table>
                 )}
@@ -90,7 +90,7 @@ export default function MemberListPage() {
 }
 
 function MemberListTableRow({member}: {member:MemberListItem}) {
-    const { member_id, member_name, member_email, role, datasets } = member
+    const { memberId: member_id, memberName: member_name, memberEmail: member_email, role, datasets } = member
     return (
         <tr className="align-middle">
             <td>{member_id}</td>

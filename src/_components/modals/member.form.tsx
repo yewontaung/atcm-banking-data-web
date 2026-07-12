@@ -9,12 +9,12 @@ import type { ModificationResult } from "../../_models/outputs";
 
 export default function MemberForm({state:{isOpen, closeModal,}, onSaved}:{state:ModalState, onSaved?:(result:ModificationResult<number>) => void}) {
     const {onChange, controls, errors,...form} = useForms<MemberForm>({
-        member_email: "", role: "Collector", name: ""
+        memberEmail: "", role: "Collector", name: ""
     }, (data, errors) => {
-        if(!data.member_email || data.member_email == "") {
-            errors.member_email = "Please enter member email."
+        if(!data.memberEmail || data.memberEmail == "") {
+            errors.memberEmail = "Please enter member email."
         }
-        if(!data.name || data.member_email == "") {
+        if(!data.name || data.memberEmail == "") {
             errors.name = "Please enter member name"
         }
     })
@@ -46,7 +46,7 @@ export default function MemberForm({state:{isOpen, closeModal,}, onSaved}:{state
                             <option value={"Admin"}>Admin</option>
                         </FormsSelect>
                     </div>
-                    <FormsInput error={errors.member_email} onChange={onChange} name={controls.member_email} value={form.form.member_email} className="mb-3" label="Email" placeholder="Enter member email" />
+                    <FormsInput error={errors.memberEmail} onChange={onChange} name={controls.memberEmail} value={form.form.memberEmail} className="mb-3" label="Email" placeholder="Enter member email" />
                     <div className="d-flex column-gap-2 mt-3">
                         <Button type="button" className="w-50" variant="outline-secondary" onClick={closeModal}>Cancel</Button>
                         <Button type="submit" className="w-50">Add</Button>

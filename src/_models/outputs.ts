@@ -1,7 +1,7 @@
 export type MemberListItem = {
-    member_id:number
-    member_name:string
-    member_email:string
+    memberId:number
+    memberName:string
+    memberEmail:string
     role:"admin" | "supervison" | "collector"
     datasets:number
 }
@@ -45,20 +45,20 @@ export type DatasetDetail = {
 // binding backend
 
 export type ModificationResult<T> = {
-    result_data:T
+    resultData:T
 }
 
 export type AuthProfile = {
-    account_id:string,
-    account_name:string,
-    account_email:string,
-    account_role:"Admin" | "Supervisor" | "Collector",
-    profile_url:string,    
+    accountId:string,
+    accountName:string,
+    accountEmail:string,
+    accountRole:"Admin" | "Supervisor" | "Collector",
+    profileUrl:string,    
 }
 
 export type AuthToken = {
-    access_token:string,
-    access_type:string,
+    accessToken:string,
+    accessType:string,
 }
 
 export type AuthResult = {
