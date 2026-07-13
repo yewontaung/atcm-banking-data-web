@@ -6,21 +6,21 @@ export const defaultProfile = "/imgs/profile.jpg"
 
 export const intentItemSeed:IntentListItem[] = [
     {
-        id: 1,
+        intentId: 1,
         dataset: 200,
-        intent: "transfer_balance",
+        label: "transfer_balance",
         lastUpdated: new Date("01-07-2026"),
-        namedEntities: [
-            {id: 1, label: "T0_ACCOUNT_ID"},
-            {id: 2, label: "AMOUNT"},
+        ners: [
+            {nerId: 1, label: "T0_ACCOUNT_ID"},
+            {nerId: 2, label: "AMOUNT"},
         ]
     },
     {
-        id: 2,
+        intentId: 2,
         dataset: 100,
-        intent: "check_balance",
+        label: "check_balance",
         lastUpdated: new Date("02-07-2026"),
-        namedEntities: []
+        ners: []
     },
 ]
 

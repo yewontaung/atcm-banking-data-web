@@ -14,12 +14,14 @@ export type NerListItem = {
 }
 
 export type IntentListItem = {
-    id:number,
-    intent:string,
-    lastUpdated:Date,
+    intentId:number,
+    label:string,
+    lastUpdated:string,
     dataset:number,
-    namedEntities:{id:number, label:string}[]
+    ners:string[]
 }
+
+// old
 
 export type IntentData = {
     id:string,

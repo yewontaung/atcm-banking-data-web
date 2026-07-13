@@ -6,3 +6,7 @@ export type MemberSearch = {
 export type NerSearch = {
     q:string
 }
+
+export type IntentSearch = {
+    q:string
+}

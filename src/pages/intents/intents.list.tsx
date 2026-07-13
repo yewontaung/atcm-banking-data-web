@@ -1,24 +1,56 @@
-import { Badge, Button, ButtonGroup, Container, Row, Table } from "react-bootstrap";
+import { Badge, Button, ButtonGroup, Container, Table } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { Edit2Icon, EyeIcon } from "lucide-react";
-import { iconSize, intentItemSeed } from "../../_utils/constants";
+import { iconSize } from "../../_utils/constants";
 import type { IntentListItem } from "../../_models/outputs";
 import { FormsInput } from "../../_components/ui/forms.input";
-import IntentForm from "../../_components/modals/intent.form";
+import IntentFormModal from "../../_components/modals/intent.form";
 import { useModals } from "../../_hooks/use-modals";
+import { useForms } from "../../_hooks/use-forms";
+import type { IntentSearch } from "../../_models/searches";
+import { useEffect, useState } from "react";
+import * as intentService from "../../services/intents.service"
+import { formateDate } from "../../_utils/date-formats";
 
 export default function IntentsListPage() {
     const modalState = useModals()
+    const {controls, onChange, ...form} = useForms<IntentSearch>({q: ""})
+    const [intents, setIntents] = useState<IntentListItem[]>([])
+
+    console.log("Render")
+
+    useEffect(() => {
+        const loadIntents = async () => {
+            const items = await intentService.search()
+            setIntents(items)
+        }
+        console.log("Mounted")
+        loadIntents()
+
+        return () => console.log("Unmounted")
+    }, [])
+    
+    const onSearch = async (search?:IntentSearch) => {
+        const items = await intentService.search(search)
+        setIntents(() => items)
+    }
+
+    const onSaved = async () => {
+        modalState.closeModal()
+        form.reset()
+        await onSearch()
+    }
+
     return (
         <MainContentDecorator title="Intetns Management">
-            <IntentForm {...modalState} />
+            <IntentFormModal state={modalState} onSaved={onSaved} />
             {/* Intent Search */}
             <Container className="mt-3">
-                <Row className="gap-2">
-                    <FormsInput label="Keyword" placeholder="Enter keyword" className="col-auto px-0" />
-                    <Button className="col-auto align-self-end">Search</Button>
-                    <Button onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Intent</Button>
-                </Row>
+                <form onSubmit={form.onSubmit(onSearch)} className="row gap-2">
+                    <FormsInput name={controls.q} value={form.form.q} onChange={onChange} label="Keyword" placeholder="Enter keyword" className="col-auto px-0" />
+                    <Button type="submit" className="col-auto align-self-end">Search</Button>
+                    <Button type="button" onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Intent</Button>
+                </form>
             </Container>
             {/* Intent List Table */}
             <Container className="mt-4">
@@ -34,7 +66,7 @@ export default function IntentsListPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {intentItemSeed.map(item => <IntentListItemRow key={item.id} {...item} />)}
+                        {intents.map(item => <IntentListItemRow key={item.intentId} {...item} />)}
                     </tbody>
                 </Table>
             </Container>
@@ -42,16 +74,16 @@ export default function IntentsListPage() {
     )
 }
 
-function IntentListItemRow({id, intent, lastUpdated, dataset, namedEntities}:IntentListItem) {
+function IntentListItemRow({intentId, label, lastUpdated, dataset, ners}:IntentListItem) {
     return (
         <tr className="align-middle">
-            <td>{id}</td>
-            <td>{intent}</td>
-            <td>{lastUpdated.toDateString()}</td>
+            <td>{intentId}</td>
+            <td>{label}</td>
+            <td>{formateDate(lastUpdated)}</td>
             <td>{dataset}</td>
             <td className="col-3">
                 <div className="d-flex gap-2 flex-wrap">
-                    {namedEntities && namedEntities.map(item => <Badge key={item.id}>{item.label}</Badge>)}
+                    {ners && ners.map((item, idx) => <Badge key={idx}>{item}</Badge>)}
                 </div>
             </td>
             <td>

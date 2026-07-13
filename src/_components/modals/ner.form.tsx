@@ -27,7 +27,7 @@ export default function NERForm({state:{isOpen, closeModal}, onSaved}:{state:Mod
             <Modal.Body>
                 <Form onSubmit={onSubmit}>
 
-                    <FormsInput onChange={form.onChange} name={controls.label} error={errors.label} value={form.form.label} label="Enter NER label" placeholder="RECEIVER" className="mb-3" />
+                    <FormsInput onChange={form.onChange} name={controls.label} error={errors.label} value={form.form.label} label="Enter NER label" placeholder="Enter named entites" className="mb-3" />
 
                     <div className="d-flex column-gap-2 mt-3">
                         <Button className="w-50" variant="outline-secondary" onClick={closeModal}>Cancel</Button>

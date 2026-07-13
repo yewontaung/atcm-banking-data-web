@@ -27,6 +27,47 @@ export function useForms<T extends Record<string, unknown>>(t:T, validation?:(da
         }
     }
 
-    const reset = () => setForm(prev => ({...prev, ...t}))
-    return {form, onChange, controls, reset, setForm, validate, errors}
+    const reset = (value?:T) => setForm(() => (value ?? t))
+    
+    const onSubmit = (func:(value:T) => void) => {
+        
+        const handle = (e?:React.SubmitEvent) => {
+            e?.preventDefault()
+            func(form)
+        }
+
+        return handle
+    }
+
+    return {form, errors, controls, onChange, reset, setForm, validate, onSubmit}
+}
+
+export function useArrayField<T, F>(fieldName:keyof T, form:T, setForm:React.Dispatch<React.SetStateAction<T>>) {
+
+    const fields = form[fieldName] as F[]
+
+    const append = (value:F) => {
+        setForm(prev => (
+            {
+                ...prev,
+                [fieldName]: [
+                    ...prev[fieldName] as F[],
+                    value
+                ]
+            }
+        ))
+    }
+
+    const remove = (index:number) => {
+        setForm(prev => (
+            {
+                ...prev,
+                [fieldName]: [
+                    ...(prev[fieldName] as F[]).filter((_, i) => i !== index),
+                ]
+            }
+        ))
+    }
+    
+    return {fields, append, remove}
 }

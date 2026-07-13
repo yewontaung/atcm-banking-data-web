@@ -37,3 +37,10 @@ export type MemberForm = {
 export type NerForm = {
     label:string
 }
+
+// intent schema
+export type IntentForm = {
+    label:string,
+    description:string,
+    ners:number[]
+}

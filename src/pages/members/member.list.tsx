@@ -2,7 +2,7 @@ import { Alert, Button, ButtonGroup, Container, Form, Table } from "react-bootst
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { EyeIcon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
-import type { MemberListItem, ModificationResult } from "../../_models/outputs";
+import type { MemberListItem } from "../../_models/outputs";
 import { FormsInput } from "../../_components/ui/forms.input";
 import MemberForm from "../../_components/modals/member.form";
 import { useModals } from "../../_hooks/use-modals";
@@ -11,38 +11,34 @@ import { useForms } from "../../_hooks/use-forms";
 import type { MemberSearch } from "../../_models/searches";
 import * as memberService from "../../services/member.service"
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 
 export default function MemberListPage() {
     const modalState = useModals()
     const [loading, setLoading] = useState(true)
-    const [params, setParams] = useSearchParams()
-    const {onChange, controls, ...form} = useForms<MemberSearch>({keyword: params.get("keyword") ?? "", role: params.get("role") ?? ""})
+    const {onChange, controls, ...form} = useForms<MemberSearch>({keyword: "", role: ""})
 
     const [members, setMembers] = useState<MemberListItem[]>([])
     useEffect(() => {
         const loadMembers = async () => {
             try {
-                const items = await memberService.search({keyword: params.get("keyword") as string, role: params.get("role") ?? ""})
+                const items = await memberService.search()
                 setMembers(items)
             } finally {
                 setLoading(false)
             }
         }
         loadMembers()
-    }, [setMembers, params])
+    }, [setMembers])
 
-    const onSearch = async (e?:React.SubmitEvent) => {
-        e?.preventDefault()
-        setParams(form.form)
-        const items = await memberService.search(form.form)
+    const onSearch = async (search?:MemberSearch) => {
+        const items = await memberService.search(search)
         setMembers(items)
     }
 
-    const onSaved = (result:ModificationResult<number>) => {
-        console.log(result)
+    const onSaved = async () => {
         modalState.closeModal()
-        onSearch()
+        form.reset()
+        await onSearch()
     }
     
     return (
@@ -51,7 +47,7 @@ export default function MemberListPage() {
             <MemberForm state={modalState} onSaved={onSaved} />
             {/* Member Search Form */}
             <Container className="mt-3">
-                <Form onSubmit={onSearch} className="row gap-2">
+                <Form onSubmit={form.onSubmit(onSearch)} className="row gap-2">
                     <FormsSelect name={controls.role} onChange={onChange} value={form.form.role} className="col-auto px-0" label="Role">
                         <option value="">All</option>
                         <option value={"Collector"}>Collector</option>

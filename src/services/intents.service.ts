@@ -1,20 +1,23 @@
-import type { IntentData } from "../_models/outputs";
+import type { IntentListItem, ModificationResult } from "../_models/outputs";
+import type { IntentForm } from "../_models/schemas";
+import type { IntentSearch } from "../_models/searches";
+import { queryParam } from "../_utils/param.utils";
+import { protectedRequest } from "../rest-client/api";
 
-export function getIntents():IntentData[] {
-    const intents:IntentData[] = [
-        {
-            id: "1",
-            label: "CHECK_BALANCE",
-            namedEntities: [],
-        },
-        {
-            id: "2",
-            label: "TRANSFER_FUND",
-            namedEntities: [
-                {id: "1", label: "RECIPIENT"},
-                {id: "2", label: "AMOUNT"},
-            ]
-        }
-    ]
-    return intents 
+export async function search(search?:IntentSearch) {
+    const params = queryParam(search ?? {})
+    const resposne = await protectedRequest(`intents?${params}`, {
+        method: "GET",
+    })
+
+    return (await resposne.json()) as IntentListItem[]
+}
+
+export async function save(form: IntentForm) {
+    const response = await protectedRequest("intents", {
+        method: "POST",
+        body: JSON.stringify(form)
+    })
+
+    return (await response.json()) as ModificationResult<number>
 }
