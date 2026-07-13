@@ -6,6 +6,13 @@ export type MemberListItem = {
     datasets:number
 }
 
+export type NerListItem = {
+    nerId:number
+    label:string
+    lastUpdated:string
+    intents:number
+}
+
 export type IntentListItem = {
     id:number,
     intent:string,

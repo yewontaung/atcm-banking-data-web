@@ -32,3 +32,8 @@ export type MemberForm = {
     role:"Admin" | "Supervisor" | "Collector"
     memberEmail:string
 }
+
+// ner schema
+export type NerForm = {
+    label:string
+}
