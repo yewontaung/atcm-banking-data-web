@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@alenaksu/json-viewer": "^2.1.1",
+    "@fontsource/roboto": "^5.2.10",
     "@microlink/react-json-view": "^1.31.20",
     "bootstrap": "^5.3.8",
     "lucide-react": "^1.21.0",

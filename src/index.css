@@ -1,7 +1,10 @@
-/* @import url('https://googleapis.com'); */
+@import "@fontsource/roboto/300.css";
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/700.css";
 
 body {
-  font-family: "Google Sans", monospace !important;
+  font-family: "Roboto", "Google Sans", monospace !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

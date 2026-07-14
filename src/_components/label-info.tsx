@@ -3,7 +3,7 @@ export function GroupLabelInfo({label, info, className}:{label?:string, info:str
         <div className={className}>
             <div className={`input-group`}>
                 {label && <label className="input-group-text">{label}</label>}
-                <div className="form-control">{info}</div>
+                <div className="form-control overflow-hidden">{info}</div>
             </div>
         </div>
     )

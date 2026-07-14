@@ -13,6 +13,8 @@ import FormPreview from "../../_components/modals/form.preview";
 import { useArrayField, useForms, type FormsUtils } from "../../_hooks/use-forms";
 import type { IntentListItem } from "../../_models/outputs";
 import * as intentService from "../../services/intent.service"
+import * as datasetService from "../../services/dataset.service";
+import { useNavigate } from "react-router-dom";
 
 export default function DatasetEditPage() {
 
@@ -136,8 +138,8 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
         <div className={` ${className}`}>
             <Container>
                 {/* Editing Intents / Intent form */}
-                <Row className="gap-1 mb-3">
-                    <InputsGroup label="Intent" className="col-4 px-0">
+                <Row className="gap-1 mb-3 px-3">
+                    <InputsGroup label="Intent" className="col-5 px-0">
                         <InputGroup.Radio name="current" onChange={e => {
                             if (e.target.checked) setCheckTarget({ targetId: intentForm.data.intentId, target: "intent" })
                         }} />
@@ -149,13 +151,14 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
 
                     <FormsInput label="Start" onChange={e => onIntentIndexChange("start", e.target.value)} className="col-2 px-0" placeholder="0" value={intentForm.data.startIndex} />
                     <FormsInput label="End" onChange={e => onIntentIndexChange("end", e.target.value)} className="col-2 px-0" placeholder="0" value={intentForm.data.endIndex} />
+                    <Button onClick={addIntent} className="w-auto align-self-end mx-1">Add Intent</Button>
                 </Row>
 
                 {nerForm.data.length > 0 && <small className="text-warning">NER Alignment</small>}
                 {nerForm.data.map((item, idx) => (
-                    <Row key={idx} className="gap-1">
+                    <Row key={idx} className="gap-1 px-3">
 
-                        <InputsGroup className="col-4 px-0">
+                        <InputsGroup className="col-5 px-0">
                             <InputGroup.Radio name="current" onChange={e => {
                                 if (e.target.checked) setCheckTarget({ targetId: item.nerId, target: "ner" })
                             }} />
@@ -169,9 +172,9 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
                         </InputsGroup>
                     </Row>
                 ))}
-                <Row className="mt-3 gap-1">
+                {/* <Row className="mt-3 gap-1">
                     <Button onClick={addIntent} className="col-8 mx-1">Add Intent</Button>
-                </Row>
+                </Row> */}
             </Container>
             <Container>
                 {/* Added Intents */}
@@ -181,7 +184,7 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
                             <Accordion.Header>
                                 <Container fluid className="position-relative">
                                     <Row className="gap-1">
-                                        <GroupLabelInfo label="Intent" className="col-4 px-0" info={intent.label} />
+                                        <GroupLabelInfo label="Intent" className="col-5 px-0" info={intent.label} />
                                         <GroupLabelInfo label="Start" className="col-2 px-0" info={intent.startIndex} />
                                         <GroupLabelInfo label="End" className="col-2 px-0" info={intent.endIndex} />
                                         <ButtonGroup className="col-auto align-self-end px-0">
@@ -215,6 +218,8 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
 
 function ManualEditForm({setPreview, previewModalState}:{previewModalState:ModalState, setPreview:(preview:DatasetForm) => void}) {
 
+    const navigate = useNavigate()
+
     const [editCommand, setEditCommand] = useState(true)
 
     const formUtils = useForms<DatasetForm>({
@@ -246,19 +251,26 @@ function ManualEditForm({setPreview, previewModalState}:{previewModalState:Modal
         setSelected({ start: range.startOffset, end: range.endOffset })
     }
 
-    const onSave = () => {
+    const onSave = async () => {
         console.log(form.form)
+        if(!form.validate()) return
+        try {
+            const result = await datasetService.save(form.form)
+            navigate(`/datasets/${result.resultData}`)
+        } catch {
+            console.log("Something wrong.")
+        }
     }
 
     return (
         <Container className="mt-3">
             <Form onSubmit={onSubmit(onSave)} className="row">
-                <div className="col-auto flex-grow-1">
+                <div className="col">
                     <div className="mb-3 d-flex justify-content-between align-items-center">
                         <div>
                             <label>Command</label><Form.Check onChange={e => setEditCommand(e.target.checked)} checked={editCommand} className="d-inline ms-4 me-2" id="editCommand" /><label htmlFor="editCommand">Edit Text</label>
                         </div>
-                        <Form.Select className="w-auto">
+                        <Form.Select name={controls.datasetType} value={form.form.datasetType} onChange={onChange} className="w-auto">
                             <option>Training</option>
                             <option>Validation</option>
                             <option>Testing</option>
@@ -274,9 +286,9 @@ function ManualEditForm({setPreview, previewModalState}:{previewModalState:Modal
                     <SelectIntentForm selected={selected} className="mt-3" form={formUtils} />
                 </div>
 
-                <div className="col-auto">
-                    <Button onClick={openPreview} className="w-100 mb-3" variant="outline-primary">Preview form</Button>
-                    <Button className="w-100">Save for review</Button>
+                <div className="col-3">
+                    <Button type="button" onClick={openPreview} className="w-100 mb-3" variant="outline-primary">Preview form</Button>
+                    <Button type="submit" className="w-100">Save for review</Button>
                 </div>
             </Form>
         </Container>
@@ -289,7 +301,7 @@ function JsonEditForm() {
     return (
         <Container className="p-2">
             <Row>
-                <div className="col-auto flex-grow-1">
+                <div className="col-auto flex-fill">
                     <div>
                         <div className="d-flex justify-content-end gap-2">
                             <Button variant="secondary"><ClipboardIcon size={iconSize} /> Paste</Button>
