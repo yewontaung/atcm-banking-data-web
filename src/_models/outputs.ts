@@ -18,7 +18,7 @@ export type IntentListItem = {
     label:string,
     lastUpdated:string,
     dataset:number,
-    ners:string[]
+    ners:{nerId:number, label:string}[]
 }
 
 // old

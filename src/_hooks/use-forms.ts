@@ -1,6 +1,17 @@
 import React, { useState } from "react";
 
-export function useForms<T extends Record<string, unknown>>(t:T, validation?:(data:T, error:{[K in keyof T]: string | undefined}) => void) {
+export type FormsUtils<T> = {
+    form: T;
+    errors: { [K in keyof T]: string | undefined; };
+    controls: { [K in keyof T]: K; };
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+    reset: (value?: T) => void;
+    setForm: React.Dispatch<React.SetStateAction<T>>;
+    validate: () => boolean;
+    onSubmit: (func: (value: T) => void) => (e?: React.SubmitEvent) => void;
+}
+
+export function useForms<T extends Record<string, unknown>>(t:T, validation?:(data:T, error:{[K in keyof T]: string | undefined}) => void):FormsUtils<T> {
     
     const [form, setForm] = useState<T>(t)
 

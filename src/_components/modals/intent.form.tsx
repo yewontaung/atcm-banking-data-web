@@ -3,8 +3,8 @@ import type { ModalState } from "../../_hooks/use-modals";
 import { FormsInput } from "../ui/forms.input";
 import { useEffect, useState } from "react";
 import type { ModificationResult, NerListItem } from "../../_models/outputs";
-import * as nerService from "../../services/ners.service"
-import * as intentService from "../../services/intents.service"
+import * as nerService from "../../services/ner.service"
+import * as intentService from "../../services/intent.service"
 import { useArrayField, useForms } from "../../_hooks/use-forms";
 import type { IntentForm } from "../../_models/schemas";
 

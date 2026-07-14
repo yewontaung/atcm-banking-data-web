@@ -1,8 +1,9 @@
 import { Modal } from "react-bootstrap";
 import type { ModalState } from "../../_hooks/use-modals";
 import type { DatasetForm } from "../../_models/schemas";
+import { AppJsonView } from "../app-jsonview";
 
-export default function FormPreview({state:{isOpen, closeModal}, form}:{state:ModalState, form:DatasetForm}) {
+export default function FormPreview({state:{isOpen, closeModal}, form}:{state:ModalState, form?:DatasetForm}) {
     return (
         <Modal show={isOpen} onHide={closeModal}>
             <Modal.Header closeButton>
@@ -10,7 +11,7 @@ export default function FormPreview({state:{isOpen, closeModal}, form}:{state:Mo
             </Modal.Header>
             <Modal.Body>
                 <div>
-                    {JSON.stringify(form, null, 2)}
+                    {form && <AppJsonView data={form} />}
                 </div>
             </Modal.Body>
         </Modal>

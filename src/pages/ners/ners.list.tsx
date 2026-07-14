@@ -6,7 +6,7 @@ import { iconSize } from "../../_utils/constants";
 import NERForm from "../../_components/modals/ner.form";
 import { useModals } from "../../_hooks/use-modals";
 import { useEffect, useState } from "react";
-import * as nersService from "../../services/ners.service"
+import * as nersService from "../../services/ner.service"
 import { useForms } from "../../_hooks/use-forms";
 import type { NerSearch } from "../../_models/searches";
 import type { NerListItem } from "../../_models/outputs";

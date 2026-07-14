@@ -4,7 +4,7 @@ import { GroupLabelInfo } from "../../_components/label-info"
 import { Calendar1Icon, ClipboardIcon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
 import { demoDataset, iconSize } from "../../_utils/constants"
 import type { DatasetDetail, DatasetIntentData, NERAlignmentData } from "../../_models/outputs"
-import JsonView from "@microlink/react-json-view"
+import { AppJsonView } from "../../_components/app-jsonview"
 
 export default function DatasetDetailPage() {
     return (
@@ -29,19 +29,7 @@ function JsonDatasetView({dataset}:{dataset:DatasetDetail}) {
                     <div className="h-100 position-relative border">
                         <Button className="z-3 position-absolute end-0 me-4 text-white" variant="link"><ClipboardIcon size={iconSize} /></Button>
                         <div className="overflow-y-auto overflow-x-auto" style={{maxHeight: 500}}>
-                            <JsonView 
-                                src={dataset} 
-                                name="dataset" 
-                                enableClipboard={false} 
-                                displayDataTypes={false}
-                                displayArrayKey={false}
-                                displayObjectSize={false}
-                                theme="ocean"
-                                style={{
-                                    fontFamily: '"JetBrains Mono"',
-                                    fontSize: 12,
-                                    padding: 20,
-                                }} />
+                            <AppJsonView data={dataset}  />
                         </div>
                     </div>
                 </div>

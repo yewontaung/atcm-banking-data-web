@@ -1,22 +1,23 @@
-export type DatasetFormNER = {
-    id:string,
+// dataset schema
+export type DatasetIntentNerItem = {
+    nerId:number,
     label:string,
-    start:number,
-    end:number,
-    intentId:string,
+    startIndex:number,
+    endIndex:number,
 }
 
-export type DatasetFormIntent = {
-    id:string,
+export type DatasetIntentItem = {
+    intentId:number,
     label:string,
-    start:number,
-    end:number,
-    namedEntities:DatasetFormNER[]
+    startIndex:number,
+    endIndex:number,
+    ners:DatasetIntentNerItem[]
 }
 
 export type DatasetForm = {
     command:string,
-    intents:DatasetFormIntent[]
+    datasetType:"Training" | "Validation" | "Testing"
+    intents:DatasetIntentItem[]
 }
 
 

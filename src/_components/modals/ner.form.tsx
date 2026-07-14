@@ -4,7 +4,7 @@ import { FormsInput } from "../ui/forms.input";
 import type { ModificationResult } from "../../_models/outputs";
 import { useForms } from "../../_hooks/use-forms";
 import type { NerForm } from "../../_models/schemas";
-import * as nersService from "../../services/ners.service"
+import * as nersService from "../../services/ner.service"
 
 export default function NERForm({state:{isOpen, closeModal}, onSaved}:{state:ModalState, onSaved?:(result:ModificationResult<number>) => void}) {
     const {controls, errors, ...form} = useForms<NerForm>({label: ""}, (data, error) => {

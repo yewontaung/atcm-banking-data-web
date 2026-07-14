@@ -9,7 +9,7 @@ import { useModals } from "../../_hooks/use-modals";
 import { useForms } from "../../_hooks/use-forms";
 import type { IntentSearch } from "../../_models/searches";
 import { useEffect, useState } from "react";
-import * as intentService from "../../services/intents.service"
+import * as intentService from "../../services/intent.service"
 import { formateDate } from "../../_utils/date-formats";
 
 export default function IntentsListPage() {
@@ -83,7 +83,7 @@ function IntentListItemRow({intentId, label, lastUpdated, dataset, ners}:IntentL
             <td>{dataset}</td>
             <td className="col-3">
                 <div className="d-flex gap-2 flex-wrap">
-                    {ners && ners.map((item, idx) => <Badge key={idx}>{item}</Badge>)}
+                    {ners && ners.map(item => <Badge key={item.nerId}>{item.label}</Badge>)}
                 </div>
             </td>
             <td>
