@@ -22,7 +22,7 @@ const sideBarMenuItems:SideBarMenuItem[] = [
     {
         id:2,
         label:"Dataset",
-        link:"dataset",
+        link:"datasets",
         icon: <DatabaseIcon size={iconSize} />,
     },
     {

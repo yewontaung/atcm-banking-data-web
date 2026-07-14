@@ -5,13 +5,13 @@ import { Route, Routes } from 'react-router-dom'
 import SignInPage from './pages/auth/sign-in'
 import MainLayout from './layouts/main.layout'
 import MemberListPage from './pages/members/member.list'
-import DatasetListPage from './pages/dataset/dataset.list'
+import DatasetListPage from './pages/datasets/datasets.list'
 import IntentsListPage from './pages/intents/intents.list'
 import NersListPage from './pages/ners/ners.list'
 import DashboardAnalysisPage from './pages/dashboard/dashboard.analysis'
 import MeProfilePage from './pages/me/me.profile'
-import DatasetEditPage from './pages/dataset/dataset.add'
-import DatasetDetailPage from './pages/dataset/dataset.detail'
+import DatasetEditPage from './pages/datasets/datasets.add'
+import DatasetDetailPage from './pages/datasets/dataset.detail'
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
       <Route path='/' element={<MainLayout />}>
         <Route index element={<DashboardAnalysisPage />} />
         <Route path='dashboard' element={<DashboardAnalysisPage />} />
-        <Route path='dataset'>
+        <Route path='datasets'>
           <Route index element={<DatasetListPage />} />
           <Route path='add' element={<DatasetEditPage />} />
           <Route path=':id' element={<DatasetDetailPage />} />
