@@ -21,6 +21,16 @@ export type IntentListItem = {
     ners:{nerId:number, label:string}[]
 }
 
+export type DatasetListItem = {
+    datasetId:number
+    command:string
+    datasetType:"Training" | "Validation" | "Testing"
+    approved:boolean
+    memberId:number
+    memberName:string
+    lastUpdated:string
+}
+
 // old
 
 export type IntentData = {
@@ -55,6 +65,13 @@ export type DatasetDetail = {
 
 export type ModificationResult<T> = {
     resultData:T
+}
+
+export type PaginationResult<T> = {
+    items:T[]
+    page:number
+    size:number
+    total:number
 }
 
 export type AuthProfile = {
