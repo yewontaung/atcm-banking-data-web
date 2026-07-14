@@ -21,3 +21,11 @@ export async function save(form: IntentForm) {
 
     return (await response.json()) as ModificationResult<number>
 }
+
+export async function remove(intentId: number) {
+    const response = await protectedRequest(`intents/${intentId}`, {
+        method: "DELETE"
+    })
+
+    return (await response.json()) as ModificationResult<number>
+}
