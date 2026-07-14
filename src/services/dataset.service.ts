@@ -15,8 +15,16 @@ export async function save(form:DatasetForm) {
 
 export async function search(search?:DatasetSearch) {
     const params = queryParam(search ?? {})
-    console.log(params)
+
     const response = await protectedRequest(`datasets?${params}`)
 
     return (await response.json()) as PaginationResult<DatasetListItem>
+}
+
+export async function moveToBin(datasetId: number) {
+    const response = await protectedRequest(`datasets/${datasetId}/bin`, {
+        method: "DELETE"
+    })
+
+    return (await response.json()) as ModificationResult<number>
 }

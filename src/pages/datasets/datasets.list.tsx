@@ -1,6 +1,6 @@
-import { Alert, Badge, Button, ButtonGroup, Container, Form, Table } from "react-bootstrap";
+import { Alert, Badge, Button, ButtonGroup, Container, Form, Modal, Table } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
-import { Edit2Icon, EyeIcon } from "lucide-react";
+import { Edit2Icon, EyeIcon, Trash2Icon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
 import FormsSelect from "../../_components/ui/forms.select";
 import InputsGroup from "../../_components/ui/inputs.group";
@@ -12,6 +12,7 @@ import { useForms } from "../../_hooks/use-forms";
 import type { DatasetSearch } from "../../_models/searches";
 import * as datasetService from "../../services/dataset.service"
 import { formateDate } from "../../_utils/date-formats";
+import { useModals } from "../../_hooks/use-modals";
 
 export default function DatasetListPage() {
 
@@ -43,6 +44,8 @@ export default function DatasetListPage() {
         setDatasets(result)
     }
 
+    const [toDelete, setToDelete] = useState<DatasetListItem>()
+    const deleteModal = useModals()
 
     return (
         <MainContentDecorator title="Dataset Management">
@@ -84,12 +87,42 @@ export default function DatasetListPage() {
                             </thead>
                             <tbody>
 
-                                {datasets?.items.map(i => <IntentListItemRow item={i} key={i.datasetId} />)}
+                                {datasets?.items.map(i => <IntentListItemRow onDelete={(item) => {
+                                    setToDelete(item)
+                                    deleteModal.openModal()
+                                }} item={i} key={i.datasetId} />)}
 
                             </tbody>
                         </Table>
 
-                        <Pagination onChange={(page, size) => onSearch({...form.form, page, size})} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />
+                        {datasets && datasets.total > 0 && <Pagination onChange={(page, size) => onSearch({...form.form, page, size})} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
+                        
+                        <Modal size="sm" animation={false} show={deleteModal.isOpen} 
+                        onHide={() => {
+                            setToDelete(undefined)
+                            deleteModal.closeModal()
+                        }}>
+                            <Modal.Body>
+                                <h6>Are you sure to move dataset to bin?</h6>
+                                <div className="d-flex justify-content-center gap-3 mt-4">
+                                    <Button onClick={() => {
+                                        setToDelete(undefined)
+                                        deleteModal.closeModal()
+                                    }} variant="outline-secondary" className="w-50">Cancel</Button>
+
+                                    <Button onClick={async () => {
+                                        if(!toDelete) return
+
+                                        const result = await datasetService.moveToBin(toDelete.datasetId)
+
+                                        setDatasets(prev => (prev ? {...prev, total: prev.total- 1, items: prev.items.filter(i => i.datasetId !== result.resultData)} : prev))
+
+                                        setToDelete(undefined)
+                                        deleteModal.closeModal()
+                                    }} variant="danger" className="w-50">Move to bin</Button>
+                                </div>
+                            </Modal.Body>
+                        </Modal>
                     </>
                 )}
 
@@ -101,7 +134,7 @@ export default function DatasetListPage() {
     )
 }
 
-function IntentListItemRow({item}:{item:DatasetListItem}) {
+function IntentListItemRow({item, onDelete}:{item:DatasetListItem, onDelete?:(item:DatasetListItem) => void}) {
     return (
         <tr className="align-middle">
             <td>{item.datasetId}</td>
@@ -121,6 +154,8 @@ function IntentListItemRow({item}:{item:DatasetListItem}) {
                         <Button size="sm" variant="outline-primary"><EyeIcon size={iconSize} /></Button>
                     </Link>
                     <Button size="sm" variant="outline-primary"><Edit2Icon size={iconSize} /></Button>
+
+                    <Button onClick={() => onDelete?.(item)} size="sm" variant="outline-danger"><Trash2Icon size={iconSize} /></Button>
                 </ButtonGroup>
             </td>
         </tr>
