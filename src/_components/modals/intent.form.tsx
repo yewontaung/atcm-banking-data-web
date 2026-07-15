@@ -10,15 +10,17 @@ import type { IntentForm } from "../../_models/schemas";
 
 export default function IntentFormModal({state:{isOpen, closeModal}, onSaved}:{state:ModalState, onSaved?:(result:ModificationResult<number>) => void}) {
     const [ners, setNers] = useState<NerListItem[]>([])
+    const [toSelectNers, setToSelectNers] = useState<NerListItem[]>([])
     const [selectedNers, setSelectedNers] = useState<NerListItem[]>([])
 
     useEffect(() => {
         const loadNers = async () => {
             const items = await nerService.search()
             setNers(items)
+            setToSelectNers(items)
         }
         loadNers()
-    }, [setNers])
+    }, [])
 
 
     const {controls, errors, ...form} = useForms<IntentForm>({
@@ -38,7 +40,7 @@ export default function IntentFormModal({state:{isOpen, closeModal}, onSaved}:{s
 
     const onSelect = (strId:string) => {
         const nerId = Number(strId)
-        setNers(prev => prev.filter(i => i.nerId !== nerId))
+        setToSelectNers(toSelectNers.filter(i => i.nerId !== nerId))
         setSelectedNers(prev => [...prev, ners.filter(i => i.nerId === nerId)[0]])
         append(nerId)
     }
@@ -49,12 +51,14 @@ export default function IntentFormModal({state:{isOpen, closeModal}, onSaved}:{s
         const result = await intentService.save(form.form)
         form.reset()
         setSelectedNers([])
+        setToSelectNers(ners)
         onSaved?.(result)
     }
 
     const cancel = () => {
         form.reset()
         setSelectedNers([])
+        setToSelectNers(ners)
         closeModal()
     }
 
@@ -71,11 +75,11 @@ export default function IntentFormModal({state:{isOpen, closeModal}, onSaved}:{s
                         <h6>Add NERs</h6>
                         <Row className="row-cols-2 align-items-cente row-gap-3">
                             {selectedNers && selectedNers.map(i => <div key={i.nerId} className="col"><div className="form-control">{i.label}</div></div>)}
-                            {ners.length > 0 && (
+                            {toSelectNers.length > 0 && (
                                 <div className="col">
                                     <Form.Select onChange={e => onSelect(e.target.value)}>
                                         <option>Select NER</option>
-                                        {ners.map(i => <option key={i.nerId} value={i.nerId}>{i.label}</option>)}
+                                        {toSelectNers.map(i => <option key={i.nerId} value={i.nerId}>{i.label}</option>)}
                                     </Form.Select>
                                 </div>
                             )}
