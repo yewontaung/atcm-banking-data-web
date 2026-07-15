@@ -15,3 +15,8 @@ export function setAuthResult(result:AuthResult) {
     localStorage.setItem(import.meta.env.VITE_TOKEN, access_token)
     localStorage.setItem(`${import.meta.env.VITE_TOKEN}_profile`, JSON.stringify(result.profile))
 }
+
+export function removeAuth() {
+    localStorage.removeItem(import.meta.env.VITE_TOKEN)
+    localStorage.removeItem(`${import.meta.env.VITE_TOKEN}_profile`)
+}

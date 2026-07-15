@@ -1,19 +1,47 @@
-import { Button, Container, Image, Row } from "react-bootstrap";
+import { Button, Container, Dropdown, Image, Row } from "react-bootstrap";
 import { defaultProfile, iconSize } from "../../_utils/constants";
-import { CloudUploadIcon, MailIcon, SettingsIcon, TagIcon, User2Icon } from "lucide-react";
+import { CloudUploadIcon, MailIcon, SettingsIcon, TagIcon, Trash2Icon, User2Icon } from "lucide-react";
 import TotalDataCard from "../../_components/totaldata-card";
 import ThemeButton from "../../_components/theme-button";
 import { getAuthProfile } from "../../_utils/auth.utils";
+import { AppProfile } from "../../_components/app-profile";
+import { Link } from "react-router-dom";
+import LogoutButton from "../../_components/logout-button";
 
 export default function MeProfilePage() {
     const profile = getAuthProfile()
+
     return (
         <Container>
-            <ThemeButton className="position-absolute end-0 me-3" />
+            <div className="position-absolute end-0 me-4 d-flex gap-2">
+                <ThemeButton className="" />
+                <Dropdown>
+                    <Dropdown.Toggle className="bg-transparent border-0">
+                        <AppProfile className="me-2" img={defaultProfile} />
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="">
+                        <Dropdown.Item as="button">
+                            <Link to="/me/profile" className="text-decoration-none text-white">
+                                <User2Icon size={iconSize} className="me-3" /> Profile
+                            </Link>
+                        </Dropdown.Item>
+                        <Dropdown.Item as="button">
+                            <Link to="/datasets/bin" className="text-decoration-none text-white">
+                                <Trash2Icon size={iconSize} className="me-3" /> Recycle bin
+                            </Link>
+                        </Dropdown.Item>
+                        <Dropdown.Divider />
+                        <Dropdown.Item>
+                            <LogoutButton />
+                        </Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+            </div>
+
             <Row>
                 <div className="col-auto">
                     <div className="py-3">
-                        <Image src={profile.profileUrl ?? defaultProfile} className="d-block mx-auto" roundedCircle width={200} height={200} style={{objectFit: "cover"}} />
+                        <Image src={profile.profileUrl ?? defaultProfile} className="d-block mx-auto" roundedCircle width={200} height={200} style={{ objectFit: "cover" }} />
                         <div className="p-2 mt-3 d-flex flex-column row-gap-2">
                             <div><User2Icon className="me-3" size={iconSize} /> {profile.accountName}</div>
                             <div><MailIcon className="me-3" size={iconSize} /> {profile.accountEmail}</div>
@@ -53,5 +81,5 @@ export default function MeProfilePage() {
                 </div>
             </Row>
         </Container>
-    )   
+    )
 }

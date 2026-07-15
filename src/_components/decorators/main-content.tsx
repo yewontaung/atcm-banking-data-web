@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { AppProfile } from "../app-profile";
 import { defaultProfile, iconSize } from "../../_utils/constants";
 import { Container, Dropdown } from "react-bootstrap";
-import { LogOutIcon, Trash2Icon, User2Icon } from "lucide-react";
+import { Trash2Icon, User2Icon } from "lucide-react";
+import LogoutButton from "../logout-button";
 
 export default function MainContentDecorator({title, children}:{title:string, children:ReactNode}) {
     return (
@@ -30,7 +31,7 @@ export default function MainContentDecorator({title, children}:{title:string, ch
                             </Dropdown.Item>
                             <Dropdown.Divider />
                             <Dropdown.Item>
-                                    <LogOutIcon size={iconSize} className="me-3" /> Logout
+                                <LogoutButton />
                             </Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
