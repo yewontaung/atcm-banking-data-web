@@ -17,17 +17,13 @@ export default function IntentsListPage() {
     const {controls, onChange, ...form} = useForms<IntentSearch>({q: ""})
     const [intents, setIntents] = useState<IntentListItem[]>([])
 
-    console.log("Render")
-
     useEffect(() => {
         const loadIntents = async () => {
             const items = await intentService.search()
             setIntents(items)
         }
-        console.log("Mounted")
         loadIntents()
 
-        return () => console.log("Unmounted")
     }, [])
     
     const onSearch = async (search?:IntentSearch) => {

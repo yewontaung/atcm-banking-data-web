@@ -28,3 +28,19 @@ export async function moveToBin(datasetId: number) {
 
     return (await response.json()) as ModificationResult<number>
 }
+
+export async function getBin(page: number, size: number) {
+    const params = queryParam({page, size})
+    const response = await protectedRequest(`datasets/bin?${params}`)
+
+    return (await response.json()) as PaginationResult<DatasetListItem>
+}
+export async function deleteDataset(datasetId: number) {
+
+    const response = await protectedRequest(`datasets/${datasetId}`, {
+        method: "DELETE"
+    })
+
+    return (await response.json()) as ModificationResult<number>
+}
+

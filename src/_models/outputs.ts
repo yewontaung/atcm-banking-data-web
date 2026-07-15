@@ -29,6 +29,7 @@ export type DatasetListItem = {
     memberId:number
     memberName:string
     lastUpdated:string
+    deleted:boolean
 }
 
 // old

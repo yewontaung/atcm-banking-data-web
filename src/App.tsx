@@ -12,6 +12,7 @@ import DashboardAnalysisPage from './pages/dashboard/dashboard.analysis'
 import MeProfilePage from './pages/me/me.profile'
 import DatasetEditPage from './pages/datasets/datasets.add'
 import DatasetDetailPage from './pages/datasets/dataset.detail'
+import DatasetBinPage from './pages/datasets/datasets.bin'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route index element={<DatasetListPage />} />
           <Route path='add' element={<DatasetEditPage />} />
           <Route path=':id' element={<DatasetDetailPage />} />
+          <Route path='bin' element={<DatasetBinPage />} />
         </Route>
         <Route path='intents' element={<IntentsListPage />} />
         <Route path='ners' element={<NersListPage />} />

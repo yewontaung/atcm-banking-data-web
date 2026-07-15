@@ -189,7 +189,7 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
                                         <GroupLabelInfo label="End" className="col-2 px-0" info={intent.endIndex} />
                                         <ButtonGroup className="col-auto align-self-end px-0">
                                             {/* <Button variant="outline-primary">Edit</Button> */}
-                                            <Button onClick={() => deleteIntent(intent.intentId, idx)} variant="outline-danger"><TrashIcon size={iconSize} /></Button>
+                                            <Button as="div" onClick={() => deleteIntent(intent.intentId, idx)} variant="outline-danger"><TrashIcon size={iconSize} /></Button>
                                         </ButtonGroup>
                                     </Row>
                                 </Container>
@@ -199,7 +199,7 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
                                     <Container fluid>
                                         {intent.ners.map((ne, idx) => (
                                             <Row key={idx} className="gap-1 mb-1">
-                                                <GroupLabelInfo label="NER" className="col-4 px-0" info={ne.label} />
+                                                <GroupLabelInfo label="NER" className="col-5 px-0" info={ne.label} />
                                                 <GroupLabelInfo label="Start" className="col-2 px-0" info={ne.startIndex} />
                                                 <GroupLabelInfo label="End" className="col-2 px-0" info={ne.endIndex} />
                                             </Row>

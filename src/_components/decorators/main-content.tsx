@@ -18,14 +18,20 @@ export default function MainContentDecorator({title, children}:{title:string, ch
                             <AppProfile className="me-2" img={defaultProfile} />
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="">
-                            <Dropdown.Item>
+                            <Dropdown.Item as="button">
                                 <Link to="/me/profile" className="text-decoration-none text-white">
                                     <User2Icon size={iconSize} className="me-3" /> Profile
                                 </Link>
                             </Dropdown.Item>
-                            <Dropdown.Item><Trash2Icon size={iconSize} className="me-3" /> Recycle bin</Dropdown.Item>
+                            <Dropdown.Item as="button">
+                                <Link to="/datasets/bin" className="text-decoration-none text-white">
+                                    <Trash2Icon size={iconSize} className="me-3" /> Recycle bin
+                                </Link>
+                            </Dropdown.Item>
                             <Dropdown.Divider />
-                            <Dropdown.Item  className="text-danger"><LogOutIcon size={iconSize} className="me-3" /> Logout</Dropdown.Item>
+                            <Dropdown.Item>
+                                    <LogOutIcon size={iconSize} className="me-3" /> Logout
+                            </Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                 </div>
