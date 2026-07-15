@@ -8,9 +8,12 @@ import { AppProfile } from "../../_components/app-profile";
 import { Link } from "react-router-dom";
 import LogoutButton from "../../_components/logout-button";
 import RolePermit from "../../_components/role-permit";
+import { useModals } from "../../_hooks/use-modals";
+import PasswordFormModal from "../../_components/modals/password.form";
 
 export default function MeProfilePage() {
     const profile = getAuthProfile()
+    const changePasswordModal = useModals()
 
     return (
         <Container>
@@ -50,7 +53,8 @@ export default function MeProfilePage() {
                             <div><MailIcon className="me-3" size={iconSize} /> {profile.accountEmail}</div>
                             <div><TagIcon className="me-3" size={iconSize} /> {profile.accountRole}</div>
                             <Button className="mt-3"><CloudUploadIcon size={iconSize} /> Upload Profile</Button>
-                            <Button variant="outline-primary" className=""><SettingsIcon size={iconSize} /> Change Password</Button>
+                            <Button onClick={changePasswordModal.openModal} variant="outline-primary" className=""><SettingsIcon size={iconSize} /> Change Password</Button>
+                            <PasswordFormModal state={changePasswordModal} />
                         </div>
                     </div>
                 </div>

@@ -51,3 +51,10 @@ export type IntentEditForm = {
     label:string,
     description:string,
 }
+
+// password schema
+export type PasswordForm = {
+    oldPassword:string,
+    newPassword:string,
+    confirmPassword:string,
+}
