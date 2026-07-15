@@ -13,6 +13,7 @@ import type { DatasetSearch } from "../../_models/searches";
 import * as datasetService from "../../services/dataset.service"
 import { formateDate } from "../../_utils/date-formats";
 import { useModals } from "../../_hooks/use-modals";
+import RolePermit from "../../_components/role-permit";
 
 export default function DatasetListPage() {
 
@@ -87,7 +88,7 @@ export default function DatasetListPage() {
                             </thead>
                             <tbody>
 
-                                {datasets?.items.map(i => <IntentListItemRow onDelete={(item) => {
+                                {datasets?.items.map(i => <DatasetListItemRow onDelete={(item) => {
                                     setToDelete(item)
                                     deleteModal.openModal()
                                 }} item={i} key={i.datasetId} />)}
@@ -134,7 +135,7 @@ export default function DatasetListPage() {
     )
 }
 
-function IntentListItemRow({item, onDelete}:{item:DatasetListItem, onDelete?:(item:DatasetListItem) => void}) {
+function DatasetListItemRow({item, onDelete}:{item:DatasetListItem, onDelete?:(item:DatasetListItem) => void}) {
     return (
         <tr className="align-middle">
             <td>{item.datasetId}</td>
@@ -153,9 +154,9 @@ function IntentListItemRow({item, onDelete}:{item:DatasetListItem, onDelete?:(it
                     <Link to={`/datasets/${item.datasetId}`}>
                         <Button size="sm" variant="outline-primary"><EyeIcon size={iconSize} /></Button>
                     </Link>
-                    <Button size="sm" variant="outline-primary"><Edit2Icon size={iconSize} /></Button>
-
-                    <Button onClick={() => onDelete?.(item)} size="sm" variant="outline-danger"><Trash2Icon size={iconSize} /></Button>
+                    <RolePermit roles={["Admin", "Supervisor"]}>
+                        <Button onClick={() => onDelete?.(item)} size="sm" variant="outline-danger"><Trash2Icon size={iconSize} /></Button>
+                    </RolePermit>
                 </ButtonGroup>
             </td>
         </tr>

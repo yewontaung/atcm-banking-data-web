@@ -31,7 +31,7 @@ export default function MeProfilePage() {
                             </Link>
                         </Dropdown.Item>
                         <Dropdown.Divider />
-                        <Dropdown.Item>
+                        <Dropdown.Item as="button">
                             <LogoutButton />
                         </Dropdown.Item>
                     </Dropdown.Menu>

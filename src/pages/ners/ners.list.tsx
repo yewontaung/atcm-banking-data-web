@@ -10,6 +10,8 @@ import * as nersService from "../../services/ner.service"
 import { useForms } from "../../_hooks/use-forms";
 import type { NerSearch } from "../../_models/searches";
 import type { NerListItem } from "../../_models/outputs";
+import RolePermit from "../../_components/role-permit";
+import { formateDate } from "../../_utils/date-formats";
 
 export default function NersListPage() {
     const state = useModals()
@@ -48,46 +50,50 @@ export default function NersListPage() {
                 <form onSubmit={form.onSubmit(onSearch)} className="row gap-2">
                     <FormsInput onChange={form.onChange} name={controls.q} value={form.form.q} className="col-auto px-0" label="Keyword" placeholder="Enter keyword" />
                     <Button type="submit" className="align-self-end col-auto">Search</Button>
-                    <Button type="button" onClick={state.openModal} variant="danger" className="align-self-end col-auto">Add Named Entity</Button>
+                    <RolePermit roles={["Admin"]}>
+                        <Button type="button" onClick={state.openModal} variant="danger" className="align-self-end col-auto">Add Named Entity</Button>
+                    </RolePermit>
                 </form>
             </Container>
-            <NERForm onSaved={onSaved} state={state} />
-
+            <RolePermit roles={["Admin"]}>
+                <NERForm onSaved={onSaved} state={state} />
+            </RolePermit>
             <Container className="mt-3">
                 {/* NER List Table */}
-                <Row>
-                    {!loading && (
-                        <Table hover>
-                            <thead>
-                                <tr className="align-middle">
-                                    <th>ID</th>
-                                    <th>Label</th>
-                                    <th>Last Updated</th>
-                                    <th>Intends</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {ners.map(i => (
-                                    <tr key={i.nerId} className="align-middle">
-                                        <td>{i.nerId}</td>
-                                        <td>{i.label}</td>
-                                        <td>{i.lastUpdated}</td>
-                                        <td>{i.intents}</td>
-                                        <td>
-                                            <ButtonGroup>
-                                                <Button size="sm" variant="outline-primary"><Edit2Icon size={iconSize} /></Button>
-                                                <Button size="sm" variant="outline-danger"><TrashIcon size={iconSize} /></Button>
-                                            </ButtonGroup>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    )}
-                    {!loading && ners.length == 0 && <Alert className="text-center w-100" variant="light">Add named enities.</Alert>}
 
-                </Row>
+                {!loading && (
+                    <Table hover>
+                        <thead>
+                            <tr className="align-middle">
+                                <th>ID</th>
+                                <th>Label</th>
+                                <th>Last Updated</th>
+                                <th className="text-end pe-4">Intends</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {ners.map(i => (
+                                <tr key={i.nerId} className="align-middle">
+                                    <td>{i.nerId}</td>
+                                    <td>{i.label}</td>
+                                    <td>{formateDate(i.lastUpdated)}</td>
+                                    <td className="text-end pe-4">{i.intents}</td>
+                                    <td>
+                                        <RolePermit roles={["Admin"]}>
+                                        <ButtonGroup>
+                                            <Button size="sm" variant="outline-primary"><Edit2Icon size={iconSize} /></Button>
+                                            <Button size="sm" variant="outline-danger"><TrashIcon size={iconSize} /></Button>
+                                        </ButtonGroup>
+                                        </RolePermit>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                )}
+                {!loading && ners.length == 0 && <Alert className="text-center w-100" variant="light">Add named enities.</Alert>}
+
             </Container>
         </MainContentDecorator>
     )

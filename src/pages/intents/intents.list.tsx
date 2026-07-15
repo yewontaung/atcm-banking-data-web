@@ -11,6 +11,7 @@ import type { IntentSearch } from "../../_models/searches";
 import { useEffect, useState } from "react";
 import * as intentService from "../../services/intent.service"
 import { formateDate } from "../../_utils/date-formats";
+import RolePermit from "../../_components/role-permit";
 
 export default function IntentsListPage() {
     const modalState = useModals()
@@ -42,13 +43,17 @@ export default function IntentsListPage() {
 
     return (
         <MainContentDecorator title="Intetns Management">
-            <IntentFormModal state={modalState} onSaved={onSaved} />
+            <RolePermit roles={["Admin"]}>
+                <IntentFormModal state={modalState} onSaved={onSaved} />
+            </RolePermit>
             {/* Intent Search */}
             <Container className="mt-3">
                 <form onSubmit={form.onSubmit(onSearch)} className="row gap-2">
                     <FormsInput name={controls.q} value={form.form.q} onChange={onChange} label="Keyword" placeholder="Enter keyword" className="col-auto px-0" />
                     <Button type="submit" className="col-auto align-self-end">Search</Button>
-                    <Button type="button" onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Intent</Button>
+                    <RolePermit roles={["Admin"]}>
+                        <Button type="button" onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Intent</Button>
+                    </RolePermit>
                 </form>
             </Container>
             {/* Intent List Table */}
@@ -122,7 +127,9 @@ function IntentListItemRow({item, onDelete}:{item:IntentListItem, onDelete?:(ite
                 <ButtonGroup>
                     <Button variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
                     <Button variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
-                    {dataset === 0 && <Button variant="outline-danger" onClick={() => onDelete?.(item)} size="sm"><Trash2Icon size={iconSize} /></Button>}
+                    <RolePermit roles={["Admin"]}>
+                        {dataset === 0 && <Button variant="outline-danger" onClick={() => onDelete?.(item)} size="sm"><Trash2Icon size={iconSize} /></Button>}
+                    </RolePermit>
                 </ButtonGroup>
             </td>
         </tr>

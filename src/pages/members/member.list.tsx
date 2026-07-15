@@ -1,6 +1,6 @@
 import { Alert, Button, ButtonGroup, Container, Form, Table } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
-import { EyeIcon } from "lucide-react";
+import { Edit2Icon, EyeIcon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
 import type { MemberListItem } from "../../_models/outputs";
 import { FormsInput } from "../../_components/ui/forms.input";
@@ -11,6 +11,7 @@ import { useForms } from "../../_hooks/use-forms";
 import type { MemberSearch } from "../../_models/searches";
 import * as memberService from "../../services/member.service"
 import { useEffect, useState } from "react";
+import RolePermit from "../../_components/role-permit";
 
 export default function MemberListPage() {
     const modalState = useModals()
@@ -44,7 +45,9 @@ export default function MemberListPage() {
     return (
         <MainContentDecorator title="Members Management">
             {/* Member Add Form */}
-            <MemberForm state={modalState} onSaved={onSaved} />
+            <RolePermit roles={["Admin"]}>
+                <MemberForm state={modalState} onSaved={onSaved} />
+            </RolePermit>
             {/* Member Search Form */}
             <Container className="mt-3">
                 <Form onSubmit={form.onSubmit(onSearch)} className="row gap-2">
@@ -56,7 +59,10 @@ export default function MemberListPage() {
                     </FormsSelect>
                     <FormsInput name={controls.keyword} onChange={onChange} value={form.form.keyword} className="col-auto px-0" label="Keyword" placeholder="Enter keyword" />
                     <Button type="submit" className="col-auto align-self-end">Search</Button>
-                    <Button type="button" onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Member</Button>
+
+                    <RolePermit roles={["Admin"]}>
+                        <Button type="button" onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Member</Button>
+                    </RolePermit>
                 </Form>
             </Container>
 
@@ -70,7 +76,7 @@ export default function MemberListPage() {
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
-                                <th>Dataset</th>
+                                <th className="text-end pe-4">Dataset</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -93,11 +99,11 @@ function MemberListTableRow({member}: {member:MemberListItem}) {
             <td>{member_name}</td>
             <td>{member_email}</td>
             <td>{role}</td>
-            <td>{datasets}</td>
+            <td className="text-end pe-4">{datasets}</td>
             <td>
                 <ButtonGroup>
                     <Button variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
-                    <Button variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
+                    <Button variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
                 </ButtonGroup>
             </td>
         </tr>

@@ -30,7 +30,7 @@ export default function MainContentDecorator({title, children}:{title:string, ch
                                 </Link>
                             </Dropdown.Item>
                             <Dropdown.Divider />
-                            <Dropdown.Item>
+                            <Dropdown.Item as="button">
                                 <LogoutButton />
                             </Dropdown.Item>
                         </Dropdown.Menu>
