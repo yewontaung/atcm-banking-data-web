@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import * as intentService from "../../services/intent.service"
 import { formateDate } from "../../_utils/date-formats";
 import RolePermit from "../../_components/role-permit";
+import type { IntentEditForm } from "../../_models/schemas";
 
 export default function IntentsListPage() {
     const modalState = useModals()
@@ -40,6 +41,26 @@ export default function IntentsListPage() {
 
     const deleteModal = useModals()
     const [toDelete, setToDelete] = useState<IntentListItem>()
+
+    const editModal = useModals()
+    const editForm = useForms<IntentEditForm>({
+        intentId: 0, label: "", description: ""
+    }, (data, errors) => {
+        if(!data.label || data.label === "") {
+            errors.label = "Please enter intent label."
+        }
+        if(!data.description || data.description === "") {
+            errors.description = "Please enter intent description."
+        } 
+    })
+
+    const onEdit = async () => {
+        if(!editForm.validate()) return
+        const result = await intentService.edit(editForm.form)
+        setIntents(intents.filter(i => i.intentId === result.resultData).map(i => ({...i, label: editForm.form.label, description: editForm.form.description})))
+        editForm.reset()
+        editModal.closeModal()
+    }
 
     return (
         <MainContentDecorator title="Intetns Management">
@@ -73,10 +94,38 @@ export default function IntentsListPage() {
                         {intents.map(item => <IntentListItemRow key={item.intentId} {...{item}} onDelete={item => {
                             setToDelete(item)
                             deleteModal.openModal()
+                        }} onEdit={item => {
+                            editForm.setForm({intentId: item.intentId, label: item.label, description: item.description})
+                            editModal.openModal()
                         }} />)}
                     </tbody>
                 </Table>
+                    
+                {/* Edit section */}
+                <Modal animation={false} show={editModal.isOpen} onHide={() => {
+                    editForm.reset()
+                    editModal.closeModal()
+                }}>
+                    <Modal.Header>Edit intent</Modal.Header>
+                    <Modal.Body>
 
+                        <form onSubmit={editForm.onSubmit(onEdit)}>
+                            <FormsInput className="mb-3" value={editForm.form.label} onChange={editForm.onChange} error={editForm.errors.label} name={editForm.controls.label} label="Intent label" placeholder="Enter intent label" />
+                            <FormsInput className="mb-3" as="textarea"  value={editForm.form.description} onChange={editForm.onChange}  name={editForm.controls.description} label="Intent label" placeholder="Enter intent label" />
+
+                            <div className="d-flex justify-content-end gap-3">
+                                <Button type="button" onClick={() => {
+                                    editForm.reset()
+                                    editModal.closeModal()
+                                }} variant="outline-secondary">Cancel</Button>
+                                <Button type="submit">Save</Button>
+                            </div>
+                        </form>
+
+                    </Modal.Body>
+                </Modal>
+
+                {/* Delete section */}
                 <Modal animation={false} show={deleteModal.isOpen} size="sm"
                     onHide={() => {
                         setToDelete(undefined)
@@ -90,7 +139,7 @@ export default function IntentsListPage() {
                                 setToDelete(undefined)
                                 deleteModal.closeModal()
                             }} variant="outline-secondary">Cancel</Button>
-                            <Button onClick={async () => {
+                            <Button autoFocus onClick={async () => {
                                 console.log("Deleting")
                                 if(!toDelete) return
                                 const result = await intentService.remove(toDelete?.intentId)
@@ -108,7 +157,13 @@ export default function IntentsListPage() {
     )
 }
 
-function IntentListItemRow({item, onDelete}:{item:IntentListItem, onDelete?:(item:IntentListItem) => void}) {
+function IntentListItemRow(
+    {item, onDelete, onEdit}
+    :{
+        item:IntentListItem, 
+        onDelete?:(item:IntentListItem) => void,
+        onEdit?:(item:IntentListItem) => void
+    }) {
 
     const {intentId, label, lastUpdated, dataset, ners} = item
 
@@ -125,8 +180,10 @@ function IntentListItemRow({item, onDelete}:{item:IntentListItem, onDelete?:(ite
             </td>
             <td>
                 <ButtonGroup>
-                    <Button variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
-                    <Button variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
+                    {/* <Button variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button> */}
+                    <Button onClick={() => {
+                        onEdit?.(item)
+                    }} variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
                     <RolePermit roles={["Admin"]}>
                         {dataset === 0 && <Button variant="outline-danger" onClick={() => onDelete?.(item)} size="sm"><Trash2Icon size={iconSize} /></Button>}
                     </RolePermit>

@@ -1,5 +1,5 @@
 import type { IntentListItem, ModificationResult } from "../_models/outputs";
-import type { IntentForm } from "../_models/schemas";
+import type { IntentEditForm, IntentForm } from "../_models/schemas";
 import type { IntentSearch } from "../_models/searches";
 import { queryParam } from "../_utils/param.utils";
 import { protectedRequest } from "../rest-client/api";
@@ -28,4 +28,14 @@ export async function remove(intentId: number) {
     })
 
     return (await response.json()) as ModificationResult<number>
+}
+
+export async function edit(form: IntentEditForm) {
+    const response = await protectedRequest(`intents/${form.intentId}`, {
+        method: "PUT",
+        body: JSON.stringify(form)
+    })
+
+    return (await response.json()) as ModificationResult<number>
+
 }

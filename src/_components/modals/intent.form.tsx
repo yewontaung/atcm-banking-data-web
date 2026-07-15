@@ -71,14 +71,14 @@ export default function IntentFormModal({state:{isOpen, closeModal}, onSaved}:{s
                 <Form onSubmit={form.onSubmit(save)}>
                     <FormsInput onChange={form.onChange} name={controls.label} value={form.form.label} error={errors.label} className="mb-3" label="Intent Label" placeholder="Enter intent label" />
                     <FormsInput onChange={form.onChange} name={controls.description} value={form.form.description} error={errors.description} className="mb-3" as="textarea" label="Description" placeholder="Enter description" />
+                    <label className="col-12 mb-2">Add ners</label>
                     <Container fluid className="mb-4">
-                        <h6>Add NERs</h6>
                         <Row className="row-cols-2 align-items-cente row-gap-3">
                             {selectedNers && selectedNers.map(i => <div key={i.nerId} className="col"><div className="form-control">{i.label}</div></div>)}
                             {toSelectNers.length > 0 && (
-                                <div className="col">
+                                <div className="col px-0">
                                     <Form.Select onChange={e => onSelect(e.target.value)}>
-                                        <option>Select NER</option>
+                                        <option>Select ner</option>
                                         {toSelectNers.map(i => <option key={i.nerId} value={i.nerId}>{i.label}</option>)}
                                     </Form.Select>
                                 </div>

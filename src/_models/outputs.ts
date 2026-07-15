@@ -19,6 +19,7 @@ export type NerListItem = {
 export type IntentListItem = {
     intentId:number,
     label:string,
+    description:string,
     lastUpdated:string,
     dataset:number,
     ners:{nerId:number, label:string}[]

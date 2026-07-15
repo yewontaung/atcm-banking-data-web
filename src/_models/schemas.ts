@@ -45,3 +45,9 @@ export type IntentForm = {
     description:string,
     ners:number[]
 }
+
+export type IntentEditForm = {
+    intentId:number,
+    label:string,
+    description:string,
+}

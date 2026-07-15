@@ -159,8 +159,8 @@ function MetadataCard(
                 )}
 
                 {/* Move to bin section */}
-                {!info.approved && !info.deleted && <Button onClick={binModal.openModal} variant="outline-danger" className="w-100 mt-3">Move to bin</Button>}
-                {!info.approved && !info.deleted && (
+                {!info.deleted && <Button onClick={binModal.openModal} variant="outline-danger" className="w-100 mt-3">Move to bin</Button>}
+                {!info.deleted && (
                     <Modal size="sm" animation={false} show={binModal.isOpen} onHide={binModal.closeModal}>
                         <Modal.Body>
                             <h6 className="text-center">Move dataset to bin?</h6>
@@ -225,7 +225,7 @@ function IntentDetailList({ className, intents, alignments }: { className?: stri
                     <Accordion.Header>
                         <Container fluid className="position-relative">
                             <Row className="gap-1">
-                                <GroupLabelInfo label="Intent" className="col-4 px-0" info="transfer_fund" />
+                                <GroupLabelInfo label="Intent" className="col-6 px-0" info="transfer_fund" />
                                 <GroupLabelInfo label="Start" className="col-2 px-0" info="10" />
                                 <GroupLabelInfo label="End" className="col-2 px-0" info="20" />
                             </Row>
@@ -235,7 +235,7 @@ function IntentDetailList({ className, intents, alignments }: { className?: stri
                         <Container fluid>
                             {alignments.filter(a => a.intentId === i.intentId).map((item) => (
                                 <Row key={item.nerId} className="gap-1 mt-2">
-                                    <GroupLabelInfo label="NER" className="col-4 px-0" info={item.label} />
+                                    <GroupLabelInfo label="Ner" className="col-5 px-0" info={item.label} />
                                     <GroupLabelInfo label="Start" className="col-2 px-0" info={item.startIndex} />
                                     <GroupLabelInfo label="End" className="col-2 px-0" info={item.endIndex} />
                                 </Row>
