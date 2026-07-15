@@ -1,19 +1,19 @@
-import type { DatasetListItem, ModificationResult, PaginationResult } from "../_models/outputs";
+import type { DatasetDetailResult, DatasetListItem, ModificationResult, PaginationResult } from "../_models/outputs";
 import type { DatasetForm } from "../_models/schemas";
 import type { DatasetSearch } from "../_models/searches";
 import { queryParam } from "../_utils/param.utils";
 import { protectedRequest } from "../rest-client/api";
 
-export async function save(form:DatasetForm) {
+export async function save(form: DatasetForm) {
     const response = await protectedRequest("datasets", {
         method: "POST",
         body: JSON.stringify(form)
     })
 
-    return (await response.json()) as ModificationResult<number> 
+    return (await response.json()) as ModificationResult<number>
 }
 
-export async function search(search?:DatasetSearch) {
+export async function search(search?: DatasetSearch) {
     const params = queryParam(search ?? {})
 
     const response = await protectedRequest(`datasets?${params}`)
@@ -22,7 +22,7 @@ export async function search(search?:DatasetSearch) {
 }
 
 export async function moveToBin(datasetId: number) {
-    const response = await protectedRequest(`datasets/${datasetId}/bin`, {
+    const response = await protectedRequest(`datasets/${datasetId}`, {
         method: "DELETE"
     })
 
@@ -30,15 +30,39 @@ export async function moveToBin(datasetId: number) {
 }
 
 export async function getBin(page: number, size: number) {
-    const params = queryParam({page, size})
+    const params = queryParam({ page, size })
     const response = await protectedRequest(`datasets/bin?${params}`)
 
     return (await response.json()) as PaginationResult<DatasetListItem>
 }
+
 export async function deleteDataset(datasetId: number) {
 
-    const response = await protectedRequest(`datasets/${datasetId}`, {
+    const response = await protectedRequest(`datasets/bin/${datasetId}`, {
         method: "DELETE"
+    })
+
+    return (await response.json()) as ModificationResult<number>
+}
+
+export async function findById(datasetId: number) {
+    
+    const response = await protectedRequest(`datasets/${datasetId}`)
+
+    return (await response.json()) as DatasetDetailResult
+
+}
+
+export async function approve(datasetId: number) {
+    const response = await protectedRequest(`datasets/${datasetId}`, {
+        method: "PUT",
+    })
+
+    return (await response.json()) as ModificationResult<number>
+}
+export async function restore(datasetId: number) {
+    const response = await protectedRequest(`datasets/bin/${datasetId}`, {
+        method: "PUT",
     })
 
     return (await response.json()) as ModificationResult<number>

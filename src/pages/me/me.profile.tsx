@@ -7,6 +7,7 @@ import { getAuthProfile } from "../../_utils/auth.utils";
 import { AppProfile } from "../../_components/app-profile";
 import { Link } from "react-router-dom";
 import LogoutButton from "../../_components/logout-button";
+import RolePermit from "../../_components/role-permit";
 
 export default function MeProfilePage() {
     const profile = getAuthProfile()
@@ -25,11 +26,13 @@ export default function MeProfilePage() {
                                 <User2Icon size={iconSize} className="me-3" /> Profile
                             </Link>
                         </Dropdown.Item>
-                        <Dropdown.Item as="button">
-                            <Link to="/datasets/bin" className="text-decoration-none text-white">
-                                <Trash2Icon size={iconSize} className="me-3" /> Recycle bin
-                            </Link>
-                        </Dropdown.Item>
+                        <RolePermit roles={["Admin", "Supervisor"]}>
+                            <Dropdown.Item as="button">
+                                <Link to="/datasets/bin" className="text-decoration-none text-white">
+                                    <Trash2Icon size={iconSize} className="me-3" /> Recycle bin
+                                </Link>
+                            </Dropdown.Item>
+                        </RolePermit>
                         <Dropdown.Divider />
                         <Dropdown.Item as="button">
                             <LogoutButton />

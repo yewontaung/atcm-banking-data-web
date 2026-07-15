@@ -1,3 +1,6 @@
+export type DatasetType = "Training" | "Validation" | "Testing"
+export type MemberRole = "Admin" | "Supervisor" | "Collector"
+
 export type MemberListItem = {
     memberId:number
     memberName:string
@@ -24,7 +27,7 @@ export type IntentListItem = {
 export type DatasetListItem = {
     datasetId:number
     command:string
-    datasetType:"Training" | "Validation" | "Testing"
+    datasetType:DatasetType
     approved:boolean
     memberId:number
     memberName:string
@@ -40,26 +43,42 @@ export type IntentData = {
     namedEntities:{id:string, label:string}[]
 }
 
-export type DatasetIntentData = {
-    id:number,
+export type DatasetDetailIntent = {
+    intentId:number,
     label:string,
-    start:number,
-    end:number,
+    startIndex:number,
+    endIndex:number,
 }
 
-export type NERAlignmentData = {
-    id:number,
+export type DatasetIntentNerAlignment = {
+    nerId:number,
     label:string,
-    start:number,
-    end:number,
+    startIndex:number,
+    endIndex:number,
     intentId:number,
 }
 
 export type DatasetDetail = {
-    id:number,
+    datasetId:number,
     command:string,
-    intents: DatasetIntentData[],
-    alignments:NERAlignmentData[],
+    intents: DatasetDetailIntent[],
+    alignments:DatasetIntentNerAlignment[],
+}
+
+export type DatasetInfo = {
+    datasetId:number
+    memberId:number
+    memberName:string
+    memberRole:MemberRole
+    datasetType:DatasetType
+    approved:boolean
+    lastUpdated:string
+    deleted:boolean
+}
+
+export type DatasetDetailResult = {
+    info:DatasetInfo
+    dataset:DatasetDetail
 }
 
 // binding backend

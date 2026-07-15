@@ -1,6 +1,6 @@
 import { Alert, Badge, Button, ButtonGroup, Container, Form, Modal, Table } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
-import { Edit2Icon, EyeIcon, Trash2Icon } from "lucide-react";
+import { EyeIcon, Trash2Icon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
 import FormsSelect from "../../_components/ui/forms.select";
 import InputsGroup from "../../_components/ui/inputs.group";

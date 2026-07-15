@@ -26,7 +26,7 @@ function App() {
         <Route path='datasets'>
           <Route index element={<DatasetListPage />} />
           <Route path='add' element={<DatasetEditPage />} />
-          <Route path=':id' element={<DatasetDetailPage />} />
+          <Route path=':datasetId' element={<DatasetDetailPage />} />
           <Route path='bin' element={<DatasetBinPage />} />
         </Route>
         <Route path='intents' element={<IntentsListPage />} />

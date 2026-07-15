@@ -6,6 +6,7 @@ import { defaultProfile, iconSize } from "../../_utils/constants";
 import { Container, Dropdown } from "react-bootstrap";
 import { Trash2Icon, User2Icon } from "lucide-react";
 import LogoutButton from "../logout-button";
+import RolePermit from "../role-permit";
 
 export default function MainContentDecorator({title, children}:{title:string, children:ReactNode}) {
     return (
@@ -24,11 +25,13 @@ export default function MainContentDecorator({title, children}:{title:string, ch
                                     <User2Icon size={iconSize} className="me-3" /> Profile
                                 </Link>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button">
-                                <Link to="/datasets/bin" className="text-decoration-none text-white">
-                                    <Trash2Icon size={iconSize} className="me-3" /> Recycle bin
-                                </Link>
-                            </Dropdown.Item>
+                            <RolePermit roles={["Admin", "Supervisor"]}>
+                                <Dropdown.Item as="button">
+                                    <Link to="/datasets/bin" className="text-decoration-none text-white">
+                                        <Trash2Icon size={iconSize} className="me-3" /> Recycle bin
+                                    </Link>
+                                </Dropdown.Item>
+                            </RolePermit>
                             <Dropdown.Divider />
                             <Dropdown.Item as="button">
                                 <LogoutButton />

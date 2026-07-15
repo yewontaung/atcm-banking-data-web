@@ -11,7 +11,7 @@ export default function FormPreview({state:{isOpen, closeModal}, form}:{state:Mo
             </Modal.Header>
             <Modal.Body>
                 <div>
-                    {form && <AppJsonView data={form} />}
+                    {form && <AppJsonView name="dataset" data={form} />}
                 </div>
             </Modal.Body>
         </Modal>

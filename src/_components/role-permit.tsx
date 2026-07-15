@@ -1,6 +1,5 @@
+import type { MemberRole } from "../_models/outputs"
 import { getAuthProfile } from "../_utils/auth.utils"
-
-type MemberRole = "Admin" | "Supervisor" | "Collector"
 
 export default function RolePermit({roles, children}:{roles:MemberRole[], children:React.ReactNode}) {
 

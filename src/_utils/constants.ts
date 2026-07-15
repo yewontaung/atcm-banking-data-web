@@ -25,29 +25,29 @@ export const intentItemSeed:IntentListItem[] = [
 ]
 
 export const demoDataset:DatasetDetail = {
-    id: 1,
+    datasetId: 1,
     command: "Transfer 4000 to my mom account.",
     intents: [
         {
-            id: 1,
+            intentId: 1,
             label: "transfer_fund",
-            start: 0,
-            end: 10,
+            startIndex: 0,
+            endIndex: 10,
         },
     ],
     alignments: [
         {
-            id: 1,
+            nerId: 1,
             label: "TO_ACCOUNT",
-            start: 20,
-            end: 30,
+            startIndex: 20,
+            endIndex: 30,
             intentId: 1,
         },
         {
-            id: 2,
+            nerId: 2,
             label: "MONEY_AMOUNT",
-            start: 10,
-            end: 14,
+            startIndex: 10,
+            endIndex: 14,
             intentId: 1,
         }
     ]
