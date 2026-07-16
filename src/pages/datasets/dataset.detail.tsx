@@ -135,6 +135,7 @@ function MetadataCard(
                 <div>
                     {info.approved && <><TriangleAlertIcon size={iconSize} className="me-3" /> <Badge bg="success" text="white">Reviewed</Badge></>}
                     {!info.approved && <><TriangleAlertIcon size={iconSize} className="me-3" /> <Badge bg="warning" text="dark">Pending</Badge></>}
+                    {info.deleted && <><Badge className="ms-2" bg="danger" text="white">Deleted</Badge></>}
                 </div>
                 <div><Calendar1Icon size={iconSize} className="me-3" /> {formateDate(info.lastUpdated)}</div>
             </div>

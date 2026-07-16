@@ -61,7 +61,7 @@ export default function IntentsListPage() {
     const onEdit = async () => {
         if(!editForm.validate()) return
         const result = await intentService.edit(editForm.form)
-        setIntents(intents.filter(i => i.intentId === result.resultData).map(i => ({...i, label: editForm.form.label, description: editForm.form.description})))
+        setIntents(intents.map(i => (i.intentId !== result.resultData ? i : {...i, label: editForm.form.label, description: editForm.form.description})))
         editForm.reset()
         editModal.closeModal()
     }
@@ -125,7 +125,7 @@ export default function IntentsListPage() {
                 </Modal>
                     
                 {/* Edit section */}
-                <Modal animation={false} show={editModal.isOpen} onHide={() => {
+                <Modal show={editModal.isOpen} onHide={() => {
                     editForm.reset()
                     editModal.closeModal()
                 }}>
@@ -207,10 +207,10 @@ function IntentListItemRow(
                     <Button onClick={() => {
                         onView?.(item)
                     }} variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
+                    <RolePermit roles={["Admin"]}>
                     <Button onClick={() => {
                         onEdit?.(item)
                     }} variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
-                    <RolePermit roles={["Admin"]}>
                         {dataset === 0 && <Button variant="outline-danger" onClick={() => onDelete?.(item)} size="sm"><Trash2Icon size={iconSize} /></Button>}
                     </RolePermit>
                 </ButtonGroup>
