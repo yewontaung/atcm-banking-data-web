@@ -36,13 +36,7 @@ export type DatasetListItem = {
     deleted:boolean
 }
 
-// old
-
-export type IntentData = {
-    id:string,
-    label:string,
-    namedEntities:{id:string, label:string}[]
-}
+// dataset detail
 
 export type DatasetDetailIntent = {
     intentId:number,
@@ -111,3 +105,9 @@ export type AuthToken = {
 export type AuthResult = {
     profile:AuthProfile,
 } & AuthToken
+
+export type ProfileResult = {
+    trainingDataset:number,
+    validationDataset:number,
+    testingDataset:number,
+} & AuthProfile

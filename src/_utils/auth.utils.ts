@@ -10,6 +10,10 @@ export function getAuthProfile():AuthProfile {
     return JSON.parse(profile) as AuthProfile
 }
 
+export function updateAuthProfile(authProfile:AuthProfile) {
+    localStorage.setItem(`${import.meta.env.VITE_TOKEN}_profile`, JSON.stringify(authProfile))
+}
+
 export function setAuthResult(result:AuthResult) {
     const {accessToken: access_token} = result
     localStorage.setItem(import.meta.env.VITE_TOKEN, access_token)

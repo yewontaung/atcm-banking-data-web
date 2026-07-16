@@ -1,4 +1,4 @@
-import type { ModificationResult } from "../_models/outputs";
+import type { ModificationResult, ProfileResult } from "../_models/outputs";
 import type { PasswordForm } from "../_models/schemas";
 import { protectedRequest } from "../rest-client/api";
 
@@ -13,4 +13,10 @@ export async function changePassword(form:PasswordForm) {
     }
 
     return (await response.json()) as ModificationResult<number>
+}
+
+export async function profile() {
+    const response = await protectedRequest("me/profile")
+
+    return (await response.json()) as ProfileResult
 }
