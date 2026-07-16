@@ -23,3 +23,19 @@ export async function save(form: NerForm) {
     return (await response.json()) as ModificationResult<number>
 }
 
+
+export async function remove(nerId: number) {
+    const response = await protectedRequest(`ners/${nerId}`, {
+        method: "DELETE"
+    })
+
+    return (await response.json()) as ModificationResult<number>
+}
+export async function edit(nerId: number, form: NerForm) {
+    const response = await protectedRequest(`ners/${nerId}`, {
+        method: "PUT",
+        body: JSON.stringify(form)
+    })
+    return (await response.json()) as ModificationResult<number>
+}
+

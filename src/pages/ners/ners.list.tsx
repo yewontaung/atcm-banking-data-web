@@ -1,4 +1,4 @@
-import { Alert, Button, ButtonGroup, Container, Table } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, Container, Modal, Table } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { FormsInput } from "../../_components/ui/forms.input";
 import { Edit2Icon, TrashIcon } from "lucide-react";
@@ -12,13 +12,15 @@ import type { NerSearch } from "../../_models/searches";
 import type { NerListItem } from "../../_models/outputs";
 import RolePermit from "../../_components/role-permit";
 import { formateDate } from "../../_utils/date-formats";
+import NEREditModal from "../../_components/modals/ner.edit";
+import type { NerForm } from "../../_models/schemas";
 
 export default function NersListPage() {
     const state = useModals()
     const [loading, setLoading] = useState(true)
     const [ners, setNers] = useState<NerListItem[]>([])
 
-    const {controls, ...form} = useForms<NerSearch>({q: ""})
+    const { controls, ...form } = useForms<NerSearch>({ q: "" })
 
     useEffect(() => {
         const loadNers = async () => {
@@ -32,7 +34,7 @@ export default function NersListPage() {
         loadNers()
     }, [])
 
-    const onSearch = async (search?:NerSearch) => {
+    const onSearch = async (search?: NerSearch) => {
         const items = await nersService.search(search)
         setNers(items)
     }
@@ -41,6 +43,33 @@ export default function NersListPage() {
         state.closeModal()
         form.reset()
         await onSearch()
+    }
+
+    const deleteModal = useModals()
+    const [toDelete, setToDelete] = useState<NerListItem>()
+
+    const remove = async () => {
+        if (!toDelete) return
+        try {
+            const result = await nersService.remove(toDelete.nerId)
+            setNers(ners.filter(i => i.nerId !== result.resultData))
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const editModal = useModals()
+    const [toEdit, setToEdit] = useState<NerListItem>()
+
+
+    const edit = async (form:NerForm) => {
+        if(!toEdit) return
+        try {
+            const result = await nersService.edit(toEdit.nerId,form)
+            setNers(ners.map(i => i.nerId !== result.resultData ? i : {...i, label: form.label}))
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     return (
@@ -80,19 +109,57 @@ export default function NersListPage() {
                                     <td>{formateDate(i.lastUpdated)}</td>
                                     <td className="text-end pe-4">{i.intents}</td>
                                     <td>
-                                        <RolePermit roles={["Admin"]}>
-                                        <ButtonGroup>
-                                            <Button size="sm" variant="outline-primary"><Edit2Icon size={iconSize} /></Button>
-                                            <Button size="sm" variant="outline-danger"><TrashIcon size={iconSize} /></Button>
-                                        </ButtonGroup>
-                                        </RolePermit>
-                                    </td>
+                                            <RolePermit roles={["Admin"]}>
+                                                <ButtonGroup>
+                                                    <Button onClick={() => {
+                                                        setToEdit(i)
+                                                        editModal.openModal()
+                                                    }} size="sm" variant="outline-primary"><Edit2Icon size={iconSize} /></Button>
+                                                    {i.intents === 0 && (
+                                                        <Button onClick={() => {
+                                                            setToDelete(i)
+                                                            deleteModal.openModal()
+                                                        }} size="sm" variant="outline-danger"><TrashIcon size={iconSize} /></Button>
+                                                    )}
+                                                </ButtonGroup>
+                                            </RolePermit>
+                                        </td>
                                 </tr>
                             ))}
                         </tbody>
                     </Table>
                 )}
                 {!loading && ners.length == 0 && <Alert className="text-center w-100" variant="light">Add named enities.</Alert>}
+
+                {/* Ner Edit Section */}
+                <NEREditModal item={toEdit} onEdit={async (form) => {
+                    await edit(form)
+                    setToEdit(undefined)
+                    editModal.closeModal()
+                }} state={editModal} />
+
+                {/* Ner Delete Section */}
+                <Modal animation={false} size="sm" show={deleteModal.isOpen} onHide={() => {
+                    setToDelete(undefined)
+                    deleteModal.closeModal()
+                }}>
+                    <Modal.Body>
+                        <div className="mb-3 text-center">
+                            Delete the Named Entity
+                        </div>
+                        <div className="d-flex gap-3">
+                            <Button onClick={() => {
+                                setToDelete(undefined)
+                                deleteModal.closeModal()
+                            }} variant="outline-secondary" className="w-50">Cancel</Button>
+                            <Button autoFocus onClick={async () => {
+                                await remove()
+                                setToDelete(undefined)
+                                deleteModal.closeModal()
+                            }} variant="danger" className="w-50">Delete</Button>
+                        </div>
+                    </Modal.Body>
+                </Modal>
 
             </Container>
         </MainContentDecorator>
