@@ -54,14 +54,14 @@ export async function findById(datasetId: number) {
 }
 
 export async function approve(datasetId: number) {
-    const response = await protectedRequest(`datasets/${datasetId}`, {
+    const response = await protectedRequest(`datasets/approve/${datasetId}`, {
         method: "PUT",
     })
 
     return (await response.json()) as ModificationResult<number>
 }
 export async function restore(datasetId: number) {
-    const response = await protectedRequest(`datasets/bin/${datasetId}`, {
+    const response = await protectedRequest(`datasets/bin/restore/${datasetId}`, {
         method: "PUT",
     })
 

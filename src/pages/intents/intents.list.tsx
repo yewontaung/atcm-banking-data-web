@@ -2,7 +2,7 @@ import { Badge, Button, ButtonGroup, Container, Modal, Table } from "react-boots
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { Edit2Icon, EyeIcon, Trash2Icon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
-import type { IntentListItem } from "../../_models/outputs";
+import type { ActionCallback, IntentListItem } from "../../_models/outputs";
 import { FormsInput } from "../../_components/ui/forms.input";
 import IntentFormModal from "../../_components/modals/intent.form";
 import { useModals } from "../../_hooks/use-modals";
@@ -13,6 +13,7 @@ import * as intentService from "../../services/intent.service"
 import { formateDate } from "../../_utils/date-formats";
 import RolePermit from "../../_components/role-permit";
 import type { IntentEditForm } from "../../_models/schemas";
+import { LabelInfo } from "../../_components/label-info";
 
 export default function IntentsListPage() {
     const modalState = useModals()
@@ -38,6 +39,9 @@ export default function IntentsListPage() {
         form.reset()
         await onSearch()
     }
+
+    const viewDetailModal = useModals()
+    const [toView, setToView] = useState<IntentListItem>()
 
     const deleteModal = useModals()
     const [toDelete, setToDelete] = useState<IntentListItem>()
@@ -91,7 +95,14 @@ export default function IntentsListPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {intents.map(item => <IntentListItemRow key={item.intentId} {...{item}} onDelete={item => {
+                        {intents.map(item => <IntentListItemRow key={item.intentId} {...{item}} 
+                        
+                        onView={item => {
+                            setToView(item)
+                            viewDetailModal.openModal()
+                        }}
+
+                        onDelete={item => {
                             setToDelete(item)
                             deleteModal.openModal()
                         }} onEdit={item => {
@@ -100,6 +111,18 @@ export default function IntentsListPage() {
                         }} />)}
                     </tbody>
                 </Table>
+
+                {/* View Detail section */}
+                <Modal show={viewDetailModal.isOpen} onHide={viewDetailModal.closeModal}>
+                    <Modal.Header closeButton></Modal.Header>
+                    <Modal.Body>
+                        <LabelInfo label="Intent Label" info={toView?.label ?? ""} className="mb-3" />
+                        <div className="d-flex gap-2 align-items-center mb-3">
+                            {toView?.ners.map(i => <Badge key={i.nerId}>{i.label}</Badge>)}
+                        </div>
+                        <LabelInfo label="Description" info={toView?.description ?? ""} className="mb-3" />
+                    </Modal.Body>
+                </Modal>
                     
                 {/* Edit section */}
                 <Modal animation={false} show={editModal.isOpen} onHide={() => {
@@ -158,11 +181,12 @@ export default function IntentsListPage() {
 }
 
 function IntentListItemRow(
-    {item, onDelete, onEdit}
+    {item, onDelete, onEdit, onView}
     :{
         item:IntentListItem, 
         onDelete?:(item:IntentListItem) => void,
-        onEdit?:(item:IntentListItem) => void
+        onEdit?:(item:IntentListItem) => void,
+        onView?:ActionCallback<IntentListItem>
     }) {
 
     const {intentId, label, lastUpdated, dataset, ners} = item
@@ -180,7 +204,9 @@ function IntentListItemRow(
             </td>
             <td>
                 <ButtonGroup>
-                    {/* <Button variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button> */}
+                    <Button onClick={() => {
+                        onView?.(item)
+                    }} variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
                     <Button onClick={() => {
                         onEdit?.(item)
                     }} variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
