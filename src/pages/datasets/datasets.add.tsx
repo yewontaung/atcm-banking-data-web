@@ -1,12 +1,12 @@
 import { Accordion, Button, ButtonGroup, Container, Form, InputGroup, Row, Tab, Tabs } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
-import { ClipboardIcon, TrashIcon } from "lucide-react";
+import { BadgeCheckIcon, TrashIcon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
 import { GroupLabelInfo } from "../../_components/label-info";
 import InputsGroup from "../../_components/ui/inputs.group";
 import type { DatasetForm, DatasetIntentItem, DatasetIntentNerItem } from "../../_models/schemas";
 import { useControls } from "../../_hooks/use-controls";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FormsInput } from "../../_components/ui/forms.input";
 import { useModals, type ModalState } from "../../_hooks/use-modals";
 import FormPreview from "../../_components/modals/form.preview";
@@ -15,6 +15,8 @@ import type { IntentListItem } from "../../_models/outputs";
 import * as intentService from "../../services/intent.service"
 import * as datasetService from "../../services/dataset.service";
 import { useNavigate } from "react-router-dom";
+import { isEmpty } from "../../_utils/strings";
+import DatasetFormatModal from "../../_components/modals/dataset.format";
 
 export default function DatasetEditPage() {
 
@@ -298,26 +300,75 @@ function ManualEditForm({setPreview, previewModalState}:{previewModalState:Modal
 
 
 function JsonEditForm() {
+
+    const [formData, setFormData] = useState<DatasetForm[]>([])
+    const [warning, setWarning] = useState<string>()
+    const inputRef = useRef<HTMLTextAreaElement>(null)
+    const navigate = useNavigate()
+
+    const onChange = () => {
+        if(!inputRef.current?.value || isEmpty(inputRef.current.value)) {
+            setWarning(undefined)
+            setFormData([])
+            return
+        }
+        const value = inputRef.current?.value
+        try {
+            const data = JSON.parse(value) as DatasetForm | DatasetForm[]
+            if(Array.isArray(data)) {
+                setFormData(data)
+            } else {
+                setFormData([data])
+            }
+            inputRef.current.value = JSON.stringify(data, null, 2)
+            setWarning(undefined)
+        } catch (e) {
+            setFormData([])
+            if(e instanceof Error) {
+                setWarning(e.message)
+            }
+        }
+    }
+
+    const save = async () => {
+        if(formData.length === 0) {
+            setWarning("Please enter valid datasets.")
+            return
+        }
+        try {
+            await datasetService.saveJsons(formData)
+            navigate("/datasets")
+        } catch(e) {
+            console.log(e)
+            setWarning("Something went wrong. Please check input and try again.")
+        }
+        
+    }
+
+    const formatModal = useModals()
+    
     return (
         <Container className="p-2">
             <Row>
                 <div className="col-auto flex-fill">
                     <div>
                         <div className="d-flex justify-content-end gap-2">
-                            <Button variant="secondary"><ClipboardIcon size={iconSize} /> Paste</Button>
+                            <Button onClick={formatModal.openModal} variant="secondary"><BadgeCheckIcon size={iconSize} /> See Format</Button>
+                            <DatasetFormatModal modalState={formatModal} />
                             <Form.Select className="w-auto">
                                 <option>Training</option>
                                 <option>Validation</option>
                                 <option>Testing</option>
                             </Form.Select>
                         </div>
-                        <Form.Control rows={16} as="textarea" placeholder="Paste" className="mt-3" />
+                        {warning && <span className="text-secondary">{warning}</span>}
+                        <Form.Control ref={inputRef} onChange={onChange} rows={16} as="textarea" placeholder="Enter jsons or paste" className="mt-3" />
                     </div>
                 </div>
                 <div className="col-auto">
                     <div>
                         {/* <Button onClick={state.openModal} variant="outline-primary" className="w-100 mb-3">Preview form</Button> */}
-                        <Button className="w-100">Save for review</Button>
+                        <Button onClick={save} className="w-100">Save for review</Button>
                     </div>
                 </div>
             </Row>

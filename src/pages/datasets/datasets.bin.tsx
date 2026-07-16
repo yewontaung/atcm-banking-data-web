@@ -71,7 +71,7 @@ export default function DatasetBinPage() {
                                         deleteModal.closeModal()
                                     }} variant="outline-secondary" className="w-50">Cancel</Button>
 
-                                    <Button onClick={async () => {
+                                    <Button autoFocus onClick={async () => {
                                         if (!toDelete) return
 
                                         const result = await datasetService.deleteDataset(toDelete.datasetId)

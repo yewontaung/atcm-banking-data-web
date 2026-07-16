@@ -1,6 +1,6 @@
 import JsonView from "@microlink/react-json-view"
 
-export function AppJsonView<T extends Record<string, unknown>>({data, name = "root"}:{data:T, name?:string}) {
+export function AppJsonView<T extends Record<string, unknown> | Record<string, unknown>[]>({data, name = "root"}:{data:T, name?:string}) {
     return (
         <JsonView
             src={data}

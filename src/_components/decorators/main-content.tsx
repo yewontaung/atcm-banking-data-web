@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { AppProfile } from "../app-profile";
 import { defaultProfile, iconSize } from "../../_utils/constants";
 import { Container, Dropdown } from "react-bootstrap";
-import { Trash2Icon, User2Icon } from "lucide-react";
+import { PlusSquareIcon, Trash2Icon, User2Icon } from "lucide-react";
 import LogoutButton from "../logout-button";
 import RolePermit from "../role-permit";
 import { getAuthProfile } from "../../_utils/auth.utils";
@@ -25,6 +25,11 @@ export default function MainContentDecorator({title, children}:{title:string, ch
                             <Dropdown.Item as="button">
                                 <Link to="/me/profile" className="text-decoration-none d-block">
                                     <User2Icon size={iconSize} className="me-3" /> Profile
+                                </Link>
+                            </Dropdown.Item>
+                            <Dropdown.Item as="button">
+                                <Link to="/datasets/add" className="text-decoration-none d-block">
+                                    <PlusSquareIcon size={iconSize} className="me-3" /> Add Dataset
                                 </Link>
                             </Dropdown.Item>
                             <RolePermit roles={["Admin", "Supervisor"]}>

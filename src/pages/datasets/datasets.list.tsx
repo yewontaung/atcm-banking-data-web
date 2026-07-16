@@ -67,7 +67,7 @@ export default function DatasetListPage() {
                         <Form.Control onChange={onChange} name={controls.keyword} value={form.form.keyword} placeholder="Enter search key" className="w-auto" />
                     </InputsGroup>
                     <Button type="submit" className="col-auto align-self-end">Search</Button>
-                    <Link to="/datasets/add" className="btn btn-danger col-auto align-self-end ms-2">Add Data</Link>
+                    <Link to="/datasets/add" className="btn btn-danger col-auto align-self-end ms-2">Add Dataset</Link>
                 </form>
             </Container>
             {/* Dataset List Table */}
@@ -111,7 +111,7 @@ export default function DatasetListPage() {
                                         deleteModal.closeModal()
                                     }} variant="outline-secondary" className="w-50">Cancel</Button>
 
-                                    <Button onClick={async () => {
+                                    <Button autoFocus onClick={async () => {
                                         if(!toDelete) return
 
                                         const result = await datasetService.moveToBin(toDelete.datasetId)

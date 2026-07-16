@@ -1,6 +1,6 @@
 import { Button, Container, Dropdown, Image, Row } from "react-bootstrap";
 import { defaultProfile, iconSize } from "../../_utils/constants";
-import { CloudUploadIcon, MailIcon, SettingsIcon, TagIcon, Trash2Icon, User2Icon } from "lucide-react";
+import { CloudUploadIcon, MailIcon, PlusSquareIcon, SettingsIcon, TagIcon, Trash2Icon, User2Icon } from "lucide-react";
 import TotalDataCard from "../../_components/totaldata-card";
 import ThemeButton from "../../_components/theme-button";
 import { getAuthProfile, updateAuthProfile } from "../../_utils/auth.utils";
@@ -42,13 +42,18 @@ export default function MeProfilePage() {
                     </Dropdown.Toggle>
                     <Dropdown.Menu className="">
                         <Dropdown.Item as="button">
-                            <Link to="/me/profile" className="text-decoration-none text-white d-block">
+                            <Link to="/me/profile" className="text-decoration-none d-block">
                                 <User2Icon size={iconSize} className="me-3" /> Profile
+                            </Link>
+                        </Dropdown.Item>
+                        <Dropdown.Item as="button">
+                            <Link to="/datasets/add" className="text-decoration-none d-block">
+                                <PlusSquareIcon size={iconSize} className="me-3" /> Add Dataset
                             </Link>
                         </Dropdown.Item>
                         <RolePermit roles={["Admin", "Supervisor"]}>
                             <Dropdown.Item as="button">
-                                <Link to="/datasets/bin" className="text-decoration-none text-white d-block">
+                                <Link to="/datasets/bin" className="text-decoration-none d-block">
                                     <Trash2Icon size={iconSize} className="me-3" /> Recycle bin
                                 </Link>
                             </Dropdown.Item>

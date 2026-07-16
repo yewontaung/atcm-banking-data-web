@@ -1,7 +1,7 @@
 import MainContentDecorator from "../../_components/decorators/main-content"
 import { Accordion, Badge, Button, Container, Modal, Row, Tab, Tabs } from "react-bootstrap"
 import { GroupLabelInfo } from "../../_components/label-info"
-import { Calendar1Icon, ClipboardIcon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
+import { Calendar1Icon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
 import { iconSize } from "../../_utils/constants"
 import type { DatasetDetailIntent, DatasetDetailResult, DatasetInfo, DatasetIntentNerAlignment, ModificationResult } from "../../_models/outputs"
 import { AppJsonView } from "../../_components/app-jsonview"
@@ -11,6 +11,7 @@ import * as datasetService from "../../services/dataset.service"
 import { useNavigate, useParams } from "react-router-dom"
 import { useModals } from "../../_hooks/use-modals"
 import RolePermit from "../../_components/role-permit"
+import CopyBtn from "../../_components/copy-btn"
 
 type DatasetActionHandler = {
     onApproved?:(result:ModificationResult<number>) => void,
@@ -76,7 +77,7 @@ function JsonDatasetView({detailResult:{info, dataset}, handlers}:{detailResult:
             <Row>
                 <div className="col-8">
                     <div className="h-100 position-relative border">
-                        <Button className="z-3 position-absolute end-0 me-4 text-white" variant="link"><ClipboardIcon size={iconSize} /></Button>
+                        <CopyBtn className="z-3 position-absolute end-0 me-4" onCopy={() => window.navigator.clipboard.writeText(JSON.stringify(dataset))} />                        
                         <div className="overflow-y-auto overflow-x-auto" style={{maxHeight: 500}}>
                             <AppJsonView name="dataset" data={dataset}  />
                         </div>

@@ -68,3 +68,12 @@ export async function restore(datasetId: number) {
     return (await response.json()) as ModificationResult<number>
 }
 
+export async function saveJsons(formData: DatasetForm[]) {
+    const response = await protectedRequest("datasets/jsons", {
+        method: "POST",
+        body: JSON.stringify(formData)
+    })
+
+    return (await response.json()) as ModificationResult<number[]>
+}
+
