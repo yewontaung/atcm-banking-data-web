@@ -36,17 +36,20 @@ export default function MemberListPage() {
         setMembers(items)
     }
 
+    const [toEdit, setToEdit] = useState<MemberListItem>()
+
     const onSaved = async () => {
         modalState.closeModal()
+        setToEdit(undefined)
         form.reset()
         await onSearch()
     }
-    
+
     return (
         <MainContentDecorator title="Members Management">
             {/* Member Add Form */}
             <RolePermit roles={["Admin"]}>
-                <MemberForm state={modalState} onSaved={onSaved} />
+                <MemberForm member={toEdit} state={modalState} onSaved={onSaved} />
             </RolePermit>
             {/* Member Search Form */}
             <Container className="mt-3">
@@ -61,7 +64,10 @@ export default function MemberListPage() {
                     <Button type="submit" className="col-auto align-self-end">Search</Button>
 
                     <RolePermit roles={["Admin"]}>
-                        <Button type="button" onClick={modalState.openModal} variant="danger" className="col-auto align-self-end">Add Member</Button>
+                        <Button type="button" onClick={() => {
+                            modalState.openModal()
+                            setToEdit(undefined)
+                        }} variant="danger" className="col-auto align-self-end">Add Member</Button>
                     </RolePermit>
                 </Form>
             </Container>
@@ -81,7 +87,10 @@ export default function MemberListPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {members.map(i => <MemberListTableRow key={i.memberId} member={i} />)}
+                            {members.map(i => <MemberListTableRow onEdit={(item) => {
+                                setToEdit(item)
+                                modalState.openModal()
+                            }} key={i.memberId} member={i} />)}
                         </tbody>
                     </Table>
                 )}
@@ -91,7 +100,7 @@ export default function MemberListPage() {
     )
 }
 
-function MemberListTableRow({member}: {member:MemberListItem}) {
+function MemberListTableRow({member, onEdit}: {member:MemberListItem, onEdit?:(item:MemberListItem) => void}) {
     const { memberId: member_id, memberName: member_name, memberEmail: member_email, role, datasets } = member
     return (
         <tr className="align-middle">
@@ -103,7 +112,9 @@ function MemberListTableRow({member}: {member:MemberListItem}) {
             <td>
                 <ButtonGroup>
                     <Button variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
-                    <Button variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
+                    <Button onClick={() => {
+                        onEdit?.(member)
+                    }} variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
                 </ButtonGroup>
             </td>
         </tr>

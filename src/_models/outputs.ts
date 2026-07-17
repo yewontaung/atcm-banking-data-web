@@ -6,7 +6,7 @@ export type MemberListItem = {
     memberId: number
     memberName: string
     memberEmail: string
-    role: "admin" | "supervison" | "collector"
+    role: MemberRole
     datasets: number
 }
 

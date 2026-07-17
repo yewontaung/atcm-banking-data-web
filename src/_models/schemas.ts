@@ -1,3 +1,5 @@
+import type { MemberRole } from "./outputs"
+
 // dataset schema
 export type DatasetIntentNerItem = {
     nerId:number,
@@ -30,7 +32,7 @@ export type SignInForm = {
 // member schema
 export type MemberForm = {
     name:string,
-    role:"Admin" | "Supervisor" | "Collector"
+    role:MemberRole
     memberEmail:string
 }
 

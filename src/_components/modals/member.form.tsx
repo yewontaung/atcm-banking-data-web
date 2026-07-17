@@ -5,28 +5,48 @@ import FormsSelect from "../ui/forms.select";
 import { useForms } from "../../_hooks/use-forms";
 import type { MemberForm } from "../../_models/schemas";
 import * as memberService from "../../services/member.service"
-import type { ModificationResult } from "../../_models/outputs";
+import type { ActionCallback, MemberListItem, ModificationResult } from "../../_models/outputs";
+import { useEffect } from "react";
 
-export default function MemberForm({state:{isOpen, closeModal,}, onSaved}:{state:ModalState, onSaved?:(result:ModificationResult<number>) => void}) {
-    const {onChange, controls, errors,...form} = useForms<MemberForm>({
+export default function MemberForm({ state: { isOpen, closeModal, }, onSaved, member }: { member?: MemberListItem, state: ModalState, onSaved?: ActionCallback<ModificationResult<number>> }) {
+    const { onChange, controls, errors, setForm, reset, ...form } = useForms<MemberForm>({
         memberEmail: "", role: "Collector", name: ""
     }, (data, errors) => {
-        if(!data.memberEmail || data.memberEmail == "") {
+        if (!data.memberEmail || data.memberEmail == "") {
             errors.memberEmail = "Please enter member email."
         }
-        if(!data.name || data.memberEmail == "") {
+        if (!data.name || data.memberEmail == "") {
             errors.name = "Please enter member name"
         }
     })
 
-    const onSubmit = async (e:React.SubmitEvent) => {
+    useEffect(() => {
+        if (!member) {
+            reset()
+            return
+        }
+        setForm({
+            name: member.memberName,
+            memberEmail: member.memberEmail,
+            role: member.role,
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [member])
+
+    const onSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault()
-        if(!form.validate()) return
+        if (!form.validate()) return
         try {
-            const result = await memberService.add(form.form)
-            form.reset()
-            onSaved?.(result)
-        } catch(e) {
+            if (member) {
+                const result = await memberService.edit(member.memberId, form.form)
+                reset()
+                onSaved?.(result)
+            } else {
+                const result = await memberService.add(form.form)
+                reset()
+                onSaved?.(result)
+            }
+        } catch (e) {
             console.log(e)
         }
     }
@@ -49,7 +69,7 @@ export default function MemberForm({state:{isOpen, closeModal,}, onSaved}:{state
                     <FormsInput error={errors.memberEmail} onChange={onChange} name={controls.memberEmail} value={form.form.memberEmail} className="mb-3" label="Email" placeholder="Enter member email" />
                     <div className="d-flex column-gap-2 mt-3">
                         <Button type="button" className="w-50" variant="outline-secondary" onClick={closeModal}>Cancel</Button>
-                        <Button type="submit" className="w-50">Add</Button>
+                        <Button type="submit" className="w-50">{member ? "Save" : "Add"}</Button>
                     </div>
                 </Form>
             </Modal.Body>

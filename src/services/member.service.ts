@@ -25,3 +25,12 @@ export async function add(form: MemberForm) {
 
 }
 
+
+export async function edit(memberId: number, form: MemberForm) {
+    const response = await protectedRequest(`members/${memberId}`, {
+        method: "PUT",
+        body: JSON.stringify(form)
+    })
+
+    return (await response.json()) as ModificationResult<number>
+}
