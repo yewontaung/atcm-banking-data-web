@@ -39,9 +39,7 @@ export default function Pagination({
             </div>
             <div className="d-flex gap-2 align-items-center">
                 {/* Previous */}
-                {page > 1 && (
-                    <Button variant={`outline-${variant}`} onClick={() => onChange?.(page - 1, size)}><ChevronLeftIcon size={iconSize} /></Button>
-                )}
+                <Button disabled={page == 1} variant={`outline-${variant}`} onClick={() => onChange?.(page - 1, size)}><ChevronLeftIcon size={iconSize} /></Button>
                 {/* Links start */}
                 <ButtonGroup>
 
@@ -73,9 +71,7 @@ export default function Pagination({
                 </ButtonGroup>
                 {/* Links end */}
                 {/* Next */}
-                {page < pages && (
-                    <Button variant={`outline-${variant}`} onClick={() => onChange?.(page + 1, size)}><ChevronRightIcon size={iconSize} /></Button>
-                )}
+                <Button disabled={page == pages} variant={`outline-${variant}`} onClick={() => onChange?.(page + 1, size)}><ChevronRightIcon size={iconSize} /></Button>
             </div>
         </div>
     )

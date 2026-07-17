@@ -11,16 +11,17 @@ export default function DatasetFormatModal({ modalState }: { modalState: ModalSt
     
     return (
         <Modal size="lg" show={modalState.isOpen} onHide={modalState.closeModal}>
-            <Modal.Header closeButton></Modal.Header>
+            {/* <Modal.Header closeButton></Modal.Header> */}
             <Modal.Body className="position-relative">
                 <CopyBtn onCopy={() => {
-                    window.navigator.clipboard.writeText(`${promptState}\n\`\`\` Format \n${JSON.stringify(datasetFormformat, null, 2)}\n\`\`\``)
+                    window.navigator.clipboard.writeText(`${promptState}\n\`\`\` \n${JSON.stringify(datasetFormformat, null, 2)}\n\`\`\``)
                 }} className="position-absolute end-0 top-0" />
-                <label>Prompt</label>
-                <textarea onChange={e => {
-                    if (!e.target.value) return
-                    setPromptState(e.target.value)
-                }} value={promptState} className="form-control mt-2 mb-2" rows={6}></textarea>
+                <div className="mb-2 py-2 px-3">
+                    <textarea onChange={e => {
+                        if (!e.target.value) return
+                        setPromptState(e.target.value)
+                    }} value={promptState} className="form-control" rows={6}></textarea>
+                </div>
                 <AppJsonView name="datasets" data={datasetFormformat} />
             </Modal.Body>
         </Modal>
