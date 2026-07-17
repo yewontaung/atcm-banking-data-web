@@ -227,9 +227,9 @@ function IntentDetailList({ className, intents, alignments }: { className?: stri
                     <Accordion.Header>
                         <Container fluid className="position-relative">
                             <Row className="gap-1">
-                                <GroupLabelInfo label="Intent" className="col-6 px-0" info="transfer_fund" />
-                                <GroupLabelInfo label="Start" className="col-2 px-0" info="10" />
-                                <GroupLabelInfo label="End" className="col-2 px-0" info="20" />
+                                <GroupLabelInfo label="Intent" className="col-6 px-0" info={i.label} />
+                                <GroupLabelInfo label="Start" className="col-2 px-0" info={i.startIndex} />
+                                <GroupLabelInfo label="End" className="col-2 px-0" info={i.endIndex} />
                             </Row>
                         </Container>
                     </Accordion.Header>
