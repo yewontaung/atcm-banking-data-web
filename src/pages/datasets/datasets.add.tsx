@@ -355,11 +355,6 @@ function JsonEditForm() {
                         <div className="d-flex justify-content-end gap-2">
                             <Button onClick={formatModal.openModal} variant="secondary"><BadgeCheckIcon size={iconSize} /> See Format</Button>
                             <DatasetFormatModal modalState={formatModal} />
-                            <Form.Select className="w-auto">
-                                <option>Training</option>
-                                <option>Validation</option>
-                                <option>Testing</option>
-                            </Form.Select>
                         </div>
                         {warning && <span className="text-secondary">{warning}</span>}
                         <Form.Control ref={inputRef} onChange={onChange} rows={16} as="textarea" placeholder="Enter jsons or paste" className="mt-3" />

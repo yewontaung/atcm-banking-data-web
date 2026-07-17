@@ -24,6 +24,7 @@ export default function DatasetListPage() {
         keyword: "",
         status: "",
         strategy: "",
+        datasetType: "",
         page:1,
         size: 10,
     })
@@ -53,12 +54,18 @@ export default function DatasetListPage() {
             {/* Dataset Search Form */}
             <Container className="mt-3">
                 <form onSubmit={form.onSubmit(onSearch)} className="row row-gap-2">
-                    <FormsSelect name={controls.status} value={form.form.status} onChange={onChange} label="Status" className="col-auto px-0">
+                    <FormsSelect name={controls.status} value={form.form.status} onChange={onChange} label="Status" className="col-auto px-0 pe-1">
                         <option value="">All</option>
                         <option value="pending">Pending</option>
-                        <option value="approved">Reviewd</option>
+                        <option value="approved">Reviewed</option>
                     </FormsSelect>
-                    <InputsGroup label="Search Strategy" className="col-auto px-auto">
+                    <FormsSelect name={controls.datasetType} value={form.form.datasetType} onChange={onChange} label="Dataset Type" className="col-auto px-0 pe-1">
+                        <option value="">All</option>
+                        <option value="Training">Training</option>
+                        <option value="Validation">Validation</option>
+                        <option value="Testing">Testing</option>
+                    </FormsSelect>
+                    <InputsGroup label="Search Strategy" className="col-auto px-0 pe-1">
                         <Form.Select name={controls.strategy} value={form.form.strategy} onChange={onChange} className="w-auto" style={{width: "35%"}}>
                             <option value="">All</option>
                             <option value="collector">Collector</option>
@@ -141,7 +148,9 @@ function DatasetListItemRow({item, onDelete}:{item:DatasetListItem, onDelete?:(i
             <td>{item.datasetId}</td>
             <td>{item.command}</td>
             <td>
-                <Badge>{item.datasetType}</Badge>
+                {item.datasetType === "Training" && <Badge>{item.datasetType}</Badge>}
+                {item.datasetType === "Validation" && <Badge bg="secondary" text="white">{item.datasetType}</Badge>}
+                {item.datasetType === "Testing" && <Badge bg="info" text="dark">{item.datasetType}</Badge>}
             </td>
             <td>
                 {item.approved && <Badge bg="success" text="white">Approved</Badge>}

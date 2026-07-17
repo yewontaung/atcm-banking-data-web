@@ -14,10 +14,11 @@ import { formateDate } from "../../_utils/date-formats";
 import RolePermit from "../../_components/role-permit";
 import type { IntentEditForm } from "../../_models/schemas";
 import { LabelInfo } from "../../_components/label-info";
+import CopyBtn from "../../_components/copy-btn";
 
 export default function IntentsListPage() {
     const modalState = useModals()
-    const {controls, onChange, ...form} = useForms<IntentSearch>({q: ""})
+    const { controls, onChange, ...form } = useForms<IntentSearch>({ q: "" })
     const [intents, setIntents] = useState<IntentListItem[]>([])
 
     useEffect(() => {
@@ -28,8 +29,8 @@ export default function IntentsListPage() {
         loadIntents()
 
     }, [])
-    
-    const onSearch = async (search?:IntentSearch) => {
+
+    const onSearch = async (search?: IntentSearch) => {
         const items = await intentService.search(search)
         setIntents(() => items)
     }
@@ -50,18 +51,18 @@ export default function IntentsListPage() {
     const editForm = useForms<IntentEditForm>({
         intentId: 0, label: "", description: ""
     }, (data, errors) => {
-        if(!data.label || data.label === "") {
+        if (!data.label || data.label === "") {
             errors.label = "Please enter intent label."
         }
-        if(!data.description || data.description === "") {
+        if (!data.description || data.description === "") {
             errors.description = "Please enter intent description."
-        } 
+        }
     })
 
     const onEdit = async () => {
-        if(!editForm.validate()) return
+        if (!editForm.validate()) return
         const result = await intentService.edit(editForm.form)
-        setIntents(intents.map(i => (i.intentId !== result.resultData ? i : {...i, label: editForm.form.label, description: editForm.form.description})))
+        setIntents(intents.map(i => (i.intentId !== result.resultData ? i : { ...i, label: editForm.form.label, description: editForm.form.description })))
         editForm.reset()
         editModal.closeModal()
     }
@@ -95,20 +96,20 @@ export default function IntentsListPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {intents.map(item => <IntentListItemRow key={item.intentId} {...{item}} 
-                        
-                        onView={item => {
-                            setToView(item)
-                            viewDetailModal.openModal()
-                        }}
+                        {intents.map(item => <IntentListItemRow key={item.intentId} {...{ item }}
 
-                        onDelete={item => {
-                            setToDelete(item)
-                            deleteModal.openModal()
-                        }} onEdit={item => {
-                            editForm.setForm({intentId: item.intentId, label: item.label, description: item.description})
-                            editModal.openModal()
-                        }} />)}
+                            onView={item => {
+                                setToView(item)
+                                viewDetailModal.openModal()
+                            }}
+
+                            onDelete={item => {
+                                setToDelete(item)
+                                deleteModal.openModal()
+                            }} onEdit={item => {
+                                editForm.setForm({ intentId: item.intentId, label: item.label, description: item.description })
+                                editModal.openModal()
+                            }} />)}
                     </tbody>
                 </Table>
 
@@ -121,9 +122,29 @@ export default function IntentsListPage() {
                             {toView?.ners.map(i => <Badge key={i.nerId}>{i.label}</Badge>)}
                         </div>
                         <LabelInfo label="Description" info={toView?.description ?? ""} className="mb-3" />
+                        <div className="mt-2">
+                            <div className="d-flex justify-content-between align-items-center">
+                                <span>Copy intent</span>
+                                <CopyBtn onCopy={() => {
+                                    window.navigator.clipboard.writeText(
+                                        JSON.stringify({
+                                            "intentId": toView?.intentId,
+                                            "label": toView?.label,
+                                            "ners": toView?.ners
+                                        }, null, 2))
+                                }} />
+                            </div>
+                            <div className="p-1 px-3 text-primary border bg-dark" style={{ whiteSpace: "pre-wrap" }}>
+                                {JSON.stringify({
+                                    "intentId": toView?.intentId,
+                                    "label": toView?.label,
+                                    "ners": toView?.ners
+                                }, null, 2)}
+                            </div>
+                        </div>
                     </Modal.Body>
                 </Modal>
-                    
+
                 {/* Edit section */}
                 <Modal show={editModal.isOpen} onHide={() => {
                     editForm.reset()
@@ -134,7 +155,7 @@ export default function IntentsListPage() {
 
                         <form onSubmit={editForm.onSubmit(onEdit)}>
                             <FormsInput className="mb-3" value={editForm.form.label} onChange={editForm.onChange} error={editForm.errors.label} name={editForm.controls.label} label="Intent label" placeholder="Enter intent label" />
-                            <FormsInput className="mb-3" as="textarea"  value={editForm.form.description} onChange={editForm.onChange}  name={editForm.controls.description} label="Intent label" placeholder="Enter intent label" />
+                            <FormsInput className="mb-3" as="textarea" value={editForm.form.description} onChange={editForm.onChange} name={editForm.controls.description} label="Intent label" placeholder="Enter intent label" />
 
                             <div className="d-flex justify-content-end gap-3">
                                 <Button type="button" onClick={() => {
@@ -164,7 +185,7 @@ export default function IntentsListPage() {
                             }} variant="outline-secondary">Cancel</Button>
                             <Button autoFocus onClick={async () => {
                                 console.log("Deleting")
-                                if(!toDelete) return
+                                if (!toDelete) return
                                 const result = await intentService.remove(toDelete?.intentId)
                                 setIntents(intents.filter(i => i.intentId !== result.resultData))
                                 deleteModal.closeModal()
@@ -181,15 +202,15 @@ export default function IntentsListPage() {
 }
 
 function IntentListItemRow(
-    {item, onDelete, onEdit, onView}
-    :{
-        item:IntentListItem, 
-        onDelete?:(item:IntentListItem) => void,
-        onEdit?:(item:IntentListItem) => void,
-        onView?:ActionCallback<IntentListItem>
-    }) {
+    { item, onDelete, onEdit, onView }
+        : {
+            item: IntentListItem,
+            onDelete?: (item: IntentListItem) => void,
+            onEdit?: (item: IntentListItem) => void,
+            onView?: ActionCallback<IntentListItem>
+        }) {
 
-    const {intentId, label, lastUpdated, dataset, ners} = item
+    const { intentId, label, lastUpdated, dataset, ners } = item
 
     return (
         <tr className="align-middle">
@@ -208,9 +229,9 @@ function IntentListItemRow(
                         onView?.(item)
                     }} variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
                     <RolePermit roles={["Admin"]}>
-                    <Button onClick={() => {
-                        onEdit?.(item)
-                    }} variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
+                        <Button onClick={() => {
+                            onEdit?.(item)
+                        }} variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
                         {dataset === 0 && <Button variant="outline-danger" onClick={() => onDelete?.(item)} size="sm"><Trash2Icon size={iconSize} /></Button>}
                     </RolePermit>
                 </ButtonGroup>

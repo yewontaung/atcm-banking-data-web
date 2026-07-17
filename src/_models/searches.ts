@@ -14,6 +14,7 @@ export type IntentSearch = {
 export type DatasetSearch = {
     status:"pending" | "approved" | ""
     strategy:"intent" | "collector" | "command" | ""
+    datasetType:"Training" | "Validation" | "Testing" | ""
     keyword:string
     page:number
     size:number

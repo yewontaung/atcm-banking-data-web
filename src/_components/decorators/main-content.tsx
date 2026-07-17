@@ -18,7 +18,7 @@ export default function MainContentDecorator({title, children}:{title:string, ch
                 <div className="align-self-start d-flex gap-3">
                     <ThemeButton />
                     <Dropdown>
-                        <Dropdown.Toggle className="bg-transparent d-flex align-items-center">
+                        <Dropdown.Toggle className="bg-transparent d-flex align-items-center text-primary">
                             <AppProfile className="me-2" img={profile.profileUrl ?? defaultProfile} /> {profile.accountName}
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="">

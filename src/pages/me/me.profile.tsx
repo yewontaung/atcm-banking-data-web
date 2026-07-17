@@ -37,7 +37,7 @@ export default function MeProfilePage() {
             <div className="position-absolute end-0 me-4 d-flex gap-2">
                 <ThemeButton className="" />
                 <Dropdown>
-                    <Dropdown.Toggle className="bg-transparent">
+                    <Dropdown.Toggle className="bg-transparent text-primary">
                         <AppProfile className="me-2" img={profile?.profileUrl ?? defaultProfile} /> {profile?.accountName}
                     </Dropdown.Toggle>
                     <Dropdown.Menu className="">

@@ -12,8 +12,8 @@ export default function CopyBtn({onCopy, className}:{className?:string, onCopy?:
     }
     return (
         <>
-            {copying || <Button className={`text-white ${className}`} variant="link" onClick={copy}><ClipboardIcon size={iconSize} /></Button>}
-            {copying && <Button className={`text-white ${className}`} variant="link" onClick={copy}><ClipboardCheckIcon size={iconSize} /></Button>}
+            {copying || <Button className={`${className}`} variant="link" onClick={copy}><ClipboardIcon size={iconSize} /></Button>}
+            {copying && <Button className={`${className}`} variant="link" onClick={copy}><ClipboardCheckIcon size={iconSize} /></Button>}
         </>
     )    
 }
