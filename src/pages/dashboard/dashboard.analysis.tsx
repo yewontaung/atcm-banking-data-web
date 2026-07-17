@@ -3,25 +3,43 @@ import { Badge, Container, Form, ListGroup } from "react-bootstrap";
 import { AppProfile } from "../../_components/app-profile";
 import { defaultProfile } from "../../_utils/constants";
 import TotalDataCard from "../../_components/totaldata-card";
+import * as dashboardService from "../../services/dashboard.service"
+import { useEffect, useState } from "react";
+import type { CollectRate, DashboardAnalysis, DatasetAnalysis } from "../../_models/outputs";
 
 export default function DashboardAnalysisPage() {
+
+    const [dashboard, setDashboard] = useState<DashboardAnalysis>()
+
+    useEffect(() => {
+        const loadDashboard = async () => {
+            const result = await dashboardService.analysis()
+            setDashboard(result)
+        }
+
+        loadDashboard()
+
+    }, [])
+
+    const {datasetMeta, datasetAnalysis, todayCollectRate, yesterdayCollectRate} = dashboard ?? {}
+
     return (
         <MainContentDecorator title="Dashboard">
             {/* Total Data Analysis */}
             <Container className="mt-3">
                 <div className="row gap-3">
-                    <TotalDataCard label="Dataset" total={1000} className="col-auto w-25" />
-                    <TotalDataCard label="Intents" total={10} className="col-auto w-25" />
-                    <TotalDataCard label="Named Entities" total={20} className="col-auto w-25" />
+                    <TotalDataCard label="Dataset" total={datasetMeta?.totalDatasets ?? 0} className="col-auto w-25" />
+                    <TotalDataCard label="Intents" total={datasetMeta?.totalIntents ?? 0} className="col-auto w-25" />
+                    <TotalDataCard label="Named Entities" total={datasetMeta?.totalNers ?? 0} className="col-auto w-25" />
                 </div>
             </Container>
             <Container className="mt-3">
                 <div className="row">
                     <div className="col-auto px-0 w-50">
-                        <CollectRate />
+                        <CollectRate todayRate={todayCollectRate ?? []} yesterdayRate={yesterdayCollectRate ?? []}/>
                     </div>
                     <div className="col-auto w-50">
-                        <DatasetAnalysis />
+                        <DatasetAnalysisSection analysis={datasetAnalysis} />
                     </div>
                 </div>
             </Container>
@@ -29,7 +47,7 @@ export default function DashboardAnalysisPage() {
     )
 }
 
-function DatasetAnalysis({className}:{className?:string}) {
+function DatasetAnalysisSection({className, analysis}:{className?:string, analysis?:DatasetAnalysis}) {
     return (
         <div className={`border p-3 ${className}`}>
             <div>
@@ -39,15 +57,15 @@ function DatasetAnalysis({className}:{className?:string}) {
                 <ListGroup variant="flush">
                     <ListGroup.Item className="d-flex justify-content-between align-items-center">
                         <span>Training Dataset</span>
-                        <Badge>500</Badge>
+                        <Badge>{analysis?.trainingDatasets ?? 0}</Badge>
                     </ListGroup.Item>
                     <ListGroup.Item className="d-flex justify-content-between align-items-center">
                         <span>Validation Dataset</span>
-                        <Badge>300</Badge>
+                        <Badge>{analysis?.validationDatasets ?? 0}</Badge>
                     </ListGroup.Item>
                     <ListGroup.Item className="d-flex justify-content-between align-items-center">
                         <span>Testing Dataset</span>
-                        <Badge>200</Badge>
+                        <Badge>{analysis?.testingDatasets ?? 0}</Badge>
                     </ListGroup.Item>
                 </ListGroup>
             </div>
@@ -55,14 +73,17 @@ function DatasetAnalysis({className}:{className?:string}) {
     )
 }
 
-function CollectRate({className}:{className?:string}) {
+function CollectRate({className, todayRate, yesterdayRate}:{className?:string, todayRate:CollectRate[], yesterdayRate:CollectRate[]}) {
+
+    const [filter, setFilter] = useState<"today" | "yesterday">("today")
+
     return (
         <div className={`border p-3 ${className}`}>
             <div className="d-flex justify-content-between">
                 <h5>Collect Rate</h5>
-                <Form.Select size="sm" className="w-auto align-self-start">
-                    <option value={"today"}>Today</option>
-                    <option value={"yesterday"}>Yesterday</option>
+                <Form.Select value={filter} onChange={e => setFilter(e.target.value as "today" | "yesterday")} size="sm" className="w-auto align-self-start">
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
                 </Form.Select>
             </div>
             <div className="mt-3">
@@ -71,15 +92,26 @@ function CollectRate({className}:{className?:string}) {
                         <span>Member</span>
                         <span>Collected Data</span>
                     </ListGroup.Item>
-                    {[1, 2, 3, 4].map(i => (
-                        <ListGroup.Item key={i} className="d-flex justify-content-between align-items-center">
+                    {filter === "today" && todayRate.map(i => (
+                        <ListGroup.Item key={i.memberId} className="d-flex justify-content-between align-items-center">
                             <div>
-                                <AppProfile img={defaultProfile} />
-                                <span className="ms-3">Ye Wont Aung</span>
+                                <AppProfile img={i.memberProfile ?? defaultProfile} />
+                                <span className="ms-3">{i.memberName}</span>
                             </div>
-                            <Badge bg="success">200</Badge>
+                            <Badge bg="success">{i.collectedData}</Badge>
                         </ListGroup.Item>
                     ))}
+
+                    {filter === "yesterday" && yesterdayRate.map(i => (
+                        <ListGroup.Item key={i.memberId} className="d-flex justify-content-between align-items-center">
+                            <div>
+                                <AppProfile img={i.memberProfile ?? defaultProfile} />
+                                <span className="ms-3">{i.memberName}</span>
+                            </div>
+                            <Badge bg="success">{i.collectedData}</Badge>
+                        </ListGroup.Item>
+                    ))}
+
                 </ListGroup>
             </div>
         </div>
