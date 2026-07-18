@@ -1,4 +1,4 @@
-import type { MemberListItem, ModificationResult } from "../_models/outputs";
+import type { MemberListItem, ModificationResult, ProfileResult } from "../_models/outputs";
 import type { MemberForm } from "../_models/schemas";
 import type { MemberSearch } from "../_models/searches";
 import { queryParam } from "../_utils/param.utils";
@@ -33,4 +33,10 @@ export async function edit(memberId: number, form: MemberForm) {
     })
 
     return (await response.json()) as ModificationResult<number>
+}
+
+export async function profile(memberId:number) {
+    const response = await protectedRequest(`members/${memberId}`)
+
+    return (await response.json()) as ProfileResult
 }

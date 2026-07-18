@@ -54,7 +54,7 @@ export default function MemberForm({ state: { isOpen, closeModal, }, onSaved, me
     return (
         <Modal show={isOpen} onHide={closeModal}>
             <Modal.Header closeButton>
-                <Modal.Title className="h5">Add Member</Modal.Title>
+                <Modal.Title className="h5">{member ? "Edit" : "Add"} Member</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={onSubmit}>

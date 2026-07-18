@@ -2,7 +2,7 @@ import { Alert, Button, ButtonGroup, Container, Form, Table } from "react-bootst
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { Edit2Icon, EyeIcon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
-import type { MemberListItem } from "../../_models/outputs";
+import type { MemberListItem, ProfileResult } from "../../_models/outputs";
 import { FormsInput } from "../../_components/ui/forms.input";
 import MemberForm from "../../_components/modals/member.form";
 import { useModals } from "../../_hooks/use-modals";
@@ -12,6 +12,7 @@ import type { MemberSearch } from "../../_models/searches";
 import * as memberService from "../../services/member.service"
 import { useEffect, useState } from "react";
 import RolePermit from "../../_components/role-permit";
+import MemberDetailModal from "../../_components/modals/member.detail";
 
 export default function MemberListPage() {
     const modalState = useModals()
@@ -43,6 +44,13 @@ export default function MemberListPage() {
         setToEdit(undefined)
         form.reset()
         await onSearch()
+    }
+
+    const viewModal = useModals()
+    const [toView, setToView] = useState<ProfileResult>()
+    const onView = async (item:MemberListItem) => {
+        const result = await memberService.profile(item.memberId)
+        setToView(result)
     }
 
     return (
@@ -87,20 +95,24 @@ export default function MemberListPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {members.map(i => <MemberListTableRow onEdit={(item) => {
+                            {members.map(i => <MemberListTableRow onView={(item) => {
+                                viewModal.openModal()
+                                onView(item)
+                            }} onEdit={(item) => {
                                 setToEdit(item)
                                 modalState.openModal()
                             }} key={i.memberId} member={i} />)}
                         </tbody>
                     </Table>
                 )}
+                <MemberDetailModal modalState={viewModal} profile={toView} />
                 {!loading && members.length == 0 && <Alert className="text-center w-100" variant="light">Add a member.</Alert>}
             </div>
         </MainContentDecorator>
     )
 }
 
-function MemberListTableRow({member, onEdit}: {member:MemberListItem, onEdit?:(item:MemberListItem) => void}) {
+function MemberListTableRow({member, onEdit, onView}: {member:MemberListItem, onEdit?:(item:MemberListItem) => void, onView?:(item:MemberListItem) => void}) {
     const { memberId: member_id, memberName: member_name, memberEmail: member_email, role, datasets } = member
     return (
         <tr className="align-middle">
@@ -111,10 +123,14 @@ function MemberListTableRow({member, onEdit}: {member:MemberListItem, onEdit?:(i
             <td className="text-end pe-4">{datasets}</td>
             <td>
                 <ButtonGroup>
-                    <Button variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
                     <Button onClick={() => {
-                        onEdit?.(member)
-                    }} variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
+                        onView?.(member)
+                    }} variant="outline-primary" size="sm"><EyeIcon size={iconSize} /></Button>
+                    <RolePermit roles={["Admin"]}>
+                        <Button onClick={() => {
+                            onEdit?.(member)
+                        }} variant="outline-primary" size="sm"><Edit2Icon size={iconSize} /></Button>
+                    </RolePermit>
                 </ButtonGroup>
             </td>
         </tr>
