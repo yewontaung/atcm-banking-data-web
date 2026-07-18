@@ -28,7 +28,6 @@ export default function DatasetDetailPage() {
     const [detailResult, setDetailResult] = useState<DatasetDetailResult>()
 
     useEffect(() => {
-        console.log(datasetId)
         const loadDetailResult = async () => {
             if (!datasetId) return
             const result = await datasetService.findById(Number(datasetId))

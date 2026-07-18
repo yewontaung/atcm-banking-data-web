@@ -1,16 +1,16 @@
 import { Button, Container, Dropdown, Image, Row } from "react-bootstrap";
-import { defaultProfile, iconSize } from "../../_utils/constants";
+import { iconSize } from "../../_utils/constants";
 import { CloudUploadIcon, MailIcon, PlusSquareIcon, SettingsIcon, TagIcon, Trash2Icon, User2Icon } from "lucide-react";
 import TotalDataCard from "../../_components/totaldata-card";
 import ThemeButton from "../../_components/theme-button";
-import { getAuthProfile, updateAuthProfile } from "../../_utils/auth.utils";
+import { updateAuthProfile } from "../../_utils/auth.utils";
 import { AppProfile } from "../../_components/app-profile";
 import { Link } from "react-router-dom";
 import LogoutButton from "../../_components/logout-button";
 import RolePermit from "../../_components/role-permit";
 import { useModals } from "../../_hooks/use-modals";
 import PasswordFormModal from "../../_components/modals/password.form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as accountService from "../../services/account.service"
 import { type ProfileResult, type AuthProfile } from "../../_models/outputs";
 
@@ -21,10 +21,7 @@ export default function MeProfilePage() {
     useEffect(() => {
         const loadProfile = async () => {
             const result = await accountService.profile()
-            const profile = getAuthProfile()
-            if(result.accountRole !== profile.accountRole) {
-                updateAuthProfile(result as AuthProfile)
-            }
+            updateAuthProfile(result as AuthProfile)
             setProfile(result)
         }
 
@@ -32,13 +29,25 @@ export default function MeProfilePage() {
 
     }, [])
 
+    const fileRef = useRef<HTMLInputElement>(null)
+    const uploadProfile = async () => {
+        if(!fileRef.current?.files) return
+        const file = fileRef.current.files[0]
+        const {imageUrl} = await accountService.uploadProfile(file)
+
+        setProfile(profile ? {...profile, profileUrl: imageUrl}: profile)
+        updateAuthProfile(profile as AuthProfile)
+
+        console.log(imageUrl)
+    }
+
     return (
         <Container>
             <div className="position-absolute end-0 me-4 d-flex gap-2">
                 <ThemeButton className="" />
                 <Dropdown>
                     <Dropdown.Toggle className="bg-transparent text-primary">
-                        <AppProfile className="me-2" img={profile?.profileUrl ?? defaultProfile} /> {profile?.accountName}
+                        <AppProfile className="me-2" img={accountService.resolveProfileImage(profile?.profileUrl)} /> {profile?.accountName}
                     </Dropdown.Toggle>
                     <Dropdown.Menu className="">
                         <Dropdown.Item as="button">
@@ -69,12 +78,13 @@ export default function MeProfilePage() {
             <Row>
                 <div className="col-auto">
                     <div className="py-3">
-                        <Image src={profile?.profileUrl ?? defaultProfile} className="d-block mx-auto" roundedCircle width={200} height={200} style={{ objectFit: "cover" }} />
+                        <Image src={accountService.resolveProfileImage(profile?.profileUrl)} className="d-block mx-auto" roundedCircle width={200} height={200} style={{ objectFit: "cover" }} />
                         <div className="p-2 mt-3 d-flex flex-column row-gap-2">
                             <div><User2Icon className="me-3" size={iconSize} /> {profile?.accountName}</div>
                             <div><MailIcon className="me-3" size={iconSize} /> {profile?.accountEmail}</div>
                             <div><TagIcon className="me-3" size={iconSize} /> {profile?.accountRole}</div>
-                            <Button className="mt-3"><CloudUploadIcon size={iconSize} /> Upload Profile</Button>
+                            <Button onClick={() => fileRef.current?.click()} className="mt-3"><CloudUploadIcon size={iconSize} /> Upload Profile</Button>
+                            <input ref={fileRef} onChange={uploadProfile} type="file" name="file" accept="image/*" className="d-none" />
                             <Button onClick={changePasswordModal.openModal} variant="outline-primary" className=""><SettingsIcon size={iconSize} /> Change Password</Button>
                             <PasswordFormModal state={changePasswordModal} />
                         </div>

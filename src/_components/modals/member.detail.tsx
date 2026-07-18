@@ -3,6 +3,7 @@ import type { ProfileResult } from "../../_models/outputs";
 import type { ModalState } from "../../_hooks/use-modals";
 import { defaultProfile, iconSize } from "../../_utils/constants";
 import { MailIcon, TagIcon, User2Icon } from "lucide-react";
+import { resolveProfileImage } from "../../services/account.service";
 
 export default function MemberDetailModal({profile, modalState}:{profile?:ProfileResult, modalState:ModalState}) {
     return (
@@ -11,7 +12,7 @@ export default function MemberDetailModal({profile, modalState}:{profile?:Profil
             <Modal.Body>
                 <div className="d-flex gap-3 mb-3">
                     <div>
-                        <Image roundedCircle width={100} height={100} src={profile?.profileUrl ?? defaultProfile} className="d-block mx-auto" style={{objectFit: "cover"}} alt="profile image" />
+                        <Image roundedCircle width={100} height={100} src={resolveProfileImage(profile?.profileUrl)} className="d-block mx-auto" style={{objectFit: "cover"}} alt="profile image" />
                     </div>
                     <div className="p-2 d-flex flex-column gap-2">
                         <div><User2Icon size={iconSize} className="me-3" />{profile?.accountName}</div>

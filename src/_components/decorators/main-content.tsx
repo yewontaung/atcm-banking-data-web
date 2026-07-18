@@ -8,6 +8,7 @@ import { PlusSquareIcon, Trash2Icon, User2Icon } from "lucide-react";
 import LogoutButton from "../logout-button";
 import RolePermit from "../role-permit";
 import { getAuthProfile } from "../../_utils/auth.utils";
+import { resolveProfileImage } from "../../services/account.service";
 
 export default function MainContentDecorator({title, children}:{title:string, children:ReactNode}) {
     const profile = getAuthProfile()
@@ -19,7 +20,7 @@ export default function MainContentDecorator({title, children}:{title:string, ch
                     <ThemeButton />
                     <Dropdown>
                         <Dropdown.Toggle className="bg-transparent d-flex align-items-center text-primary">
-                            <AppProfile className="me-2" img={profile.profileUrl ?? defaultProfile} /> {profile.accountName}
+                            <AppProfile className="me-2" img={resolveProfileImage(profile.profileUrl)} /> {profile.accountName}
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="">
                             <Dropdown.Item as="button">

@@ -4,6 +4,7 @@ export type ActionCallback<T> = (t: T) => void
 
 export type MemberListItem = {
     memberId: number
+    memberProfile?:string
     memberName: string
     memberEmail: string
     role: MemberRole
@@ -112,6 +113,10 @@ export type ProfileResult = {
     validationDataset: number,
     testingDataset: number,
 } & AuthProfile
+
+export type ProfileUploadResult = {
+    imageUrl:string
+}
 
 // dashboard dto
 

@@ -13,6 +13,8 @@ import * as memberService from "../../services/member.service"
 import { useEffect, useState } from "react";
 import RolePermit from "../../_components/role-permit";
 import MemberDetailModal from "../../_components/modals/member.detail";
+import { AppProfile } from "../../_components/app-profile";
+import { resolveProfileImage } from "../../services/account.service";
 
 export default function MemberListPage() {
     const modalState = useModals()
@@ -87,7 +89,7 @@ export default function MemberListPage() {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Name</th>
+                                <th>Member</th>
                                 <th>Email</th>
                                 <th>Role</th>
                                 <th className="text-end pe-4">Dataset</th>
@@ -113,11 +115,11 @@ export default function MemberListPage() {
 }
 
 function MemberListTableRow({member, onEdit, onView}: {member:MemberListItem, onEdit?:(item:MemberListItem) => void, onView?:(item:MemberListItem) => void}) {
-    const { memberId, memberName, memberEmail, role, datasets } = member
+    const { memberId, memberProfile, memberName, memberEmail, role, datasets } = member
     return (
         <tr className="align-middle">
             <td>{memberId}</td>
-            <td>{memberName}</td>
+            <td><AppProfile img={resolveProfileImage(memberProfile)} className="me-2" /> {memberName}</td>
             <td>{memberEmail}</td>
             <td>{role}</td>
             <td className="text-end pe-4">{datasets}</td>

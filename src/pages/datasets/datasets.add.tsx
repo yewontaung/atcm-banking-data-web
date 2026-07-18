@@ -254,7 +254,6 @@ function ManualEditForm({setPreview, previewModalState}:{previewModalState:Modal
     }
 
     const onSave = async () => {
-        console.log(form.form)
         if(!form.validate()) return
         try {
             const result = await datasetService.save(form.form)

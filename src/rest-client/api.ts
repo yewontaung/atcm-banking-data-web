@@ -1,6 +1,6 @@
 import { getAuthToken } from "../_utils/auth.utils"
 
-export async function publicRequest(url:string, init?:RequestInit) {
+export async function publicRequest(url: string, init?: RequestInit) {
     const api = import.meta.env.VITE_API_URL
 
     const response = await fetch(`${api}/${url}`, {
@@ -11,27 +11,40 @@ export async function publicRequest(url:string, init?:RequestInit) {
         }
     })
 
-    if(!response.ok) {
+    if (!response.ok) {
         throw Error(`${(await response.json()).detail}`)
     }
     return response
 }
 
-export async function protectedRequest(url:string, init?:RequestInit) {
-    const {accessType: access_type, accessToken: access_token} = getAuthToken()
+export async function protectedRequest(url: string, init?: RequestInit, jsonContent:boolean = true) {
+    const { accessType: access_type, accessToken: access_token } = getAuthToken()
 
     const api = import.meta.env.VITE_API_URL
 
-    const response = await fetch(`${api}/${url}`, {
-        ...init,
-        headers: {
-            ...init?.headers,
-            "Content-Type": "application/json",
-            "Authorization": `${access_type} ${access_token}` 
+    const fetchApi = async () => {
+        if(!jsonContent) {
+            return await fetch(`${api}/${url}`, {
+                ...init,
+                headers: {
+                    ...init?.headers,
+                    "Authorization": `${access_type} ${access_token}`
+                }
+            })
         }
-    })
+        return await fetch(`${api}/${url}`, {
+            ...init,
+            headers: {
+                ...init?.headers,
+                "Content-Type": "application/json",
+                "Authorization": `${access_type} ${access_token}`
+            }
+        })
+    }
 
-    if(!response.ok) {
+    const response = await fetchApi()
+
+    if (!response.ok) {
         throw Error(`${(await response.json()).detail}`)
     }
     return response
