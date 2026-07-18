@@ -14,23 +14,23 @@ import RolePermit from "../../_components/role-permit"
 import CopyBtn from "../../_components/copy-btn"
 
 type DatasetActionHandler = {
-    onApproved?:(result:ModificationResult<number>) => void,
-    onRestored?:(result:ModificationResult<number>) => void,
-    onDeleted?:(result:ModificationResult<number>) => void,
-    onMovedToBin?:(result:ModificationResult<number>) => void,
+    onApproved?: (result: ModificationResult<number>) => void,
+    onRestored?: (result: ModificationResult<number>) => void,
+    onDeleted?: (result: ModificationResult<number>) => void,
+    onMovedToBin?: (result: ModificationResult<number>) => void,
 }
 
 export default function DatasetDetailPage() {
 
     const navigate = useNavigate()
-    const {datasetId} = useParams<"datasetId">()
-    
+    const { datasetId } = useParams<"datasetId">()
+
     const [detailResult, setDetailResult] = useState<DatasetDetailResult>()
 
     useEffect(() => {
         console.log(datasetId)
         const loadDetailResult = async () => {
-            if(!datasetId) return
+            if (!datasetId) return
             const result = await datasetService.findById(Number(datasetId))
             setDetailResult(result)
         }
@@ -40,11 +40,11 @@ export default function DatasetDetailPage() {
     }, [datasetId])
 
     const onApproved = () => {
-        setDetailResult(detailResult ? {...detailResult, info: {...detailResult.info, approved: true}} : detailResult)
+        setDetailResult(detailResult ? { ...detailResult, info: { ...detailResult.info, approved: true } } : detailResult)
     }
 
     const onRestored = () => {
-        setDetailResult(detailResult ? {...detailResult, info: {...detailResult.info, deleted: false}} : detailResult)
+        setDetailResult(detailResult ? { ...detailResult, info: { ...detailResult.info, deleted: false } } : detailResult)
     }
 
     const onDeleted = () => {
@@ -52,10 +52,10 @@ export default function DatasetDetailPage() {
     }
 
     const onMovedToBin = () => {
-        setDetailResult(detailResult ? {...detailResult, info: {...detailResult.info, deleted: true}} : detailResult)
+        setDetailResult(detailResult ? { ...detailResult, info: { ...detailResult.info, deleted: true } } : detailResult)
     }
 
-    const handlers = {onApproved, onMovedToBin, onRestored, onDeleted}
+    const handlers = { onApproved, onMovedToBin, onRestored, onDeleted }
 
     return (
         <MainContentDecorator title="Dataset Detail">
@@ -71,15 +71,15 @@ export default function DatasetDetailPage() {
     )
 }
 
-function JsonDatasetView({detailResult:{info, dataset}, handlers}:{detailResult:DatasetDetailResult, handlers?:DatasetActionHandler}) {
+function JsonDatasetView({ detailResult: { info, dataset }, handlers }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler }) {
     return (
         <Container className="p-2">
             <Row>
                 <div className="col-8">
                     <div className="h-100 position-relative border">
-                        <CopyBtn className="z-3 position-absolute end-0 me-4" onCopy={() => window.navigator.clipboard.writeText(JSON.stringify(dataset))} />                        
-                        <div className="overflow-y-auto overflow-x-auto" style={{maxHeight: 500}}>
-                            <AppJsonView name="dataset" data={dataset}  />
+                        <CopyBtn className="z-3 position-absolute end-0 me-4" onCopy={() => window.navigator.clipboard.writeText(JSON.stringify(dataset))} />
+                        <div className="overflow-y-auto overflow-x-auto" style={{ maxHeight: 500 }}>
+                            <AppJsonView name="dataset" data={dataset} />
                         </div>
                     </div>
                 </div>
@@ -91,15 +91,30 @@ function JsonDatasetView({detailResult:{info, dataset}, handlers}:{detailResult:
     )
 }
 
-function DefaultDatasetView({detailResult:{info, dataset}, handlers}:{detailResult:DatasetDetailResult, handlers?:DatasetActionHandler}) {
+function DefaultDatasetView({ detailResult: { info, dataset }, handlers }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler }) {
+
+    const [selected, setSelected] = useState<{ start: number, end: number }>()
+    const onSelected = () => {
+        const selection = window.getSelection()
+        if (!selection || selection.rangeCount === 0) return
+        const range = selection.getRangeAt(0)
+        setSelected({ start: range.startOffset, end: range.endOffset })
+    }
+
     return (
         <Container className="p-3">
             <Row>
                 <div className="col-8">
                     <div className="border p-3">
-                        <label>User Command</label>
+                        <div className="d-flex justify-content-between align-items-center">
+                            <label>User Command</label>
+                            <div className="d-flex gap-2">
+                                <GroupLabelInfo label="Start" info={selected?.start ?? 0} />
+                                <GroupLabelInfo label="End" info={selected?.end ?? 0} />
+                            </div>
+                        </div>
                         <hr />
-                        <p className="p-2 mt-2">{dataset.command}</p>
+                        <p onMouseUp={onSelected} className="p-2 mt-2">{dataset.command}</p>
                     </div>
                     <IntentDetailList intents={dataset.intents} alignments={dataset.alignments} className="mt-3" />
                 </div>
@@ -112,14 +127,14 @@ function DefaultDatasetView({detailResult:{info, dataset}, handlers}:{detailResu
 }
 
 function MetadataCard(
-    {info, onApproved, onRestored, onDeleted, onMovedToBin}
-    :{
-        info:DatasetInfo, 
-        onApproved?:(result:ModificationResult<number>) => void,
-        onRestored?:(result:ModificationResult<number>) => void,
-        onDeleted?:(result:ModificationResult<number>) => void,
-        onMovedToBin?:(result:ModificationResult<number>) => void,
-    }) {
+    { info, onApproved, onRestored, onDeleted, onMovedToBin }
+        : {
+            info: DatasetInfo,
+            onApproved?: (result: ModificationResult<number>) => void,
+            onRestored?: (result: ModificationResult<number>) => void,
+            onDeleted?: (result: ModificationResult<number>) => void,
+            onMovedToBin?: (result: ModificationResult<number>) => void,
+        }) {
 
     const approveModal = useModals()
     const restoreModal = useModals()
@@ -219,7 +234,7 @@ function MetadataCard(
     )
 }
 
-function IntentDetailList({ className, intents, alignments }: { className?: string, intents:DatasetDetailIntent[], alignments:DatasetIntentNerAlignment[] }) {
+function IntentDetailList({ className, intents, alignments }: { className?: string, intents: DatasetDetailIntent[], alignments: DatasetIntentNerAlignment[] }) {
     return (
         <Accordion className={className}>
             {intents.map(i => (

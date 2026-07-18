@@ -113,12 +113,12 @@ export default function MemberListPage() {
 }
 
 function MemberListTableRow({member, onEdit, onView}: {member:MemberListItem, onEdit?:(item:MemberListItem) => void, onView?:(item:MemberListItem) => void}) {
-    const { memberId: member_id, memberName: member_name, memberEmail: member_email, role, datasets } = member
+    const { memberId, memberName, memberEmail, role, datasets } = member
     return (
         <tr className="align-middle">
-            <td>{member_id}</td>
-            <td>{member_name}</td>
-            <td>{member_email}</td>
+            <td>{memberId}</td>
+            <td>{memberName}</td>
+            <td>{memberEmail}</td>
             <td>{role}</td>
             <td className="text-end pe-4">{datasets}</td>
             <td>
