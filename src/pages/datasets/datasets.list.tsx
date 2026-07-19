@@ -83,6 +83,7 @@ export default function DatasetListPage() {
             </Container>
             {/* Dataset List Table */}
             <Container className="mt-3">
+
                 {!loading && (
                     <>
                         <Table hover>
@@ -106,8 +107,10 @@ export default function DatasetListPage() {
 
                             </tbody>
                         </Table>
+        
+                        {!loading && datasets?.items.length == 0 && <Alert className="text-center w-100" variant="light">Add Datasets.</Alert>}
 
-                        {datasets && datasets.total > 0 && <Pagination onChange={(page, size) => onSearch({ ...form.form, page, size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
+                        {datasets && datasets.total > 0 && <Pagination size={datasets.size} onChange={(page, size) => onSearch({ ...form.form, page, size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
 
                         <Modal size="sm" animation={false} show={deleteModal.isOpen}
                             onHide={() => {
@@ -139,9 +142,6 @@ export default function DatasetListPage() {
                         </Modal>
                     </>
                 )}
-
-
-                {!loading && datasets?.items.length == 0 && <Alert className="text-center w-100" variant="light">Add Datasets.</Alert>}
 
             </Container>
         </MainContentDecorator>

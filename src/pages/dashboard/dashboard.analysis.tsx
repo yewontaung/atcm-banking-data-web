@@ -6,6 +6,7 @@ import TotalDataCard from "../../_components/totaldata-card";
 import * as dashboardService from "../../services/dashboard.service"
 import { useEffect, useState } from "react";
 import type { CollectRate, DashboardAnalysis, DatasetAnalysis } from "../../_models/outputs";
+import { resolveProfileImage } from "../../services/account.service";
 
 export default function DashboardAnalysisPage() {
 
@@ -95,7 +96,7 @@ function CollectRate({className, todayRate, yesterdayRate}:{className?:string, t
                     {filter === "today" && todayRate.map(i => (
                         <ListGroup.Item key={i.memberId} className="d-flex justify-content-between align-items-center">
                             <div>
-                                <AppProfile img={i.memberProfile ?? defaultProfile} />
+                                <AppProfile img={resolveProfileImage(i.memberProfile)} />
                                 <span className="ms-3">{i.memberName}</span>
                             </div>
                             <Badge bg="success">{i.collectedData}</Badge>
@@ -105,7 +106,7 @@ function CollectRate({className, todayRate, yesterdayRate}:{className?:string, t
                     {filter === "yesterday" && yesterdayRate.map(i => (
                         <ListGroup.Item key={i.memberId} className="d-flex justify-content-between align-items-center">
                             <div>
-                                <AppProfile img={i.memberProfile ?? defaultProfile} />
+                                <AppProfile img={resolveProfileImage(i.memberProfile)} />
                                 <span className="ms-3">{i.memberName}</span>
                             </div>
                             <Badge bg="success">{i.collectedData}</Badge>
