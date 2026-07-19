@@ -13,6 +13,7 @@ import MeProfilePage from './pages/me/me.profile'
 import DatasetEditPage from './pages/datasets/datasets.add'
 import DatasetDetailPage from './pages/datasets/dataset.detail'
 import DatasetBinPage from './pages/datasets/datasets.bin'
+import DatasetExportPage from './pages/datasets/dataset.export'
 
 function App() {
   return (
@@ -26,8 +27,9 @@ function App() {
         <Route path='datasets'>
           <Route index element={<DatasetListPage />} />
           <Route path='add' element={<DatasetEditPage />} />
-          <Route path=':datasetId' element={<DatasetDetailPage />} />
+          <Route path='export' element={<DatasetExportPage />} />
           <Route path='bin' element={<DatasetBinPage />} />
+          <Route path=':datasetId' element={<DatasetDetailPage />} />
         </Route>
         <Route path='intents' element={<IntentsListPage />} />
         <Route path='ners' element={<NersListPage />} />

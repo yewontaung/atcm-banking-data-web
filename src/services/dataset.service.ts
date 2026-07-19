@@ -1,4 +1,4 @@
-import type { DatasetDetailResult, DatasetListItem, ModificationResult, PaginationResult } from "../_models/outputs";
+import type { DatasetAnalysis, DatasetDetailResult, DatasetListItem, DatasetType, ModificationResult, PaginationResult } from "../_models/outputs";
 import type { DatasetForm } from "../_models/schemas";
 import type { DatasetSearch } from "../_models/searches";
 import { queryParam } from "../_utils/param.utils";
@@ -75,5 +75,28 @@ export async function saveJsons(formData: DatasetForm[]) {
     })
 
     return (await response.json()) as ModificationResult<number[]>
+}
+
+export async function analysis() {
+    const response = await protectedRequest("datasets/analysis")
+
+    return (await response.json()) as DatasetAnalysis
+}
+
+export async function download(datasetType: DatasetType) {
+    const response = await protectedRequest(`datasets/export?dataset_type=${datasetType}`)
+
+    const blob = await response.blob()
+    const  url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = `${datasetType.toLowerCase()}.json`
+    
+    document.body.appendChild(link)
+    link.click()
+
+    link.remove()
+    URL.revokeObjectURL(url)
 }
 

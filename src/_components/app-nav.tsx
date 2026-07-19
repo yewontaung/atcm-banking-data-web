@@ -2,7 +2,7 @@ import { Dropdown } from "react-bootstrap";
 import ThemeButton from "./theme-button";
 import { AppProfile } from "./app-profile";
 import { Link } from "react-router-dom";
-import { PlusSquareIcon, Trash2Icon, User2Icon } from "lucide-react";
+import { ArrowUpRightFromSquareIcon, PlusSquareIcon, Trash2Icon, User2Icon } from "lucide-react";
 import { iconSize } from "../_utils/constants";
 import RolePermit from "./role-permit";
 import { resolveProfileImage } from "../services/account.service";
@@ -23,9 +23,15 @@ export default function AppNav({ className, profile }: { className?: string, pro
                             <User2Icon size={iconSize} className="me-3" /> Profile
                         </Link>
                     </Dropdown.Item>
+                    <Dropdown.Divider />
                     <Dropdown.Item as="button">
                         <Link to="/datasets/add" className="text-decoration-none d-block">
                             <PlusSquareIcon size={iconSize} className="me-3" /> Add Dataset
+                        </Link>
+                    </Dropdown.Item>
+                    <Dropdown.Item as="button">
+                        <Link to="/datasets/export" className="text-decoration-none d-block">
+                            <ArrowUpRightFromSquareIcon size={iconSize} className="me-3" /> Export Dataset
                         </Link>
                     </Dropdown.Item>
                     <RolePermit roles={["Admin", "Supervisor"]}>

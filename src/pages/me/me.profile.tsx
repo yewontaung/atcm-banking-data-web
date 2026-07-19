@@ -1,13 +1,8 @@
-import { Button, Container, Dropdown, Image, Row } from "react-bootstrap";
+import { Button, Container, Image, Row } from "react-bootstrap";
 import { iconSize } from "../../_utils/constants";
-import { CloudUploadIcon, MailIcon, PlusSquareIcon, SettingsIcon, TagIcon, Trash2Icon, User2Icon } from "lucide-react";
+import { CloudUploadIcon, MailIcon, SettingsIcon, TagIcon, User2Icon } from "lucide-react";
 import TotalDataCard from "../../_components/totaldata-card";
-import ThemeButton from "../../_components/theme-button";
 import { getAuthProfile, updateAuthProfile } from "../../_utils/auth.utils";
-import { AppProfile } from "../../_components/app-profile";
-import { Link } from "react-router-dom";
-import LogoutButton from "../../_components/logout-button";
-import RolePermit from "../../_components/role-permit";
 import { useModals } from "../../_hooks/use-modals";
 import PasswordFormModal from "../../_components/modals/password.form";
 import { useEffect, useRef, useState } from "react";
