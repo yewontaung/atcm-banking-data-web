@@ -94,7 +94,7 @@ export default function DatasetListPage() {
                                     <th>Type</th>
                                     <th>Status</th>
                                     <th>Member</th>
-                                    <th>Last Updated</th>
+                                    <th>Updated</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -152,7 +152,7 @@ function DatasetListItemRow({ item, onDelete }: { item: DatasetListItem, onDelet
     return (
         <tr className="align-middle">
             <td>{item.datasetId}</td>
-            <td>{item.command}</td>
+            <td className="text-truncate" style={{maxWidth: 250,}}>{item.command}</td>
             <td>
                 {item.datasetType === "Training" && <Badge>{item.datasetType}</Badge>}
                 {item.datasetType === "Validation" && <Badge bg="secondary" text="white">{item.datasetType}</Badge>}

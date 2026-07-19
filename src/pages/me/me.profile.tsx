@@ -3,7 +3,7 @@ import { iconSize } from "../../_utils/constants";
 import { CloudUploadIcon, MailIcon, PlusSquareIcon, SettingsIcon, TagIcon, Trash2Icon, User2Icon } from "lucide-react";
 import TotalDataCard from "../../_components/totaldata-card";
 import ThemeButton from "../../_components/theme-button";
-import { updateAuthProfile } from "../../_utils/auth.utils";
+import { getAuthProfile, updateAuthProfile } from "../../_utils/auth.utils";
 import { AppProfile } from "../../_components/app-profile";
 import { Link } from "react-router-dom";
 import LogoutButton from "../../_components/logout-button";
@@ -13,6 +13,7 @@ import PasswordFormModal from "../../_components/modals/password.form";
 import { useEffect, useRef, useState } from "react";
 import * as accountService from "../../services/account.service"
 import { type ProfileResult, type AuthProfile } from "../../_models/outputs";
+import AppNav from "../../_components/app-nav";
 
 export default function MeProfilePage() {
     const changePasswordModal = useModals()
@@ -37,43 +38,11 @@ export default function MeProfilePage() {
 
         setProfile(profile ? {...profile, profileUrl: imageUrl}: profile)
         updateAuthProfile(profile as AuthProfile)
-
-        console.log(imageUrl)
     }
 
     return (
         <Container>
-            <div className="position-absolute end-0 me-4 d-flex gap-2">
-                <ThemeButton className="" />
-                <Dropdown>
-                    <Dropdown.Toggle className="bg-transparent text-primary">
-                        <AppProfile className="me-2" img={accountService.resolveProfileImage(profile?.profileUrl)} /> {profile?.accountName}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu className="">
-                        <Dropdown.Item as="button">
-                            <Link to="/me/profile" className="text-decoration-none d-block">
-                                <User2Icon size={iconSize} className="me-3" /> Profile
-                            </Link>
-                        </Dropdown.Item>
-                        <Dropdown.Item as="button">
-                            <Link to="/datasets/add" className="text-decoration-none d-block">
-                                <PlusSquareIcon size={iconSize} className="me-3" /> Add Dataset
-                            </Link>
-                        </Dropdown.Item>
-                        <RolePermit roles={["Admin", "Supervisor"]}>
-                            <Dropdown.Item as="button">
-                                <Link to="/datasets/bin" className="text-decoration-none d-block">
-                                    <Trash2Icon size={iconSize} className="me-3" /> Recycle bin
-                                </Link>
-                            </Dropdown.Item>
-                        </RolePermit>
-                        <Dropdown.Divider />
-                        <Dropdown.Item as="button">
-                            <LogoutButton />
-                        </Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
-            </div>
+            <AppNav profile={profile ?? getAuthProfile()} className="position-absolute end-0 me-4 d-flex gap-2" />
 
             <Row>
                 <div className="col-auto">

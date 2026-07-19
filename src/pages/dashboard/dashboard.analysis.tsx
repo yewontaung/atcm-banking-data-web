@@ -1,7 +1,6 @@
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { Badge, Container, Form, ListGroup } from "react-bootstrap";
 import { AppProfile } from "../../_components/app-profile";
-import { defaultProfile } from "../../_utils/constants";
 import TotalDataCard from "../../_components/totaldata-card";
 import * as dashboardService from "../../services/dashboard.service"
 import { useEffect, useState } from "react";
