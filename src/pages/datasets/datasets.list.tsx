@@ -4,46 +4,50 @@ import { EyeIcon, Trash2Icon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
 import FormsSelect from "../../_components/ui/forms.select";
 import InputsGroup from "../../_components/ui/inputs.group";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Pagination from "../../_components/ui/pagination";
-import { useEffect, useState } from "react";
-import type { DatasetListItem, PaginationResult } from "../../_models/outputs";
+import { useState } from "react";
+import type { DatasetListItem, DatasetType } from "../../_models/outputs";
 import { useForms } from "../../_hooks/use-forms";
 import type { DatasetSearch } from "../../_models/searches";
 import * as datasetService from "../../services/dataset.service"
 import { formateDate } from "../../_utils/date-formats";
 import { useModals } from "../../_hooks/use-modals";
 import RolePermit from "../../_components/role-permit";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function DatasetListPage() {
 
-    const [datasets, setDatasets] = useState<PaginationResult<DatasetListItem>>()
-    const [loading, setLoading] = useState(true)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const search: DatasetSearch = {
+        keyword: searchParams.get("keyword") ?? "",
+        status: searchParams.get("status") as "pending" | "approved" ?? "",
+        strategy: searchParams.get("strategy") as "intent" | "collector" | "command" ?? "",
+        datasetType: searchParams.get("datasetType") as DatasetType ?? "",
+        page: Number(searchParams.get("page") ?? 1),
+        size: Number(searchParams.get("size") ?? 10),
+    }
 
-    const {controls, onChange, ...form} = useForms<DatasetSearch>({
-        keyword: "",
-        status: "",
-        strategy: "",
-        datasetType: "",
-        page:1,
-        size: 10,
+
+    const { controls, onChange, ...form } = useForms<DatasetSearch>(search)
+
+    const { data: datasets, isLoading: loading } = useQuery({
+        queryKey: ["datasets", search],
+        queryFn: () => datasetService.search(search)
     })
 
-    useEffect(() => {
-        const loadDatasets = async () => {
-            const result = await datasetService.search()
-            setDatasets(result)
-            setLoading(false)
-        }
+    const client = useQueryClient()
 
-        loadDatasets()
-
-    }, [])
-
-    const onSearch = async (search?:DatasetSearch) => {
-        console.log(search ?? form.form)
-        const result = await datasetService.search(search ?? form.form) 
-        setDatasets(result)
+    const onSearch = async (search?: DatasetSearch) => {
+        const data = search ?? form.form
+        setSearchParams({
+            keyword: data.keyword,
+            status: data.status,
+            strategy: data.strategy,
+            datasetType: data.datasetType,
+            page: data.page.toString(),
+            size: data.size.toString(),
+        })
     }
 
     const [toDelete, setToDelete] = useState<DatasetListItem>()
@@ -57,7 +61,7 @@ export default function DatasetListPage() {
                     <FormsSelect name={controls.status} value={form.form.status} onChange={onChange} label="Status" className="col-auto px-0 pe-1">
                         <option value="">All</option>
                         <option value="pending">Pending</option>
-                        <option value="approved">Reviewed</option>
+                        <option value="approved">Approved</option>
                     </FormsSelect>
                     <FormsSelect name={controls.datasetType} value={form.form.datasetType} onChange={onChange} label="Dataset Type" className="col-auto px-0 pe-1">
                         <option value="">All</option>
@@ -66,7 +70,7 @@ export default function DatasetListPage() {
                         <option value="Testing">Testing</option>
                     </FormsSelect>
                     <InputsGroup label="Search Strategy" className="col-auto px-0 pe-1">
-                        <Form.Select name={controls.strategy} value={form.form.strategy} onChange={onChange} className="w-auto" style={{width: "35%"}}>
+                        <Form.Select name={controls.strategy} value={form.form.strategy} onChange={onChange} className="w-auto" style={{ width: "35%" }}>
                             <option value="">All</option>
                             <option value="collector">Collector</option>
                             <option value="command">Command</option>
@@ -103,13 +107,13 @@ export default function DatasetListPage() {
                             </tbody>
                         </Table>
 
-                        {datasets && datasets.total > 0 && <Pagination onChange={(page, size) => onSearch({...form.form, page, size})} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
-                        
-                        <Modal size="sm" animation={false} show={deleteModal.isOpen} 
-                        onHide={() => {
-                            setToDelete(undefined)
-                            deleteModal.closeModal()
-                        }}>
+                        {datasets && datasets.total > 0 && <Pagination onChange={(page, size) => onSearch({ ...form.form, page, size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
+
+                        <Modal size="sm" animation={false} show={deleteModal.isOpen}
+                            onHide={() => {
+                                setToDelete(undefined)
+                                deleteModal.closeModal()
+                            }}>
                             <Modal.Body>
                                 <h6>Are you sure to move dataset to bin?</h6>
                                 <div className="d-flex justify-content-center gap-3 mt-4">
@@ -119,11 +123,13 @@ export default function DatasetListPage() {
                                     }} variant="outline-secondary" className="w-50">Cancel</Button>
 
                                     <Button autoFocus onClick={async () => {
-                                        if(!toDelete) return
+                                        if (!toDelete) return
 
-                                        const result = await datasetService.moveToBin(toDelete.datasetId)
+                                        await datasetService.moveToBin(toDelete.datasetId)
 
-                                        setDatasets(prev => (prev ? {...prev, total: prev.total- 1, items: prev.items.filter(i => i.datasetId !== result.resultData)} : prev))
+                                        client.invalidateQueries({
+                                            queryKey: ["datasets"]
+                                        })
 
                                         setToDelete(undefined)
                                         deleteModal.closeModal()
@@ -142,7 +148,7 @@ export default function DatasetListPage() {
     )
 }
 
-function DatasetListItemRow({item, onDelete}:{item:DatasetListItem, onDelete?:(item:DatasetListItem) => void}) {
+function DatasetListItemRow({ item, onDelete }: { item: DatasetListItem, onDelete?: (item: DatasetListItem) => void }) {
     return (
         <tr className="align-middle">
             <td>{item.datasetId}</td>
