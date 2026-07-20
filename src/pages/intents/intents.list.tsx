@@ -80,7 +80,7 @@ export default function IntentsListPage() {
     }
 
     return (
-        <MainContentDecorator title="Intetns Management">
+        <MainContentDecorator title="Intents Management">
             <RolePermit roles={["Admin"]}>
                 <IntentFormModal state={modalState} onSaved={onSaved} />
             </RolePermit>
@@ -96,7 +96,7 @@ export default function IntentsListPage() {
             </Container>
             {/* Intent List Table */}
             <Container className="mt-4">
-                <Table hover>
+                <Table responsive hover>
                     <thead>
                         <tr className="align-middle">
                             <th>ID</th>

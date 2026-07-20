@@ -1,6 +1,6 @@
 import MainContentDecorator from "../../_components/decorators/main-content"
 import { Accordion, Badge, Button, Container, Modal, Row, Tab, Tabs } from "react-bootstrap"
-import { GroupLabelInfo } from "../../_components/label-info"
+import { GroupLabelInfo, LabelInfo } from "../../_components/label-info"
 import { Calendar1Icon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
 import { iconSize } from "../../_utils/constants"
 import type { DatasetDetailIntent, DatasetDetailResult, DatasetInfo, DatasetIntentNerAlignment, ModificationResult } from "../../_models/outputs"
@@ -87,8 +87,8 @@ const LoadingCard = () => {
 function JsonDatasetView({ detailResult: { info, dataset }, handlers }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler }) {
     return (
         <Container className="p-2">
-            <Row>
-                <div className="col-8">
+            <Row className="row-gap-3">
+                <div className="col-12 col-xl-8">
                     <div className="h-100 position-relative border">
                         <CopyBtn className="z-3 position-absolute end-0 me-4" onCopy={() => window.navigator.clipboard.writeText(JSON.stringify(dataset))} />
                         <div className="overflow-y-auto overflow-x-auto" style={{ maxHeight: 500 }}>
@@ -116,8 +116,8 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers }: { det
 
     return (
         <Container className="p-3">
-            <Row>
-                <div className="col-8">
+            <Row className="row-gap-3">
+                <div className="col-12 col-xl-8">
                     <div className="border p-3">
                         <div className="d-flex justify-content-between align-items-center">
                             <label>User Command</label>
@@ -279,21 +279,33 @@ function IntentDetailList({ className, intents, alignments }: { className?: stri
                 <Accordion.Item key={i.intentId} eventKey={`${i.intentId}`}>
                     <Accordion.Header>
                         <Container fluid className="position-relative">
-                            <Row className="gap-1">
-                                <GroupLabelInfo label="Intent" className="col-6 px-0" info={i.label} />
-                                <GroupLabelInfo label="Start" className="col-2 px-0" info={i.startIndex} />
-                                <GroupLabelInfo label="End" className="col-2 px-0" info={i.endIndex} />
+                            <Row className="gap-1 d-md-flex d-none">
+                                <GroupLabelInfo label="Intent" className="col-6 px-0 flex-shrink-0" info={i.label} />
+                                <GroupLabelInfo label="Start" className="col-2 px-0 flex-shrink-0" info={i.startIndex} />
+                                <GroupLabelInfo label="End" className="col-2 px-0 flex-shrink-0" info={i.endIndex} />
+                            </Row>
+                            <Row className="gap-1 d-md-flex d-md-none">
+                                <LabelInfo label="Intent" className="col-6 px-0 flex-shrink-0" info={i.label} />
+                                <LabelInfo label="Start" className="col-2 px-0 flex-shrink-0" info={i.startIndex} />
+                                <LabelInfo label="End" className="col-2 px-0 flex-shrink-0" info={i.endIndex} />
                             </Row>
                         </Container>
                     </Accordion.Header>
                     <Accordion.Body>
                         <Container fluid>
                             {alignments.filter(a => a.intentId === i.intentId).map((item) => (
-                                <Row key={item.nerId} className="gap-1 mt-2">
-                                    <GroupLabelInfo label="Ner" className="col-5 px-0" info={item.label} />
-                                    <GroupLabelInfo label="Start" className="col-2 px-0" info={item.startIndex} />
-                                    <GroupLabelInfo label="End" className="col-2 px-0" info={item.endIndex} />
-                                </Row>
+                                <>
+                                    <Row key={item.nerId} className="gap-1 d-md-flex d-none mt-2">
+                                        <GroupLabelInfo label="Ner" className="col-5 px-0" info={item.label} />
+                                        <GroupLabelInfo label="Start" className="col-2 px-0" info={item.startIndex} />
+                                        <GroupLabelInfo label="End" className="col-2 px-0" info={item.endIndex} />
+                                    </Row>
+                                    <Row key={item.nerId} className="gap-1 d-md-flex d-md-none">
+                                        <LabelInfo  className="col-5 px-0" info={item.label} />
+                                        <LabelInfo className="col-2 px-0" info={item.startIndex} />
+                                        <LabelInfo  className="col-2 px-0" info={item.endIndex} />
+                                    </Row>
+                                </>
                             ))}
                         </Container>
                     </Accordion.Body>

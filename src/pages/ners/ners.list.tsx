@@ -92,7 +92,7 @@ export default function NersListPage() {
                 {/* NER List Table */}
 
 
-                <Table hover>
+                <Table responsive hover>
                     <thead>
                         <tr className="align-middle">
                             <th>ID</th>

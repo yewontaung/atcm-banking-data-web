@@ -32,18 +32,18 @@ export default function DashboardAnalysisPage() {
         <MainContentDecorator title="Dashboard">
             {/* Total Data Analysis */}
             <Container className="mt-3">
-                <div className="row gap-3">
+                <div className="row gap-3 justify-content-center justify-content-lg-start">
                     <TotalDataCard label="Dataset" total={datasetMeta?.totalDatasets ?? 0} className="col-auto w-25" />
                     <TotalDataCard label="Intents" total={datasetMeta?.totalIntents ?? 0} className="col-auto w-25" />
                     <TotalDataCard label="Named Entities" total={datasetMeta?.totalNers ?? 0} className="col-auto w-25" />
                 </div>
             </Container>
             <Container className="mt-3">
-                <div className="row">
-                    <div className="col-auto px-0 w-50">
+                <div className="row gap-3">
+                    <div className="col-12 col-md-5 px-0">
                         <CollectRate todayRate={todayCollectRate ?? []} loading={loading} yesterdayRate={yesterdayCollectRate ?? []}/>
                     </div>
-                    <div className="col-auto w-50">
+                    <div className="col-12 col-md-5 px-0">
                         <DatasetAnalysisSection analysis={datasetAnalysis} />
                     </div>
                 </div>

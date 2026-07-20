@@ -7,11 +7,12 @@ export default function MainLayout() {
     if(!access_token) {
         return <Navigate to="/auth/sign-in" replace />
     }
+    
     return (
         <>
             <div className="container-fluid">
                 <div className="row">
-                    <div className="col-auto">
+                    <div className="d-none d-lg-block col-auto">
                         <AppSidebar />
                     </div>
                     <div className="col ps-0 pe-2">

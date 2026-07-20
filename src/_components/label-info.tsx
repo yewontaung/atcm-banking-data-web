@@ -9,7 +9,7 @@ export function GroupLabelInfo({label, info, className}:{label?:string, info:str
     )
 }
 
-export function LabelInfo({label, info, className}:{label?:string, info:string, className?:string}) {
+export function LabelInfo({label, info, className}:{label?:string, info:string | number, className?:string}) {
     return (
         <div className={className}>
             {label && <label>{label}</label>}

@@ -1,4 +1,9 @@
 .sidebar-item:hover {
-  background-color: blue;
-  color: white;
+  background-color: rgba(1, 135, 212, 0.05);
+  color: #0d6efd !important; /* Bootstrap primary color */
+}
+
+.sidebar-item.active {
+  background-color: #0d6efd;
+  color: #fff !important;
 }

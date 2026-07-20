@@ -33,7 +33,7 @@ export default function DatasetBinPage() {
 
             {/* Dataset List Table */}
             <Container className="mt-3">
-                <Table hover>
+                <Table responsive hover>
                     <thead>
                         <tr>
                             <th>ID</th>

@@ -85,7 +85,7 @@ export default function MemberListPage() {
 
             {/* Member List Table */}
             <div className="mt-3 container">
-                <Table hover>
+                <Table responsive hover>
                     <thead>
                         <tr>
                             <th>ID</th>

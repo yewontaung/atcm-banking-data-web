@@ -24,15 +24,15 @@ export default function DatasetExportPage() {
 
     return (
         <MainContentDecorator title="Export Dataset">
-            <Container className="mt-3 p-4">
-                <Row className="justify-content-center">
-                    <div className="col-3">
+            <Container className="mt-3 p-4 ">
+                <Row className="gap-3">
+                    <div className="col-lg-3 col-md-5">
                         <DatasetTypeSelectCard className="border border-primary" title="Training Dataset" datasetType={"Training"} total={datasets.trainingDatasets} />
                     </div>
-                    <div className="col-3">
+                    <div className="col-lg-3 col-md-5">
                         <DatasetTypeSelectCard className="border border-info" title="Testing Dataset" datasetType={"Testing"} total={datasets.testingDatasets} />
                     </div>
-                    <div className="col-3">
+                    <div className="col-lg-3 col-md-5">
                         <DatasetTypeSelectCard className="border border-secondary" title="Validation Dataset" datasetType={"Validation"} total={datasets.validationDatasets} />
                     </div>
                 </Row>
