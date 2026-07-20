@@ -54,6 +54,7 @@ export default function IntentsListPage() {
 
     const deleteModal = useModals()
     const [toDelete, setToDelete] = useState<IntentListItem>()
+    const [deleting, setDeleting] = useState(false)
 
     const editModal = useModals()
     const editForm = useForms<IntentEditForm>({
@@ -101,9 +102,9 @@ export default function IntentsListPage() {
                         <tr className="align-middle">
                             <th>ID</th>
                             <th>Intent</th>
-                            <th>Named Entities</th>
+                            <th>Entities</th>
                             <th className="text-end pe-3">Dataset</th>
-                            <th>Last Updated</th>
+                            <th>Updated</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -128,6 +129,7 @@ export default function IntentsListPage() {
 
                 {/* View Detail section */}
                 <Modal show={viewDetailModal.isOpen} onHide={viewDetailModal.closeModal}>
+                    <Modal.Header closeButton>Intent Detail</Modal.Header>
                     <Modal.Body>
                         <LabelInfo label="Intent Label" info={toView?.label ?? ""} className="mb-3" />
                         <div className="d-flex gap-2 align-items-center mb-3">
@@ -196,14 +198,18 @@ export default function IntentsListPage() {
                                 deleteModal.closeModal()
                             }} variant="outline-secondary">Cancel</Button>
                             <Button autoFocus onClick={async () => {
-                                console.log("Deleting")
                                 if (!toDelete) return
-                                const result = await intentService.remove(toDelete?.intentId)
-                                setIntents(intents.filter(i => i.intentId !== result.resultData))
-                                deleteModal.closeModal()
-                                setToDelete(undefined)
+                                try {
+                                    setDeleting(true)
+                                    const result = await intentService.remove(toDelete?.intentId)
+                                    setIntents(intents.filter(i => i.intentId !== result.resultData))
+                                    deleteModal.closeModal()
+                                    setToDelete(undefined)
+                                } finally{
+                                    setDeleting(false)                                    
+                                }
 
-                            }} variant="danger">Delete</Button>
+                            }} variant="danger" disabled={deleting}>{deleting ? "Deleting..." : "Delete"}</Button>
                         </div>
                     </Modal.Body>
                 </Modal>

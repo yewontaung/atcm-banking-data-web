@@ -11,7 +11,7 @@ export default function DatasetFormatModal({ modalState }: { modalState: ModalSt
     
     return (
         <Modal size="lg" show={modalState.isOpen} onHide={modalState.closeModal}>
-            {/* <Modal.Header closeButton></Modal.Header> */}
+            <Modal.Header closeButton>Dataset Format Preview</Modal.Header>
             <Modal.Body className="position-relative">
                 <CopyBtn onCopy={() => {
                     window.navigator.clipboard.writeText(`${promptState}\n\`\`\` \n${JSON.stringify(datasetFormformat, null, 2)}\n\`\`\``)

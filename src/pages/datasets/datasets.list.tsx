@@ -53,6 +53,7 @@ export default function DatasetListPage() {
 
     const [toDelete, setToDelete] = useState<DatasetListItem>()
     const deleteModal = useModals()
+    const [deleting, setDeleting] = useState(false)
 
     return (
         <MainContentDecorator title="Dataset Management">
@@ -127,8 +128,12 @@ export default function DatasetListPage() {
 
                             <Button autoFocus onClick={async () => {
                                 if (!toDelete) return
-
-                                await datasetService.moveToBin(toDelete.datasetId)
+                                try {
+                                    setDeleting(true)
+                                    await datasetService.moveToBin(toDelete.datasetId)
+                                } finally {
+                                    setDeleting(false)
+                                }
 
                                 client.invalidateQueries({
                                     queryKey: ["datasets"]
@@ -136,7 +141,7 @@ export default function DatasetListPage() {
 
                                 setToDelete(undefined)
                                 deleteModal.closeModal()
-                            }} variant="danger" className="w-50">Move to bin</Button>
+                            }} variant="danger" className="w-50" disabled={deleting}>{deleting ? "Deleting..." : "Move to bin"}</Button>
                         </div>
                     </Modal.Body>
                 </Modal>

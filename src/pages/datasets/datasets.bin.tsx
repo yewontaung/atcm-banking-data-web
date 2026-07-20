@@ -17,6 +17,7 @@ export default function DatasetBinPage() {
     const [datasets, setDatasets] = useState<PaginationResult<DatasetListItem>>()
     const [toDelete, setToDelete] = useState<DatasetListItem>()
     const deleteModal = useModals()
+    const [deleting, setDeleting] = useState(false)
     const [pageInfo, setPageInfo] = useState<{ page: number, size: number }>({ page: 1, size: 10 })
 
     useEffect(() => {
@@ -74,14 +75,19 @@ export default function DatasetBinPage() {
 
                             <Button autoFocus onClick={async () => {
                                 if (!toDelete) return
+                                try {
+                                    setDeleting(true)
 
-                                const result = await datasetService.deleteDataset(toDelete.datasetId)
+                                    const result = await datasetService.deleteDataset(toDelete.datasetId)
 
-                                setDatasets(prev => (prev ? { ...prev, total: prev.total - 1, items: prev.items.filter(i => i.datasetId !== result.resultData) } : prev))
+                                    setDatasets(prev => (prev ? { ...prev, total: prev.total - 1, items: prev.items.filter(i => i.datasetId !== result.resultData) } : prev))
 
-                                setToDelete(undefined)
-                                deleteModal.closeModal()
-                            }} variant="danger" className="w-50">Delete</Button>
+                                    setToDelete(undefined)
+                                    deleteModal.closeModal()
+                                } finally {
+                                    setDeleting(false)
+                                }
+                            }} variant="danger" className="w-50" disabled={deleting}>{deleting ? "Deleting..." : "Delete"}</Button>
                         </div>
                     </Modal.Body>
                 </Modal>

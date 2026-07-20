@@ -48,7 +48,8 @@ export default function NersListPage() {
 
     const deleteModal = useModals()
     const [toDelete, setToDelete] = useState<NerListItem>()
-
+    const [deleting, setDeleting] = useState(false)
+    
     const remove = async () => {
         if (!toDelete) return
         try {
@@ -97,8 +98,8 @@ export default function NersListPage() {
                         <tr className="align-middle">
                             <th>ID</th>
                             <th>Label</th>
-                            <th>Last Updated</th>
                             <th className="text-end pe-4">Intends</th>
+                            <th>Updated</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -107,8 +108,8 @@ export default function NersListPage() {
                             <tr key={i.nerId} className="align-middle">
                                 <td>{i.nerId}</td>
                                 <td>{i.label}</td>
-                                <td>{formateDate(i.lastUpdated)}</td>
                                 <td className="text-end pe-4">{i.intents}</td>
+                                <td>{formateDate(i.lastUpdated)}</td>
                                 <td>
                                     <RolePermit roles={["Admin"]}>
                                         <ButtonGroup>
@@ -154,10 +155,15 @@ export default function NersListPage() {
                                 deleteModal.closeModal()
                             }} variant="outline-secondary" className="w-50">Cancel</Button>
                             <Button autoFocus onClick={async () => {
-                                await remove()
-                                setToDelete(undefined)
-                                deleteModal.closeModal()
-                            }} variant="danger" className="w-50">Delete</Button>
+                                try {
+                                    setDeleting(true)
+                                    await remove()
+                                    setToDelete(undefined)
+                                    deleteModal.closeModal()
+                                } finally {
+                                    setDeleting(false)
+                                }
+                            }} variant="danger" className="w-50" disabled={deleting}>{deleting ? "Deleting..." : "Delete"}</Button>
                         </div>
                     </Modal.Body>
                 </Modal>
