@@ -53,7 +53,7 @@ const DatasetTypeSelectCard = ({title, datasetType, total, className}:{title:str
             <Card.Body>
                 <small className="text-success-emphasis text-center d-block">Total approves</small>
                 <h2 className="text-center my-3 mt-2">{total}</h2>
-                <Button className="w-100 mx-auto d-block" onClick={onDownload}><DownloadIcon className="me-3" size={iconSize} /> Download</Button>
+                <Button className="w-100 mx-auto d-block" onClick={onDownload} disabled={total == 0}><DownloadIcon className="me-3" size={iconSize} /> Download</Button>
             </Card.Body>
         </Card>
     )

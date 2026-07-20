@@ -10,13 +10,18 @@ import { resolveProfileImage } from "../../services/account.service";
 export default function DashboardAnalysisPage() {
 
     const [dashboard, setDashboard] = useState<DashboardAnalysis>()
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         const loadDashboard = async () => {
-            const result = await dashboardService.analysis()
-            setDashboard(result)
+            try {
+                setLoading(true)
+                const result = await dashboardService.analysis()
+                setDashboard(result)
+            } finally {
+                setLoading(false)
+            }
         }
-
         loadDashboard()
 
     }, [])
@@ -36,7 +41,7 @@ export default function DashboardAnalysisPage() {
             <Container className="mt-3">
                 <div className="row">
                     <div className="col-auto px-0 w-50">
-                        <CollectRate todayRate={todayCollectRate ?? []} yesterdayRate={yesterdayCollectRate ?? []}/>
+                        <CollectRate todayRate={todayCollectRate ?? []} loading={loading} yesterdayRate={yesterdayCollectRate ?? []}/>
                     </div>
                     <div className="col-auto w-50">
                         <DatasetAnalysisSection analysis={datasetAnalysis} />
@@ -73,7 +78,7 @@ function DatasetAnalysisSection({className, analysis}:{className?:string, analys
     )
 }
 
-function CollectRate({className, todayRate, yesterdayRate}:{className?:string, todayRate:CollectRate[], yesterdayRate:CollectRate[]}) {
+function CollectRate({className, todayRate, yesterdayRate, loading}:{className?:string, todayRate:CollectRate[], yesterdayRate:CollectRate[], loading?:boolean}) {
 
     const [filter, setFilter] = useState<"today" | "yesterday">("today")
 
@@ -92,6 +97,9 @@ function CollectRate({className, todayRate, yesterdayRate}:{className?:string, t
                         <span>Member</span>
                         <span>Collected Data</span>
                     </ListGroup.Item>
+
+                    {loading && <div className="text-center p-4 rounded">Loading</div>}
+
                     {filter === "today" && todayRate.map(i => (
                         <ListGroup.Item key={i.memberId} className="d-flex justify-content-between align-items-center">
                             <div>

@@ -253,13 +253,18 @@ function ManualEditForm({setPreview, previewModalState}:{previewModalState:Modal
         setSelected({ start: range.startOffset, end: range.endOffset })
     }
 
+    const [saving, setSaving] = useState(false)
+
     const onSave = async () => {
         if(!form.validate()) return
         try {
+            setSaving(true)
             const result = await datasetService.save(form.form)
             navigate(`/datasets/${result.resultData}`)
         } catch {
             console.log("Something wrong.")
+        } finally {
+            setSaving(false)
         }
     }
 
@@ -289,7 +294,7 @@ function ManualEditForm({setPreview, previewModalState}:{previewModalState:Modal
 
                 <div className="col-3">
                     <Button type="button" onClick={openPreview} className="w-100 mb-3" variant="outline-primary">Preview form</Button>
-                    <Button type="submit" className="w-100">Save for review</Button>
+                    <Button type="submit" className="w-100" disabled={saving}>{saving ? "Saving..." : "Save for review"}</Button>
                 </div>
             </Form>
         </Container>
@@ -329,17 +334,22 @@ function JsonEditForm() {
         }
     }
 
+    const [saving, setSaving] = useState(false)
+
     const save = async () => {
         if(formData.length === 0) {
             setWarning("Please enter valid datasets.")
             return
         }
         try {
+            setSaving(true)
             await datasetService.saveJsons(formData)
             navigate("/datasets")
         } catch(e) {
             console.log(e)
             setWarning("Something went wrong. Please check input and try again.")
+        } finally {
+            setSaving(false)
         }
         
     }
@@ -362,7 +372,7 @@ function JsonEditForm() {
                 <div className="col-auto">
                     <div>
                         {/* <Button onClick={state.openModal} variant="outline-primary" className="w-100 mb-3">Preview form</Button> */}
-                        <Button onClick={save} className="w-100">Save for review</Button>
+                        <Button onClick={save} className="w-100" disabled={saving}>{saving ? "Saving..." : "Save for review"}</Button>
                     </div>
                 </div>
             </Row>

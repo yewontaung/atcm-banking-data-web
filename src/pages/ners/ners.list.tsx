@@ -14,6 +14,7 @@ import RolePermit from "../../_components/role-permit";
 import { formateDate } from "../../_utils/date-formats";
 import NEREditModal from "../../_components/modals/ner.edit";
 import type { NerForm } from "../../_models/schemas";
+import { AppLoading } from "../../_components/app-loading";
 
 export default function NersListPage() {
     const state = useModals()
@@ -62,11 +63,11 @@ export default function NersListPage() {
     const [toEdit, setToEdit] = useState<NerListItem>()
 
 
-    const edit = async (form:NerForm) => {
-        if(!toEdit) return
+    const edit = async (form: NerForm) => {
+        if (!toEdit) return
         try {
-            const result = await nersService.edit(toEdit.nerId,form)
-            setNers(ners.map(i => i.nerId !== result.resultData ? i : {...i, label: form.label}))
+            const result = await nersService.edit(toEdit.nerId, form)
+            setNers(ners.map(i => i.nerId !== result.resultData ? i : { ...i, label: form.label }))
         } catch (e) {
             console.log(e)
         }
@@ -90,45 +91,45 @@ export default function NersListPage() {
             <Container className="mt-3">
                 {/* NER List Table */}
 
-                {!loading && (
-                    <Table hover>
-                        <thead>
-                            <tr className="align-middle">
-                                <th>ID</th>
-                                <th>Label</th>
-                                <th>Last Updated</th>
-                                <th className="text-end pe-4">Intends</th>
-                                <th></th>
+
+                <Table hover>
+                    <thead>
+                        <tr className="align-middle">
+                            <th>ID</th>
+                            <th>Label</th>
+                            <th>Last Updated</th>
+                            <th className="text-end pe-4">Intends</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {ners.map(i => (
+                            <tr key={i.nerId} className="align-middle">
+                                <td>{i.nerId}</td>
+                                <td>{i.label}</td>
+                                <td>{formateDate(i.lastUpdated)}</td>
+                                <td className="text-end pe-4">{i.intents}</td>
+                                <td>
+                                    <RolePermit roles={["Admin"]}>
+                                        <ButtonGroup>
+                                            <Button onClick={() => {
+                                                setToEdit(i)
+                                                editModal.openModal()
+                                            }} size="sm" variant="outline-primary"><Edit2Icon size={iconSize} /></Button>
+                                            {i.intents === 0 && (
+                                                <Button onClick={() => {
+                                                    setToDelete(i)
+                                                    deleteModal.openModal()
+                                                }} size="sm" variant="outline-danger"><TrashIcon size={iconSize} /></Button>
+                                            )}
+                                        </ButtonGroup>
+                                    </RolePermit>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {ners.map(i => (
-                                <tr key={i.nerId} className="align-middle">
-                                    <td>{i.nerId}</td>
-                                    <td>{i.label}</td>
-                                    <td>{formateDate(i.lastUpdated)}</td>
-                                    <td className="text-end pe-4">{i.intents}</td>
-                                    <td>
-                                            <RolePermit roles={["Admin"]}>
-                                                <ButtonGroup>
-                                                    <Button onClick={() => {
-                                                        setToEdit(i)
-                                                        editModal.openModal()
-                                                    }} size="sm" variant="outline-primary"><Edit2Icon size={iconSize} /></Button>
-                                                    {i.intents === 0 && (
-                                                        <Button onClick={() => {
-                                                            setToDelete(i)
-                                                            deleteModal.openModal()
-                                                        }} size="sm" variant="outline-danger"><TrashIcon size={iconSize} /></Button>
-                                                    )}
-                                                </ButtonGroup>
-                                            </RolePermit>
-                                        </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                )}
+                        ))}
+                    </tbody>
+                </Table>
+                {loading && <AppLoading />}
                 {!loading && ners.length == 0 && <Alert className="text-center w-100" variant="light">Add named enities.</Alert>}
 
                 {/* Ner Edit Section */}

@@ -26,12 +26,18 @@ export default function DatasetDetailPage() {
     const { datasetId } = useParams<"datasetId">()
 
     const [detailResult, setDetailResult] = useState<DatasetDetailResult>()
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         const loadDetailResult = async () => {
             if (!datasetId) return
-            const result = await datasetService.findById(Number(datasetId))
-            setDetailResult(result)
+            try {
+                setLoading(true)
+                const result = await datasetService.findById(Number(datasetId))
+                setDetailResult(result)
+            } finally {
+                setLoading(false)
+            }
         }
 
         loadDetailResult()
@@ -60,13 +66,21 @@ export default function DatasetDetailPage() {
         <MainContentDecorator title="Dataset Detail">
             <Tabs defaultActiveKey="info-view">
                 <Tab eventKey="info-view" title="Information View">
+                    {loading && <LoadingCard />}
                     {detailResult && <DefaultDatasetView handlers={handlers} detailResult={detailResult} />}
                 </Tab>
                 <Tab eventKey="json-view" title="Json View">
+                    {loading && <LoadingCard />}
                     {detailResult && <JsonDatasetView handlers={handlers} detailResult={detailResult} />}
                 </Tab>
             </Tabs>
         </MainContentDecorator>
+    )
+}
+
+const LoadingCard = () => {
+    return (
+        <div className="text-center rounded p-3 border border-secondary mt-4">Loading...</div>
     )
 }
 
@@ -140,6 +154,11 @@ function MetadataCard(
     const deleteModal = useModals()
     const binModal = useModals()
 
+    const [approving, setApproving] = useState(false)
+    const [restoring, setRestoring] = useState(false)
+    const [deleting, setDeleting] = useState(false)
+    const [removing, setRemoving] = useState(false)
+
     return (
         <>
             <div className="border p-3 d-flex flex-column row-gap-3">
@@ -157,7 +176,7 @@ function MetadataCard(
 
             <RolePermit roles={["Admin", "Supervisor"]}>
                 {/* Approve section */}
-                {!info.approved && !info.deleted && <Button onClick={approveModal.openModal} variant="success" className="w-100 mt-3">Approve Dataset</Button>}
+                {!info.approved && !info.deleted && <Button onClick={approveModal.openModal} variant="success" className="w-100 mt-3" disabled={approving}>{approving ? "Approving" : "Approve Dataset"}</Button>}
                 {!info.approved && !info.deleted && (
                     <Modal size="sm" animation={false} show={approveModal.isOpen} onHide={approveModal.closeModal}>
                         <Modal.Body>
@@ -165,10 +184,15 @@ function MetadataCard(
                             <div className="d-flex gap-2 mt-3">
                                 <Button onClick={approveModal.closeModal} variant="outline-secondary" className="w-50">Cancel</Button>
                                 <Button autoFocus onClick={async () => {
-                                    const result = await datasetService.approve(info.datasetId)
-                                    approveModal.closeModal()
-                                    onApproved?.(result)
-                                }} variant="success" className="w-50">Approve</Button>
+                                    try {
+                                        setApproving(true)
+                                        const result = await datasetService.approve(info.datasetId)
+                                        approveModal.closeModal()
+                                        onApproved?.(result)
+                                    } finally {
+                                        setApproving(false)
+                                    }
+                                }} variant="success" className="w-50" disabled={approving}>{approving ? "Approving..." : "Approve"}</Button>
                             </div>
                         </Modal.Body>
                     </Modal>
@@ -183,10 +207,15 @@ function MetadataCard(
                             <div className="d-flex gap-2 mt-3">
                                 <Button onClick={binModal.closeModal} variant="outline-secondary" className="w-50">Cancel</Button>
                                 <Button autoFocus onClick={async () => {
-                                    const result = await datasetService.moveToBin(info.datasetId)
-                                    binModal.closeModal()
-                                    onMovedToBin?.(result)
-                                }} variant="danger" className="w-50">Move to Bin</Button>
+                                    try {
+                                        setRemoving(true)
+                                        const result = await datasetService.moveToBin(info.datasetId)
+                                        binModal.closeModal()
+                                        onMovedToBin?.(result)
+                                    } finally {
+                                        setRemoving(false)
+                                    }
+                                }} variant="danger" className="w-50" disabled={removing}>{removing ? "Deleting..." : "Move to Bin"}</Button>
                             </div>
                         </Modal.Body>
                     </Modal>
@@ -201,10 +230,15 @@ function MetadataCard(
                             <div className="d-flex gap-2 mt-3">
                                 <Button onClick={restoreModal.closeModal} variant="outline-secondary" className="w-50">Cancel</Button>
                                 <Button autoFocus onClick={async () => {
-                                    const result = await datasetService.restore(info.datasetId)
-                                    restoreModal.closeModal()
-                                    onRestored?.(result)
-                                }} variant="primary" className="w-50">Restore</Button>
+                                    try {
+                                        setRestoring(true)
+                                        const result = await datasetService.restore(info.datasetId)
+                                        restoreModal.closeModal()
+                                        onRestored?.(result)
+                                    } finally {
+                                        setRestoring(false)
+                                    }
+                                }} variant="primary" className="w-50">{restoring ? "Restoring..." : "Restore"}</Button>
                             </div>
                         </Modal.Body>
                     </Modal>
@@ -219,10 +253,15 @@ function MetadataCard(
                             <div className="d-flex gap-2 mt-3">
                                 <Button onClick={deleteModal.closeModal} variant="outline-secondary" className="w-50">Cancel</Button>
                                 <Button autoFocus onClick={async () => {
-                                    const result = await datasetService.deleteDataset(info.datasetId)
-                                    deleteModal.closeModal()
-                                    onDeleted?.(result)
-                                }} variant="danger" className="w-50">Delete</Button>
+                                    try {
+                                        setDeleting(true)
+                                        const result = await datasetService.deleteDataset(info.datasetId)
+                                        deleteModal.closeModal()
+                                        onDeleted?.(result)
+                                    } finally {
+                                        setDeleting(false)
+                                    }
+                                }} variant="danger" className="w-50" disabled={deleting}>{deleting ? "Deleting..." : "Delete"}</Button>
                             </div>
                         </Modal.Body>
                     </Modal>

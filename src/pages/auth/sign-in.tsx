@@ -21,13 +21,15 @@ export default function SignInPage() {
         }
     )
 
+    const [logginIn, setLoggingIn] = useState(false)
+
     const onSubmit = async (e:React.SubmitEvent) => {
         e.preventDefault()
 
         if(!form.validate()) return
 
         try {
-            console.log(form.form)
+            setLoggingIn(true)
             await signIn(form.form)
             navigate("/dashboard", {replace: true})
         } catch(e) {
@@ -39,6 +41,8 @@ export default function SignInPage() {
                 setAlert(e.message)
                 setTimeout(() => setAlert(undefined), 5000)
             }
+        } finally {
+            setLoggingIn(false)
         }
     }
 
@@ -51,7 +55,7 @@ export default function SignInPage() {
 
                 <FormsInput label="Password" error={errors.password} type="password" name={controls.password} onChange={onChange} placeholder="Enter Password" className="mb-3" />
 
-                <Button type="submit" className="w-100">Log In</Button>
+                <Button type="submit" className="w-100" disabled={logginIn}>{logginIn ? "Loggin in..." : "Log In"}</Button>
             </form>
         </div>
     )

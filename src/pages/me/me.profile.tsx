@@ -13,7 +13,7 @@ import AppNav from "../../_components/app-nav";
 export default function MeProfilePage() {
     const changePasswordModal = useModals()
     const [profile, setProfile] = useState<ProfileResult>()
-
+    
     useEffect(() => {
         const loadProfile = async () => {
             const result = await accountService.profile()
@@ -26,13 +26,20 @@ export default function MeProfilePage() {
     }, [])
 
     const fileRef = useRef<HTMLInputElement>(null)
-    const uploadProfile = async () => {
-        if(!fileRef.current?.files) return
-        const file = fileRef.current.files[0]
-        const {imageUrl} = await accountService.uploadProfile(file)
+    const [uploading, setUploading] = useState(false)
 
-        setProfile(profile ? {...profile, profileUrl: imageUrl}: profile)
-        updateAuthProfile(profile as AuthProfile)
+    const uploadProfile = async () => {
+        if (!fileRef.current?.files) return
+        try {
+            setUploading(true)
+            const file = fileRef.current.files[0]
+            const { imageUrl } = await accountService.uploadProfile(file)
+
+            setProfile(profile ? { ...profile, profileUrl: imageUrl } : profile)
+            updateAuthProfile(profile as AuthProfile)
+        } finally {
+            setUploading(false)
+        }
     }
 
     return (
@@ -47,7 +54,7 @@ export default function MeProfilePage() {
                             <div><User2Icon className="me-3" size={iconSize} /> {profile?.accountName}</div>
                             <div><MailIcon className="me-3" size={iconSize} /> {profile?.accountEmail}</div>
                             <div><TagIcon className="me-3" size={iconSize} /> {profile?.accountRole}</div>
-                            <Button onClick={() => fileRef.current?.click()} className="mt-3"><CloudUploadIcon size={iconSize} /> Upload Profile</Button>
+                            <Button onClick={() => fileRef.current?.click()} className="mt-3" disabled={uploading}><CloudUploadIcon size={iconSize} /> {uploading ? "Uploading..." : "Upload Profile"}</Button>
                             <input ref={fileRef} onChange={uploadProfile} type="file" name="file" accept="image/*" className="d-none" />
                             <Button onClick={changePasswordModal.openModal} variant="outline-primary" className=""><SettingsIcon size={iconSize} /> Change Password</Button>
                             <PasswordFormModal state={changePasswordModal} />

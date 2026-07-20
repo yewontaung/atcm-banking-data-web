@@ -15,6 +15,7 @@ import { formateDate } from "../../_utils/date-formats";
 import { useModals } from "../../_hooks/use-modals";
 import RolePermit from "../../_components/role-permit";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { AppLoading } from "../../_components/app-loading";
 
 export default function DatasetListPage() {
 
@@ -83,65 +84,62 @@ export default function DatasetListPage() {
             </Container>
             {/* Dataset List Table */}
             <Container className="mt-3">
+                <Table hover>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Command</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Member</th>
+                            <th>Updated</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                {!loading && (
-                    <>
-                        <Table hover>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Command</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>Member</th>
-                                    <th>Updated</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        {datasets?.items.map(i => <DatasetListItemRow onDelete={(item) => {
+                            setToDelete(item)
+                            deleteModal.openModal()
+                        }} item={i} key={i.datasetId} />)}
 
-                                {datasets?.items.map(i => <DatasetListItemRow onDelete={(item) => {
-                                    setToDelete(item)
-                                    deleteModal.openModal()
-                                }} item={i} key={i.datasetId} />)}
+                    </tbody>
+                </Table>
 
-                            </tbody>
-                        </Table>
-        
-                        {!loading && datasets?.items.length == 0 && <Alert className="text-center w-100" variant="light">Add Datasets.</Alert>}
+                {loading && <AppLoading />}
 
-                        {datasets && datasets.total > 0 && <Pagination size={datasets.size} onChange={(page, size) => onSearch({ ...form.form, page, size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
+                {!loading && datasets?.items.length == 0 && <Alert className="text-center w-100" variant="light">Add Datasets.</Alert>}
 
-                        <Modal size="sm" animation={false} show={deleteModal.isOpen}
-                            onHide={() => {
+                {datasets && datasets.total > 0 && <Pagination size={datasets.size} onChange={(page, size) => onSearch({ ...form.form, page, size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
+
+                <Modal size="sm" animation={false} show={deleteModal.isOpen}
+                    onHide={() => {
+                        setToDelete(undefined)
+                        deleteModal.closeModal()
+                    }}>
+                    <Modal.Body>
+                        <h6>Are you sure to move dataset to bin?</h6>
+                        <div className="d-flex justify-content-center gap-3 mt-4">
+                            <Button onClick={() => {
                                 setToDelete(undefined)
                                 deleteModal.closeModal()
-                            }}>
-                            <Modal.Body>
-                                <h6>Are you sure to move dataset to bin?</h6>
-                                <div className="d-flex justify-content-center gap-3 mt-4">
-                                    <Button onClick={() => {
-                                        setToDelete(undefined)
-                                        deleteModal.closeModal()
-                                    }} variant="outline-secondary" className="w-50">Cancel</Button>
+                            }} variant="outline-secondary" className="w-50">Cancel</Button>
 
-                                    <Button autoFocus onClick={async () => {
-                                        if (!toDelete) return
+                            <Button autoFocus onClick={async () => {
+                                if (!toDelete) return
 
-                                        await datasetService.moveToBin(toDelete.datasetId)
+                                await datasetService.moveToBin(toDelete.datasetId)
 
-                                        client.invalidateQueries({
-                                            queryKey: ["datasets"]
-                                        })
+                                client.invalidateQueries({
+                                    queryKey: ["datasets"]
+                                })
 
-                                        setToDelete(undefined)
-                                        deleteModal.closeModal()
-                                    }} variant="danger" className="w-50">Move to bin</Button>
-                                </div>
-                            </Modal.Body>
-                        </Modal>
-                    </>
-                )}
+                                setToDelete(undefined)
+                                deleteModal.closeModal()
+                            }} variant="danger" className="w-50">Move to bin</Button>
+                        </div>
+                    </Modal.Body>
+                </Modal>
 
             </Container>
         </MainContentDecorator>
@@ -152,7 +150,7 @@ function DatasetListItemRow({ item, onDelete }: { item: DatasetListItem, onDelet
     return (
         <tr className="align-middle">
             <td>{item.datasetId}</td>
-            <td className="text-truncate" style={{maxWidth: 250,}}>{item.command}</td>
+            <td className="text-truncate" style={{ maxWidth: 250, }}>{item.command}</td>
             <td>
                 {item.datasetType === "Training" && <Badge>{item.datasetType}</Badge>}
                 {item.datasetType === "Validation" && <Badge bg="secondary" text="white">{item.datasetType}</Badge>}

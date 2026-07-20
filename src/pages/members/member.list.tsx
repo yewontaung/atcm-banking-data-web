@@ -15,11 +15,12 @@ import RolePermit from "../../_components/role-permit";
 import MemberDetailModal from "../../_components/modals/member.detail";
 import { AppProfile } from "../../_components/app-profile";
 import { resolveProfileImage } from "../../services/account.service";
+import { AppLoading } from "../../_components/app-loading";
 
 export default function MemberListPage() {
     const modalState = useModals()
     const [loading, setLoading] = useState(true)
-    const {onChange, controls, ...form} = useForms<MemberSearch>({keyword: "", role: ""})
+    const { onChange, controls, ...form } = useForms<MemberSearch>({ keyword: "", role: "" })
 
     const [members, setMembers] = useState<MemberListItem[]>([])
     useEffect(() => {
@@ -34,7 +35,7 @@ export default function MemberListPage() {
         loadMembers()
     }, [setMembers])
 
-    const onSearch = async (search?:MemberSearch) => {
+    const onSearch = async (search?: MemberSearch) => {
         const items = await memberService.search(search)
         setMembers(items)
     }
@@ -50,7 +51,7 @@ export default function MemberListPage() {
 
     const viewModal = useModals()
     const [toView, setToView] = useState<ProfileResult>()
-    const onView = async (item:MemberListItem) => {
+    const onView = async (item: MemberListItem) => {
         const result = await memberService.profile(item.memberId)
         setToView(result)
     }
@@ -84,29 +85,28 @@ export default function MemberListPage() {
 
             {/* Member List Table */}
             <div className="mt-3 container">
-                {!loading && (
-                    <Table hover>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Member</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th className="text-end pe-4">Dataset</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {members.map(i => <MemberListTableRow onView={(item) => {
-                                viewModal.openModal()
-                                onView(item)
-                            }} onEdit={(item) => {
-                                setToEdit(item)
-                                modalState.openModal()
-                            }} key={i.memberId} member={i} />)}
-                        </tbody>
-                    </Table>
-                )}
+                <Table hover>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Member</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th className="text-end pe-4">Dataset</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {members.map(i => <MemberListTableRow onView={(item) => {
+                            viewModal.openModal()
+                            onView(item)
+                        }} onEdit={(item) => {
+                            setToEdit(item)
+                            modalState.openModal()
+                        }} key={i.memberId} member={i} />)}
+                    </tbody>
+                </Table>
+                {loading && <AppLoading />}
                 <MemberDetailModal modalState={viewModal} profile={toView} />
                 {!loading && members.length == 0 && <Alert className="text-center w-100" variant="light">Add a member.</Alert>}
             </div>
@@ -114,7 +114,7 @@ export default function MemberListPage() {
     )
 }
 
-function MemberListTableRow({member, onEdit, onView}: {member:MemberListItem, onEdit?:(item:MemberListItem) => void, onView?:(item:MemberListItem) => void}) {
+function MemberListTableRow({ member, onEdit, onView }: { member: MemberListItem, onEdit?: (item: MemberListItem) => void, onView?: (item: MemberListItem) => void }) {
     const { memberId, memberProfile, memberName, memberEmail, role, datasets } = member
     return (
         <tr className="align-middle">

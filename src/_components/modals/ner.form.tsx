@@ -5,16 +5,21 @@ import type { ModificationResult } from "../../_models/outputs";
 import { useForms } from "../../_hooks/use-forms";
 import type { NerForm } from "../../_models/schemas";
 import * as nersService from "../../services/ner.service"
+import { useState } from "react";
 
 export default function NERForm({state:{isOpen, closeModal}, onSaved}:{state:ModalState, onSaved?:(result:ModificationResult<number>) => void}) {
     const {controls, errors, ...form} = useForms<NerForm>({label: ""}, (data, error) => {
         if(!data.label || data.label === "") error.label = "Please enter ner label."
     })
 
+    const [saving, setSaving] = useState(false)
+
     const onSubmit = async (e:React.SubmitEvent) => {
         e.preventDefault()
         if(!form.validate()) return
+        setSaving(true)
         const result = await nersService.save(form.form)
+        setSaving(false)
         onSaved?.(result)
         form.reset()
     }
@@ -31,7 +36,7 @@ export default function NERForm({state:{isOpen, closeModal}, onSaved}:{state:Mod
 
                     <div className="d-flex column-gap-2 mt-3">
                         <Button className="w-50" variant="outline-secondary" onClick={closeModal}>Cancel</Button>
-                        <Button type="submit" className="w-50">Add</Button>
+                        <Button disabled={saving} type="submit" className="w-50">{saving ? "Saving..." : "Add"}</Button>
                     </div>
                 </Form>
             </Modal.Body>
