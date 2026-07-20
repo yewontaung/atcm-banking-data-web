@@ -42,7 +42,7 @@ export default function DatasetBinPage() {
                                     <th>Type</th>
                                     <th>Status</th>
                                     <th>Member</th>
-                                    <th>Last Updated</th>
+                                    <th>Updated</th>
                                     <th></th>
                                 </tr>
                             </thead>
