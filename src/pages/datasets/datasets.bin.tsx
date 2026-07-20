@@ -48,7 +48,7 @@ export default function DatasetBinPage() {
                             </thead>
                             <tbody>
 
-                                {datasets?.items.map(i => <IntentListItemRow onDelete={(item) => {
+                                {datasets?.items.map(i => <DatasetListItemRow onDelete={(item) => {
                                     setToDelete(item)
                                     deleteModal.openModal()
                                 }} item={i} key={i.datasetId} />)}
@@ -96,11 +96,11 @@ export default function DatasetBinPage() {
     )
 }
 
-function IntentListItemRow({ item, onDelete }: { item: DatasetListItem, onDelete?: (item: DatasetListItem) => void }) {
+function DatasetListItemRow({ item, onDelete }: { item: DatasetListItem, onDelete?: (item: DatasetListItem) => void }) {
     return (
         <tr className="align-middle">
             <td>{item.datasetId}</td>
-            <td>{item.command}</td>
+            <td className="text-truncate" style={{maxWidth: 250,}}>{item.command}</td>
             <td>
                 <Badge>{item.datasetType}</Badge>
             </td>
