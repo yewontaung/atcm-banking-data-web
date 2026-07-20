@@ -1,6 +1,6 @@
 export const iconSize = 15
 
-export const defaultProfile = "/imgs/profile.jpg"
+export const defaultProfile = "/imgs/profile.avif"
 
 export const datasetFormformat = [
     {

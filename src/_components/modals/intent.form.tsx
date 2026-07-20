@@ -13,6 +13,8 @@ export default function IntentFormModal({state:{isOpen, closeModal}, onSaved}:{s
     const [toSelectNers, setToSelectNers] = useState<NerListItem[]>([])
     const [selectedNers, setSelectedNers] = useState<NerListItem[]>([])
 
+    const [saving, setSaving] = useState(false)
+
     useEffect(() => {
         const loadNers = async () => {
             const items = await nerService.search()
@@ -48,8 +50,10 @@ export default function IntentFormModal({state:{isOpen, closeModal}, onSaved}:{s
     const save = async () => {
         console.log(form.form)
         if(!form.validate()) return
+        setSaving(true)
         const result = await intentService.save(form.form)
         form.reset()
+        setSaving(false)
         setSelectedNers([])
         setToSelectNers(ners)
         onSaved?.(result)
@@ -87,7 +91,7 @@ export default function IntentFormModal({state:{isOpen, closeModal}, onSaved}:{s
                     </Container>
                     <div className="d-flex gap-2">
                         <Button onClick={cancel} type="button" variant="outline-secondary" className="w-50">Cancel</Button>
-                        <Button type="submit" className="w-50">Save Intent</Button>
+                        <Button type="submit" className="w-50" disabled={saving}>{saving ? "Saving..." : "Save Intent"}</Button>
                     </div>
                 </Form>
             </Modal.Body>

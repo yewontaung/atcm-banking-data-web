@@ -1,7 +1,6 @@
 import type { ModificationResult, ProfileResult, ProfileUploadResult } from "../_models/outputs";
 import type { PasswordForm } from "../_models/schemas";
 import { defaultProfile } from "../_utils/constants";
-import { BASE_API } from "../_utils/env.utils";
 import { protectedRequest } from "../rest-client/api";
 
 export async function changePassword(form:PasswordForm) {
@@ -24,7 +23,7 @@ export async function profile() {
 }
 
 export function resolveProfileImage(profileImage?:string) {
-    return profileImage ? `${BASE_API}${profileImage}` : defaultProfile
+    return profileImage ? `${profileImage}` : defaultProfile
 }
 
 export async function uploadProfile(file: File) {

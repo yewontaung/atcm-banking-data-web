@@ -37,9 +37,12 @@ export default function PasswordFormModal({state:{isOpen, closeModal}, onSaved}:
         setTimeout(() => setPasswordAlert(undefined), 5000)
     }, [passwordAlert])
 
+    const [saving, setSaving] = useState(false)
+
     const save = async () => {
         if(!form.validate()) return
         try {
+            setSaving(true)
             await accountService.changePassword(form.form)
             form.reset()
             setPasswordAlert("Password updated successfully.")
@@ -49,6 +52,8 @@ export default function PasswordFormModal({state:{isOpen, closeModal}, onSaved}:
                 console.log(e.message)
                 setPasswordAlert(e.message)
             }
+        } finally {
+            setSaving(false)
         }
     }
 
@@ -70,7 +75,7 @@ export default function PasswordFormModal({state:{isOpen, closeModal}, onSaved}:
                             form.reset()
                             closeModal()
                         }} variant="outline-secondary" className="w-50">Cancel</Button>
-                        <Button type="submit" variant="primary" className="w-50">Save</Button>
+                        <Button type="submit" variant="primary" className="w-50" disabled={saving}>{saving ? "Saving..." : "Save"}</Button>
                     </div>
                 </form>
             </Modal.Body>

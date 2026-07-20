@@ -15,16 +15,24 @@ import RolePermit from "../../_components/role-permit";
 import type { IntentEditForm } from "../../_models/schemas";
 import { LabelInfo } from "../../_components/label-info";
 import CopyBtn from "../../_components/copy-btn";
+import { AppLoading } from "../../_components/app-loading";
 
 export default function IntentsListPage() {
     const modalState = useModals()
     const { controls, onChange, ...form } = useForms<IntentSearch>({ q: "" })
     const [intents, setIntents] = useState<IntentListItem[]>([])
 
+    const [loading, setLoading] = useState(false)
+
     useEffect(() => {
         const loadIntents = async () => {
-            const items = await intentService.search()
-            setIntents(items)
+            try {
+                setLoading(true)
+                const items = await intentService.search()
+                setIntents(items)
+            } finally {
+                setLoading(false)
+            }
         }
         loadIntents()
 
@@ -59,16 +67,20 @@ export default function IntentsListPage() {
         }
     })
 
+    const [saving, setSaving] = useState(false)
+
     const onEdit = async () => {
         if (!editForm.validate()) return
+        setSaving(true)
         const result = await intentService.edit(editForm.form)
         setIntents(intents.map(i => (i.intentId !== result.resultData ? i : { ...i, label: editForm.form.label, description: editForm.form.description })))
         editForm.reset()
+        setSaving(false)
         editModal.closeModal()
     }
 
     return (
-        <MainContentDecorator title="Intetns Management">
+        <MainContentDecorator title="Intents Management">
             <RolePermit roles={["Admin"]}>
                 <IntentFormModal state={modalState} onSaved={onSaved} />
             </RolePermit>
@@ -84,14 +96,14 @@ export default function IntentsListPage() {
             </Container>
             {/* Intent List Table */}
             <Container className="mt-4">
-                <Table hover>
+                <Table responsive hover>
                     <thead>
                         <tr className="align-middle">
                             <th>ID</th>
                             <th>Intent</th>
-                            <th>Last Updated</th>
-                            <th className="text-end pe-3">Dataset</th>
                             <th>Named Entities</th>
+                            <th className="text-end pe-3">Dataset</th>
+                            <th>Last Updated</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -112,10 +124,10 @@ export default function IntentsListPage() {
                             }} />)}
                     </tbody>
                 </Table>
+                {loading && <AppLoading />}
 
                 {/* View Detail section */}
                 <Modal show={viewDetailModal.isOpen} onHide={viewDetailModal.closeModal}>
-                    <Modal.Header closeButton></Modal.Header>
                     <Modal.Body>
                         <LabelInfo label="Intent Label" info={toView?.label ?? ""} className="mb-3" />
                         <div className="d-flex gap-2 align-items-center mb-3">
@@ -162,7 +174,7 @@ export default function IntentsListPage() {
                                     editForm.reset()
                                     editModal.closeModal()
                                 }} variant="outline-secondary">Cancel</Button>
-                                <Button type="submit">Save</Button>
+                                <Button type="submit" disabled={saving}>{saving ? "Saving..." : "Save"}</Button>
                             </div>
                         </form>
 
@@ -216,13 +228,13 @@ function IntentListItemRow(
         <tr className="align-middle">
             <td>{intentId}</td>
             <td>{label}</td>
-            <td>{formateDate(lastUpdated)}</td>
-            <td className="text-end pe-3">{dataset}</td>
             <td className="col-3">
                 <div className="d-flex gap-2 flex-wrap">
                     {ners && ners.map(item => <Badge key={item.nerId}>{item.label}</Badge>)}
                 </div>
             </td>
+            <td className="text-end pe-3">{dataset}</td>
+            <td>{formateDate(lastUpdated)}</td>
             <td>
                 <ButtonGroup>
                     <Button onClick={() => {

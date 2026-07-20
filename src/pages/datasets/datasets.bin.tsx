@@ -9,6 +9,7 @@ import { iconSize } from "../../_utils/constants";
 import { useModals } from "../../_hooks/use-modals";
 import Pagination from "../../_components/ui/pagination";
 import * as datasetService from "../../services/dataset.service"
+import { AppLoading } from "../../_components/app-loading";
 
 export default function DatasetBinPage() {
 
@@ -16,7 +17,7 @@ export default function DatasetBinPage() {
     const [datasets, setDatasets] = useState<PaginationResult<DatasetListItem>>()
     const [toDelete, setToDelete] = useState<DatasetListItem>()
     const deleteModal = useModals()
-    const [pageInfo, setPageInfo] = useState<{page:number, size:number}>({page: 1, size: 10})
+    const [pageInfo, setPageInfo] = useState<{ page: number, size: number }>({ page: 1, size: 10 })
 
     useEffect(() => {
         const loadDasetBin = async () => {
@@ -32,63 +33,60 @@ export default function DatasetBinPage() {
 
             {/* Dataset List Table */}
             <Container className="mt-3">
-                {!loading && (
-                    <>
-                        <Table hover>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Command</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>Member</th>
-                                    <th>Last Updated</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                <Table responsive hover>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Command</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Member</th>
+                            <th>Updated</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                                {datasets?.items.map(i => <IntentListItemRow onDelete={(item) => {
-                                    setToDelete(item)
-                                    deleteModal.openModal()
-                                }} item={i} key={i.datasetId} />)}
+                        {datasets?.items.map(i => <DatasetListItemRow onDelete={(item) => {
+                            setToDelete(item)
+                            deleteModal.openModal()
+                        }} item={i} key={i.datasetId} />)}
 
-                            </tbody>
-                        </Table>
+                    </tbody>
+                </Table>
 
-                        {datasets && datasets.total > 0 && <Pagination onChange={(page, size) => setPageInfo({page, size})} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
+                {loading && <AppLoading />}
 
-                        <Modal size="sm" animation={false} show={deleteModal.isOpen}
-                            onHide={() => {
+                {datasets && datasets.total > 0 && <Pagination onChange={(page, size) => setPageInfo({ page, size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
+
+                <Modal size="sm" animation={false} show={deleteModal.isOpen}
+                    onHide={() => {
+                        setToDelete(undefined)
+                        deleteModal.closeModal()
+                    }}>
+                    <Modal.Body>
+                        <h6>Are you sure to delete the dataset?</h6>
+                        <div className="d-flex justify-content-center gap-3 mt-4">
+                            <Button onClick={() => {
                                 setToDelete(undefined)
                                 deleteModal.closeModal()
-                            }}>
-                            <Modal.Body>
-                                <h6>Are you sure to delete the dataset?</h6>
-                                <div className="d-flex justify-content-center gap-3 mt-4">
-                                    <Button onClick={() => {
-                                        setToDelete(undefined)
-                                        deleteModal.closeModal()
-                                    }} variant="outline-secondary" className="w-50">Cancel</Button>
+                            }} variant="outline-secondary" className="w-50">Cancel</Button>
 
-                                    <Button autoFocus onClick={async () => {
-                                        if (!toDelete) return
+                            <Button autoFocus onClick={async () => {
+                                if (!toDelete) return
 
-                                        const result = await datasetService.deleteDataset(toDelete.datasetId)
+                                const result = await datasetService.deleteDataset(toDelete.datasetId)
 
-                                        setDatasets(prev => (prev ? { ...prev, total: prev.total - 1, items: prev.items.filter(i => i.datasetId !== result.resultData) } : prev))
+                                setDatasets(prev => (prev ? { ...prev, total: prev.total - 1, items: prev.items.filter(i => i.datasetId !== result.resultData) } : prev))
 
-                                        setToDelete(undefined)
-                                        deleteModal.closeModal()
-                                    }} variant="danger" className="w-50">Delete</Button>
-                                </div>
-                            </Modal.Body>
-                        </Modal>
-                    </>
-                )}
+                                setToDelete(undefined)
+                                deleteModal.closeModal()
+                            }} variant="danger" className="w-50">Delete</Button>
+                        </div>
+                    </Modal.Body>
+                </Modal>
 
-
-                {!loading && datasets?.items.length == 0 && <Alert className="text-center w-100" variant="light">Add Datasets.</Alert>}
+                {!loading && datasets?.items.length == 0 && <Alert className="text-center w-100" variant="light">No datasets in bin.</Alert>}
 
             </Container>
 
@@ -96,11 +94,11 @@ export default function DatasetBinPage() {
     )
 }
 
-function IntentListItemRow({ item, onDelete }: { item: DatasetListItem, onDelete?: (item: DatasetListItem) => void }) {
+function DatasetListItemRow({ item, onDelete }: { item: DatasetListItem, onDelete?: (item: DatasetListItem) => void }) {
     return (
         <tr className="align-middle">
             <td>{item.datasetId}</td>
-            <td>{item.command}</td>
+            <td className="text-truncate" style={{ maxWidth: 250, }}>{item.command}</td>
             <td>
                 <Badge>{item.datasetType}</Badge>
             </td>

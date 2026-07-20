@@ -4,7 +4,7 @@ import { FormsInput } from "../ui/forms.input";
 import type { ActionCallback, NerListItem } from "../../_models/outputs";
 import { useForms } from "../../_hooks/use-forms";
 import type { NerForm } from "../../_models/schemas";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function NEREditModal({item, state:{isOpen, closeModal}, onEdit}:{item?:NerListItem, state:ModalState, onEdit?:ActionCallback<NerForm>}) {
 
@@ -12,9 +12,13 @@ export default function NEREditModal({item, state:{isOpen, closeModal}, onEdit}:
         if(!data.label || data.label === "") error.label = "Please enter ner label."
     })
 
+    const [saving, setSaving] = useState(false)
+
     const submit = async () => {
         if(!form.validate()) return
-        onEdit?.(form.form)
+        setSaving(true)
+        await onEdit?.(form.form)
+        setSaving(false)
         form.reset()
     }
 
@@ -33,7 +37,7 @@ export default function NEREditModal({item, state:{isOpen, closeModal}, onEdit}:
                     <FormsInput onChange={form.onChange} name={controls.label} error={errors.label} value={form.form.label} label="Enter NER label" placeholder="Enter named entites" className="mb-3" />
                     <div className="d-flex column-gap-2 mt-3">
                         <Button className="w-50" variant="outline-secondary" onClick={closeModal}>Cancel</Button>
-                        <Button type="submit" className="w-50">Save</Button>
+                        <Button type="submit" className="w-50" disabled={saving}>{saving ? "Saving..." : "Save"}</Button>
                     </div>
                 </Form>
             </Modal.Body>

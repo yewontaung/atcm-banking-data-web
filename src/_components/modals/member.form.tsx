@@ -6,7 +6,7 @@ import { useForms } from "../../_hooks/use-forms";
 import type { MemberForm } from "../../_models/schemas";
 import * as memberService from "../../services/member.service"
 import type { ActionCallback, MemberListItem, ModificationResult } from "../../_models/outputs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function MemberForm({ state: { isOpen, closeModal, }, onSaved, member }: { member?: MemberListItem, state: ModalState, onSaved?: ActionCallback<ModificationResult<number>> }) {
     const { onChange, controls, errors, setForm, reset, ...form } = useForms<MemberForm>({
@@ -33,10 +33,13 @@ export default function MemberForm({ state: { isOpen, closeModal, }, onSaved, me
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [member])
 
+    const [saving, setSaving] = useState(false)
+
     const onSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault()
         if (!form.validate()) return
         try {
+            setSaving(true)
             if (member) {
                 const result = await memberService.edit(member.memberId, form.form)
                 reset()
@@ -48,6 +51,8 @@ export default function MemberForm({ state: { isOpen, closeModal, }, onSaved, me
             }
         } catch (e) {
             console.log(e)
+        } finally {
+            setSaving(false)
         }
     }
 
@@ -69,7 +74,7 @@ export default function MemberForm({ state: { isOpen, closeModal, }, onSaved, me
                     <FormsInput error={errors.memberEmail} onChange={onChange} name={controls.memberEmail} value={form.form.memberEmail} className="mb-3" label="Email" placeholder="Enter member email" />
                     <div className="d-flex column-gap-2 mt-3">
                         <Button type="button" className="w-50" variant="outline-secondary" onClick={closeModal}>Cancel</Button>
-                        <Button type="submit" className="w-50">{member ? "Save" : "Add"}</Button>
+                        <Button type="submit" className="w-50" disabled={saving}>{saving ? "Saving..." : member ? "Save" : "Add"}</Button>
                     </div>
                 </Form>
             </Modal.Body>

@@ -1,6 +1,6 @@
 export type DatasetType = "Training" | "Validation" | "Testing"
 export type MemberRole = "Admin" | "Supervisor" | "Collector"
-export type ActionCallback<T> = (t: T) => void
+export type ActionCallback<T> = (t: T) => void | Promise<void>
 
 export type MemberListItem = {
     memberId: number

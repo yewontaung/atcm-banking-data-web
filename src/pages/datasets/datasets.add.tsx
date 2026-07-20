@@ -2,7 +2,7 @@ import { Accordion, Button, ButtonGroup, Container, Form, InputGroup, Row, Tab, 
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { BadgeCheckIcon, TrashIcon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
-import { GroupLabelInfo } from "../../_components/label-info";
+import { GroupLabelInfo, LabelInfo } from "../../_components/label-info";
 import InputsGroup from "../../_components/ui/inputs.group";
 import type { DatasetForm, DatasetIntentItem, DatasetIntentNerItem } from "../../_models/schemas";
 import { useControls } from "../../_hooks/use-controls";
@@ -65,7 +65,7 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
     })
 
     const nerForm = useControls<DatasetIntentNerItem[]>([])
-    
+
     const onIntentChange = (strId: string) => {
         if (strId === "") {
             intentForm.reset()
@@ -74,7 +74,7 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
         }
         const intentId = Number(strId)
         const intent = intents.filter(i => i.intentId === intentId)[0]
-        intentForm.setData({ intentId: intent.intentId, label: intent.label, startIndex: 0, endIndex: 0, ners:[] })
+        intentForm.setData({ intentId: intent.intentId, label: intent.label, startIndex: 0, endIndex: 0, ners: [] })
         nerForm.setData(intent.ners.map(i => ({ ...i, startIndex: 0, endIndex: 0, intentId: strId })))
     }
 
@@ -117,7 +117,7 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
         intentControl.remove(index)
     }
 
-    const [checkedTarget, setCheckTarget] = useState<{ targetId: string|number, target: "intent" | "ner" } | undefined>(undefined)
+    const [checkedTarget, setCheckTarget] = useState<{ targetId: string | number, target: "intent" | "ner" } | undefined>(undefined)
 
     useEffect(() => {
         const onSelection = (start: number, end: number) => {
@@ -153,7 +153,7 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
 
                     <FormsInput label="Start" onChange={e => onIntentIndexChange("start", e.target.value)} className="col-2 px-0" placeholder="0" value={intentForm.data.startIndex} />
                     <FormsInput label="End" onChange={e => onIntentIndexChange("end", e.target.value)} className="col-2 px-0" placeholder="0" value={intentForm.data.endIndex} />
-                    <Button onClick={addIntent} className="w-auto align-self-end mx-1">Add Intent</Button>
+                    <Button onClick={addIntent} className="w-auto align-self-end mx-1">Add <span className="d-none d-md-inline">Intent</span></Button>
                 </Row>
 
                 {nerForm.data.length > 0 && <small className="text-warning">NER Alignment</small>}
@@ -185,10 +185,19 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
                         <Accordion.Item key={intent.intentId} eventKey={`${idx}`}>
                             <Accordion.Header>
                                 <Container fluid className="position-relative">
-                                    <Row className="gap-1">
+                                    <Row className="gap-1 d-none d-md-flex">
                                         <GroupLabelInfo label="Intent" className="col-5 px-0" info={intent.label} />
                                         <GroupLabelInfo label="Start" className="col-2 px-0" info={intent.startIndex} />
                                         <GroupLabelInfo label="End" className="col-2 px-0" info={intent.endIndex} />
+                                        <ButtonGroup className="col-auto align-self-end px-0">
+                                            {/* <Button variant="outline-primary">Edit</Button> */}
+                                            <Button as="div" onClick={() => deleteIntent(intent.intentId, idx)} variant="outline-danger"><TrashIcon size={iconSize} /></Button>
+                                        </ButtonGroup>
+                                    </Row>
+                                    <Row className="gap-1 d-flex d-md-none">
+                                        <LabelInfo label="Intent" className="col-5 px-0" info={intent.label} />
+                                        <LabelInfo label="Start" className="col-2 px-0" info={intent.startIndex} />
+                                        <LabelInfo label="End" className="col-2 px-0" info={intent.endIndex} />
                                         <ButtonGroup className="col-auto align-self-end px-0">
                                             {/* <Button variant="outline-primary">Edit</Button> */}
                                             <Button as="div" onClick={() => deleteIntent(intent.intentId, idx)} variant="outline-danger"><TrashIcon size={iconSize} /></Button>
@@ -200,11 +209,18 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
                                 <Accordion.Body>
                                     <Container fluid>
                                         {intent.ners.map((ne, idx) => (
-                                            <Row key={idx} className="gap-1 mb-1">
-                                                <GroupLabelInfo label="NER" className="col-5 px-0" info={ne.label} />
-                                                <GroupLabelInfo label="Start" className="col-2 px-0" info={ne.startIndex} />
-                                                <GroupLabelInfo label="End" className="col-2 px-0" info={ne.endIndex} />
-                                            </Row>
+                                            <>
+                                                <Row key={idx} className="gap-1 mb-1 d-none d-md-flex">
+                                                    <GroupLabelInfo label="NER" className="col-5 px-0" info={ne.label} />
+                                                    <GroupLabelInfo label="Start" className="col-2 px-0" info={ne.startIndex} />
+                                                    <GroupLabelInfo label="End" className="col-2 px-0" info={ne.endIndex} />
+                                                </Row>
+                                                <Row key={idx} className="gap-1 d-flex d-md-none">
+                                                    <LabelInfo label="NER" className="col-5 px-0" info={ne.label} />
+                                                    <LabelInfo label="Start" className="col-2 px-0" info={ne.startIndex} />
+                                                    <LabelInfo label="End" className="col-2 px-0" info={ne.endIndex} />
+                                                </Row>
+                                            </>
                                         ))}
                                     </Container>
                                 </Accordion.Body>
@@ -218,7 +234,7 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
 }
 
 
-function ManualEditForm({setPreview, previewModalState}:{previewModalState:ModalState, setPreview:(preview:DatasetForm) => void}) {
+function ManualEditForm({ setPreview, previewModalState }: { previewModalState: ModalState, setPreview: (preview: DatasetForm) => void }) {
 
     const navigate = useNavigate()
 
@@ -229,21 +245,21 @@ function ManualEditForm({setPreview, previewModalState}:{previewModalState:Modal
         datasetType: "Training",
         intents: []
     }, (data, error) => {
-        if(!data.command || data.command === "") {
+        if (!data.command || data.command === "") {
             error.command = "Please enter command."
         }
-        if(data.intents.length === 0) {
+        if (data.intents.length === 0) {
             error.intents = "Please add at lease one intent."
         }
     })
 
-    const {controls, errors, onChange, onSubmit, ...form} = formUtils
+    const { controls, errors, onChange, onSubmit, ...form } = formUtils
 
     const openPreview = () => {
         setPreview(form.form)
         previewModalState.openModal()
     }
-    
+
 
     const [selected, setSelected] = useState<{ start: number, end: number }>()
     const onSelected = () => {
@@ -253,19 +269,24 @@ function ManualEditForm({setPreview, previewModalState}:{previewModalState:Modal
         setSelected({ start: range.startOffset, end: range.endOffset })
     }
 
+    const [saving, setSaving] = useState(false)
+
     const onSave = async () => {
-        if(!form.validate()) return
+        if (!form.validate()) return
         try {
+            setSaving(true)
             const result = await datasetService.save(form.form)
             navigate(`/datasets/${result.resultData}`)
         } catch {
             console.log("Something wrong.")
+        } finally {
+            setSaving(false)
         }
     }
 
     return (
         <Container className="mt-3">
-            <Form onSubmit={onSubmit(onSave)} className="row">
+            <Form onSubmit={onSubmit(onSave)} className="row row-gap-3">
                 <div className="col">
                     <div className="mb-3 d-flex justify-content-between align-items-center">
                         <div>
@@ -287,9 +308,9 @@ function ManualEditForm({setPreview, previewModalState}:{previewModalState:Modal
                     <SelectIntentForm selected={selected} className="mt-3" form={formUtils} />
                 </div>
 
-                <div className="col-3">
+                <div className="col-lg-3 col-12">
                     <Button type="button" onClick={openPreview} className="w-100 mb-3" variant="outline-primary">Preview form</Button>
-                    <Button type="submit" className="w-100">Save for review</Button>
+                    <Button type="submit" className="w-100" disabled={saving}>{saving ? "Saving..." : "Save for review"}</Button>
                 </div>
             </Form>
         </Container>
@@ -306,7 +327,7 @@ function JsonEditForm() {
     const navigate = useNavigate()
 
     const onChange = () => {
-        if(!inputRef.current?.value || isEmpty(inputRef.current.value)) {
+        if (!inputRef.current?.value || isEmpty(inputRef.current.value)) {
             setWarning(undefined)
             setFormData([])
             return
@@ -314,7 +335,7 @@ function JsonEditForm() {
         const value = inputRef.current?.value
         try {
             const data = JSON.parse(value) as DatasetForm | DatasetForm[]
-            if(Array.isArray(data)) {
+            if (Array.isArray(data)) {
                 setFormData(data)
             } else {
                 setFormData([data])
@@ -323,33 +344,38 @@ function JsonEditForm() {
             setWarning(undefined)
         } catch (e) {
             setFormData([])
-            if(e instanceof Error) {
+            if (e instanceof Error) {
                 setWarning(e.message)
             }
         }
     }
 
+    const [saving, setSaving] = useState(false)
+
     const save = async () => {
-        if(formData.length === 0) {
+        if (formData.length === 0) {
             setWarning("Please enter valid datasets.")
             return
         }
         try {
+            setSaving(true)
             await datasetService.saveJsons(formData)
             navigate("/datasets")
-        } catch(e) {
+        } catch (e) {
             console.log(e)
             setWarning("Something went wrong. Please check input and try again.")
+        } finally {
+            setSaving(false)
         }
-        
+
     }
 
     const formatModal = useModals()
-    
+
     return (
         <Container className="p-2">
-            <Row>
-                <div className="col-auto flex-fill">
+            <Row className="row-gap-3">
+                <div className="col-lg-auto col-12 flex-fill">
                     <div>
                         <div className="d-flex justify-content-end gap-2">
                             <Button onClick={formatModal.openModal} variant="secondary"><BadgeCheckIcon size={iconSize} /> See Format</Button>
@@ -359,10 +385,10 @@ function JsonEditForm() {
                         <Form.Control ref={inputRef} onChange={onChange} rows={16} as="textarea" placeholder="Enter jsons or paste" className="mt-3" />
                     </div>
                 </div>
-                <div className="col-auto">
+                <div className="col-lg-auto col">
                     <div>
                         {/* <Button onClick={state.openModal} variant="outline-primary" className="w-100 mb-3">Preview form</Button> */}
-                        <Button onClick={save} className="w-100">Save for review</Button>
+                        <Button onClick={save} className="w-100" disabled={saving}>{saving ? "Saving..." : "Save for review"}</Button>
                     </div>
                 </div>
             </Row>

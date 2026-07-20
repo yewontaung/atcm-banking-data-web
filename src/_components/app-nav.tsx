@@ -14,8 +14,8 @@ export default function AppNav({ className, profile }: { className?: string, pro
         <div className={className}>
             <ThemeButton />
             <Dropdown>
-                <Dropdown.Toggle className="bg-transparent d-flex align-items-center text-primary">
-                    <AppProfile className="me-2" img={resolveProfileImage(profile.profileUrl)} /> {profile.accountName}
+                <Dropdown.Toggle className="bg-transparent rounded-pill d-flex align-items-center text-primary px-2">
+                    <AppProfile className="me-2" img={resolveProfileImage(profile.profileUrl)} /> <span className="d-none d-md-inline">{profile.accountName}</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="">
                     <Dropdown.Item as="button">

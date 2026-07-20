@@ -1,7 +1,7 @@
 import { Image, Modal } from "react-bootstrap";
 import type { ProfileResult } from "../../_models/outputs";
 import type { ModalState } from "../../_hooks/use-modals";
-import { defaultProfile, iconSize } from "../../_utils/constants";
+import { iconSize } from "../../_utils/constants";
 import { MailIcon, TagIcon, User2Icon } from "lucide-react";
 import { resolveProfileImage } from "../../services/account.service";
 
