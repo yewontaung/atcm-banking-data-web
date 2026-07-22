@@ -3,7 +3,7 @@ import { Accordion, Badge, Button, Container, Modal, Row, Tab, Tabs } from "reac
 import { GroupLabelInfo, LabelInfo } from "../../_components/label-info"
 import { Calendar1Icon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
 import { iconSize } from "../../_utils/constants"
-import type { DatasetDetailIntent, DatasetDetailResult, DatasetInfo, DatasetIntentNerAlignment, ModificationResult } from "../../_models/outputs"
+import type { DatasetDetailIntent, DatasetDetailResult, DatasetInfo, ModificationResult } from "../../_models/outputs"
 import { AppJsonView } from "../../_components/app-jsonview"
 import { useEffect, useState } from "react"
 import { formateDate } from "../../_utils/date-formats"
@@ -127,9 +127,9 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers }: { det
                             </div>
                         </div>
                         <hr />
-                        <p onMouseUp={onSelected} className="p-2 mt-2">{dataset.command}</p>
+                        <p onMouseUp={onSelected} className="p-2 mt-2">{dataset.text}</p>
                     </div>
-                    <IntentDetailList intents={dataset.intents} alignments={dataset.alignments} className="mt-3" />
+                    <IntentDetailList intents={dataset.intents} className="mt-3" />
                 </div>
                 <div className="col-auto flex-grow-1">
                     <MetadataCard {...handlers} info={info} />
@@ -272,11 +272,11 @@ function MetadataCard(
     )
 }
 
-function IntentDetailList({ className, intents, alignments }: { className?: string, intents: DatasetDetailIntent[], alignments: DatasetIntentNerAlignment[] }) {
+function IntentDetailList({ className, intents }: { className?: string, intents: DatasetDetailIntent[] }) {
     return (
         <Accordion className={className}>
-            {intents.map(i => (
-                <Accordion.Item key={i.intentId} eventKey={`${i.intentId}`}>
+            {intents.map((i, idx) => (
+                <Accordion.Item key={i.intentId} eventKey={`${idx}`}>
                     <Accordion.Header>
                         <Container fluid className="position-relative">
                             <Row className="gap-1 d-md-flex d-none">
@@ -293,7 +293,7 @@ function IntentDetailList({ className, intents, alignments }: { className?: stri
                     </Accordion.Header>
                     <Accordion.Body>
                         <Container fluid>
-                            {alignments.filter(a => a.intentId === i.intentId).map((item) => (
+                            {i.entities.map((item) => (
                                 <>
                                     <Row key={item.nerId} className="gap-1 d-md-flex d-none mt-2">
                                         <GroupLabelInfo label="Ner" className="col-5 px-0" info={item.label} />

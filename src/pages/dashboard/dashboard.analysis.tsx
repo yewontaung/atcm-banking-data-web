@@ -98,7 +98,7 @@ function CollectRate({className, todayRate, yesterdayRate, loading}:{className?:
                         <span>Collected Data</span>
                     </ListGroup.Item>
 
-                    {loading && <div className="text-center p-4 rounded">Loading</div>}
+                    {loading && <div className="text-center p-4 rounded">Loading...</div>}
 
                     {filter === "today" && todayRate.map(i => (
                         <ListGroup.Item key={i.memberId} className="d-flex justify-content-between align-items-center">

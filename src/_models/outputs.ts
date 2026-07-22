@@ -40,26 +40,25 @@ export type DatasetListItem = {
 
 // dataset detail
 
+export type DatasetDetailIntentEntity = {
+    nerId:number
+    label:string
+    startIndex:number
+    endIndex:number
+}
+
 export type DatasetDetailIntent = {
     intentId: number,
     label: string,
     startIndex: number,
     endIndex: number,
-}
-
-export type DatasetIntentNerAlignment = {
-    nerId: number,
-    label: string,
-    startIndex: number,
-    endIndex: number,
-    intentId: number,
+    entities: DatasetDetailIntentEntity[]
 }
 
 export type DatasetDetail = {
     datasetId: number,
-    command: string,
+    text: string,
     intents: DatasetDetailIntent[],
-    alignments: DatasetIntentNerAlignment[],
 }
 
 export type DatasetInfo = {
