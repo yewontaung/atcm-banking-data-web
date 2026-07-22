@@ -1,4 +1,4 @@
-import { Badge, Button, ButtonGroup, Container, Modal, Table } from "react-bootstrap";
+import { Alert, Badge, Button, ButtonGroup, Container, Modal, Table } from "react-bootstrap";
 import MainContentDecorator from "../../_components/decorators/main-content";
 import { Edit2Icon, EyeIcon, Trash2Icon } from "lucide-react";
 import { iconSize } from "../../_utils/constants";
@@ -125,6 +125,7 @@ export default function IntentsListPage() {
                             }} />)}
                     </tbody>
                 </Table>
+                {!loading && intents.length === 0 && <Alert variant="light" className="text-center">Add Intent.</Alert>}
                 {loading && <AppLoading />}
 
                 {/* View Detail section */}

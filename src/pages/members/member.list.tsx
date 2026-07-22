@@ -119,7 +119,7 @@ function MemberListTableRow({ member, onEdit, onView }: { member: MemberListItem
     return (
         <tr className="align-middle">
             <td>{memberId}</td>
-            <td><AppProfile img={resolveProfileImage(memberProfile)} className="me-2" /> {memberName}</td>
+            <td className="text-nowrap"><AppProfile img={resolveProfileImage(memberProfile)} className="me-2" /> {memberName}</td>
             <td>{memberEmail}</td>
             <td>{role}</td>
             <td className="text-end pe-4">{datasets}</td>

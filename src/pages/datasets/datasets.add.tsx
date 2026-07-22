@@ -209,18 +209,18 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
                                 <Accordion.Body>
                                     <Container fluid>
                                         {intent.ners.map((ne, idx) => (
-                                            <>
-                                                <Row key={idx} className="gap-1 mb-1 d-none d-md-flex">
+                                            <div key={idx}>
+                                                <Row className="gap-1 mb-1 d-none d-md-flex">
                                                     <GroupLabelInfo label="NER" className="col-5 px-0" info={ne.label} />
                                                     <GroupLabelInfo label="Start" className="col-2 px-0" info={ne.startIndex} />
                                                     <GroupLabelInfo label="End" className="col-2 px-0" info={ne.endIndex} />
                                                 </Row>
-                                                <Row key={idx} className="gap-1 d-flex d-md-none">
+                                                <Row className="gap-1 d-flex d-md-none">
                                                     <LabelInfo label="NER" className="col-5 px-0" info={ne.label} />
                                                     <LabelInfo label="Start" className="col-2 px-0" info={ne.startIndex} />
                                                     <LabelInfo label="End" className="col-2 px-0" info={ne.endIndex} />
                                                 </Row>
-                                            </>
+                                            </div>
                                         ))}
                                     </Container>
                                 </Accordion.Body>
@@ -277,7 +277,8 @@ function ManualEditForm({ setPreview, previewModalState }: { previewModalState: 
             setSaving(true)
             const result = await datasetService.save(form.form)
             navigate(`/datasets/${result.resultData}`)
-        } catch {
+        } catch(e) {
+            console.log(e)
             console.log("Something wrong.")
         } finally {
             setSaving(false)

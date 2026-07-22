@@ -106,7 +106,9 @@ function DatasetListItemRow({ item, onDelete }: { item: DatasetListItem, onDelet
             <td>{item.datasetId}</td>
             <td className="text-truncate" style={{ maxWidth: 250, }}>{item.command}</td>
             <td>
-                <Badge>{item.datasetType}</Badge>
+                {item.datasetType === "Training" && <Badge>{item.datasetType}</Badge>}
+                {item.datasetType === "Validation" && <Badge bg="secondary" text="white">{item.datasetType}</Badge>}
+                {item.datasetType === "Testing" && <Badge bg="info" text="dark">{item.datasetType}</Badge>}
             </td>
             <td>
                 {item.approved && <Badge bg="success" text="white">Approved</Badge>}
