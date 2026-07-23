@@ -26,10 +26,10 @@ export default function DatasetLogPage() {
 
     return (
         <MainContentDecorator title="Modification Log">
-            <Container>
+            <Container className="p-3">
                 <Table hover responsive>
                     <thead>
-                        <tr>
+                        <tr className="align-middle">
                             <th className="text-nowrap">Log ID</th>
                             <th>Member</th>
                             <th className="text-nowrap pe-2 text-end">Dataset ID</th>
@@ -50,14 +50,15 @@ export default function DatasetLogPage() {
 
 function DatasetLogTableRow({item:{logId, profileUrl, accountEmail, datasetId, modificationType, modifiedAt}}:{item:DatasetModificationLogListItem}) {
     return (
-        <tr>
+        <tr className="align-middle">
             <td>{logId}</td>
             <td className="text-nowrap">
                 <AppProfile className="me-2" img={resolveProfileImage(profileUrl)} /> {accountEmail}
             </td>
             <td className="pe-2 text-end">{datasetId}</td>
             <td>
-                <Badge>{modificationType}</Badge>
+                {modificationType === "Approve" && <Badge bg="success">{modificationType}</Badge>}
+                {modificationType === "Edit" && <Badge bg="primary">{modificationType}</Badge>}
             </td>
             <td className="text-nowrap">{formateDate(modifiedAt)}</td>
         </tr>
