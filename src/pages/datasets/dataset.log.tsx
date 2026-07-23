@@ -42,7 +42,7 @@ export default function DatasetLogPage() {
                     </tbody>
                 </Table>
                 {isLoading && <AppLoading />}
-                {pageResult?.items && <Pagination page={pageResult.page} total={pageResult.total} size={pageResult.size} onChange={(page, size) => setSearchParams({page: size === pageResult.size ? page.toString() : "1", size: size.toString()})} />}
+                {pageResult?.items && pageResult.items.length > 0 && <Pagination page={pageResult.page} total={pageResult.total} size={pageResult.size} onChange={(page, size) => setSearchParams({page: size === pageResult.size ? page.toString() : "1", size: size.toString()})} />}
             </Container>
         </MainContentDecorator>
     )
