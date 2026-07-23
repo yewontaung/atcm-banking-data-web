@@ -161,15 +161,15 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved
             <Row className="row-gap-3">
                 <div className="col-12 col-xl-8">
                     <div className="border p-3">
-                        <div className="d-flex justify-content-between align-items-center">
-                            <label>User Command</label>
+                        <div className="d-flex flex-column row-gap-2 justify-content-between align-items-start align-items-lg-center flex-lg-row">
+                            <label className="text-nowrap">Command</label>
                             <div className="d-flex gap-2">
                                 {!info.deleted && (
                                     <>
-                                        {isEdit || <Button variant="outline-primary" onClick={() => setIsEdit(true)}><Edit2Icon size={iconSize} /></Button>}
+                                        {isEdit || <Button className="align-self-end" variant="outline-primary" onClick={() => setIsEdit(true)}><Edit2Icon size={iconSize} /></Button>}
                                         {isEdit && (
                                             <>
-                                                <Button variant="outline-primary" onClick={async () => {
+                                                <Button className="align-self-end" variant="outline-primary" onClick={async () => {
                                                     try {
                                                         setSaving(true)
                                                         await datasetService.edit(dataset.datasetId, editForm.form)
@@ -180,7 +180,7 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved
                                                     }
 
                                                 }}>{saving ? "Saving..." : <CheckIcon size={iconSize} />}</Button>
-                                                <Button variant="outline-danger" onClick={() => {
+                                                <Button className="align-self-end" variant="outline-danger" onClick={() => {
                                                     editForm.reset()
                                                     setIsEdit(false)
                                                 }}><XIcon size={iconSize} /></Button>
