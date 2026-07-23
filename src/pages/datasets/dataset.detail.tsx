@@ -1,7 +1,7 @@
 import MainContentDecorator from "../../_components/decorators/main-content"
 import { Accordion, Alert, Badge, Button, Container, Form, Modal, Row, Tab, Tabs } from "react-bootstrap"
 import { GroupLabelInfo, LabelInfo } from "../../_components/label-info"
-import { ArrowRightIcon, Calendar1Icon, CheckIcon, Edit2Icon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
+import { ArrowRightIcon, Calendar1Icon, CheckIcon, Edit2Icon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon, XIcon } from "lucide-react"
 import { iconSize } from "../../_utils/constants"
 import type { ActionCallback, DatasetDetail, DatasetDetailIntent, DatasetDetailResult, DatasetInfo, ModificationResult, NextDatasetResult } from "../../_models/outputs"
 import { AppJsonView } from "../../_components/app-jsonview"
@@ -167,17 +167,25 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved
                                 {!info.deleted && (
                                     <>
                                         {isEdit || <Button variant="outline-primary" onClick={() => setIsEdit(true)}><Edit2Icon size={iconSize} /></Button>}
-                                        {isEdit && <Button variant="outline-primary" onClick={async () => {
-                                            try {
-                                                setSaving(true)
-                                                await datasetService.edit(dataset.datasetId, editForm.form)
-                                                onSaved?.(editForm.form)
-                                                setIsEdit(false)
-                                            } finally {
-                                                setSaving(false)
-                                            }
+                                        {isEdit && (
+                                            <>
+                                                <Button variant="outline-primary" onClick={async () => {
+                                                    try {
+                                                        setSaving(true)
+                                                        await datasetService.edit(dataset.datasetId, editForm.form)
+                                                        onSaved?.(editForm.form)
+                                                        setIsEdit(false)
+                                                    } finally {
+                                                        setSaving(false)
+                                                    }
 
-                                        }}>{saving ? "Saving..." : <CheckIcon size={iconSize} />}</Button>}
+                                                }}>{saving ? "Saving..." : <CheckIcon size={iconSize} />}</Button>
+                                                <Button variant="outline-danger" onClick={() => {
+                                                    editForm.reset()
+                                                    setIsEdit(false)
+                                                }}><XIcon size={iconSize} /></Button>
+                                            </>
+                                        )}
                                     </>
                                 )}
 
