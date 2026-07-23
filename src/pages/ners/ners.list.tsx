@@ -75,7 +75,7 @@ export default function NersListPage() {
     }
 
     return (
-        <MainContentDecorator title="Named Entities Management">
+        <MainContentDecorator title="Entities Management">
             <Container className="mt-3">
                 {/* Search NER Form */}
                 <form onSubmit={form.onSubmit(onSearch)} className="row gap-2">

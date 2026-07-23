@@ -111,7 +111,7 @@ export default function DatasetListPage() {
 
                 {!loading && datasets?.items.length == 0 && <Alert className="text-center w-100" variant="light">Add Datasets.</Alert>}
 
-                {datasets && datasets.total > 0 && <Pagination size={datasets.size} onChange={(page, size) => onSearch({ ...form.form, page, size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
+                {datasets && datasets.total > 0 && <Pagination size={datasets.size} onChange={(page, size) => onSearch({ ...form.form, page: size === datasets.size ? page : 1, size:size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
 
                 <Modal size="sm" animation={false} show={deleteModal.isOpen}
                     onHide={() => {
@@ -165,8 +165,8 @@ function DatasetListItemRow({ item, onDelete }: { item: DatasetListItem, onDelet
                 {item.approved && <Badge bg="success" text="white">Approved</Badge>}
                 {!item.approved && <Badge bg="warning" text="dark">Pending</Badge>}
             </td>
-            <td>{item.memberName}</td>
-            <td>{formateDate(item.lastUpdated)}</td>
+            <td className="text-nowrap">{item.memberName}</td>
+            <td className="text-nowrap">{formateDate(item.lastUpdated)}</td>
             <td>
                 <ButtonGroup>
                     <Link to={`/datasets/${item.datasetId}`}>

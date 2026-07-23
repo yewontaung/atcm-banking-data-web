@@ -35,7 +35,7 @@ export default function DashboardAnalysisPage() {
                 <div className="row gap-3 justify-content-center justify-content-lg-start">
                     <TotalDataCard label="Dataset" total={datasetMeta?.totalDatasets ?? 0} className="col-auto w-25" />
                     <TotalDataCard label="Intents" total={datasetMeta?.totalIntents ?? 0} className="col-auto w-25" />
-                    <TotalDataCard label="Named Entities" total={datasetMeta?.totalNers ?? 0} className="col-auto w-25" />
+                    <TotalDataCard label="Entities" total={datasetMeta?.totalNers ?? 0} className="col-auto w-25" />
                 </div>
             </Container>
             <Container className="mt-3">

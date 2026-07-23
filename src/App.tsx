@@ -14,6 +14,7 @@ import DatasetEditPage from './pages/datasets/datasets.add'
 import DatasetDetailPage from './pages/datasets/dataset.detail'
 import DatasetBinPage from './pages/datasets/datasets.bin'
 import DatasetExportPage from './pages/datasets/dataset.export'
+import DatasetLogPage from './pages/datasets/dataset.log'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Route path='/' element={<MainLayout />}>
         <Route index element={<DashboardAnalysisPage />} />
         <Route path='dashboard' element={<DashboardAnalysisPage />} />
+        <Route path='dataset-logs' element={<DatasetLogPage />} />
         <Route path='datasets'>
           <Route index element={<DatasetListPage />} />
           <Route path='add' element={<DatasetEditPage />} />

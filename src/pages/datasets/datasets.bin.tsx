@@ -58,7 +58,7 @@ export default function DatasetBinPage() {
 
                 {loading && <AppLoading />}
 
-                {datasets && datasets.total > 0 && <Pagination onChange={(page, size) => setPageInfo({ page, size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
+                {datasets && datasets.total > 0 && <Pagination onChange={(page, size) => setPageInfo({ page:size === datasets.size ? page : 1, size:size })} page={datasets?.page ?? 1} total={datasets?.total ?? 0} />}
 
                 <Modal size="sm" animation={false} show={deleteModal.isOpen}
                     onHide={() => {

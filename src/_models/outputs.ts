@@ -1,5 +1,6 @@
 export type DatasetType = "Training" | "Validation" | "Testing"
 export type MemberRole = "Admin" | "Supervisor" | "Collector"
+export type ModificationType = "Approve" | "Edit"
 export type ActionCallback<T> = (t: T) => void | Promise<void>
 
 export type MemberListItem = {
@@ -81,6 +82,18 @@ export type DatasetDetailResult = {
 
 export type NextDatasetResult = {
     nextDatasetId:number
+}
+
+export type DatasetModificationLogListItem = {
+    logId:number
+    datasetId:number
+    accountId:number
+    name:string
+    accountEmail:string
+    accountRole:MemberRole
+    profileUrl:string | undefined
+    modificationType:ModificationType
+    modifiedAt:string
 }
 
 // binding backend

@@ -241,7 +241,7 @@ function IntentListItemRow(
                 </div>
             </td>
             <td className="text-end pe-3">{dataset}</td>
-            <td>{formateDate(lastUpdated)}</td>
+            <td className="text-nowrap">{formateDate(lastUpdated)}</td>
             <td>
                 <ButtonGroup>
                     <Button onClick={() => {

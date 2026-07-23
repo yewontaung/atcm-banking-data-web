@@ -19,3 +19,8 @@ export type DatasetSearch = {
     page:number
     size:number
 }
+
+export type LogSearch = {
+    page:number,
+    size:number,
+}

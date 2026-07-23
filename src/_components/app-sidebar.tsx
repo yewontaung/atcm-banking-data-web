@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { BrainCircuitIcon, DatabaseIcon, LayoutDashboardIcon, TagsIcon, Users2Icon } from "lucide-react";
+import { BrainCircuitIcon, DatabaseIcon, HistoryIcon, LayoutDashboardIcon, TagsIcon, Users2Icon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Image } from "react-bootstrap";
 
@@ -40,6 +40,12 @@ const sideBarMenuItems: SideBarMenuItem[] = [
     },
     {
         id: 5,
+        label: "Modification Logs",
+        link: "/dataset-logs",
+        icon: <HistoryIcon size={iconSize} />,
+    },
+    {
+        id: 6,
         label: "Members",
         link: "/members",
         icon: <Users2Icon size={iconSize} />,
