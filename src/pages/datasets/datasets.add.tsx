@@ -107,7 +107,6 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
             console.log("Updating end")
             nerForm.setData(prev => (prev.map(i => i.nerId === nerId ? { ...i, endIndex: Number(value) } : i)))
         }
-        console.log(nerForm.data)
     }
 
     const deleteIntent = (intentId: number, index: number) => {
@@ -260,12 +259,42 @@ function ManualEditForm({ setPreview, previewModalState }: { previewModalState: 
 
 
     const [selected, setSelected] = useState<{ start: number, end: number }>()
-    const onSelected = () => {
-        const selection = window.getSelection()
-        if (!selection || selection.rangeCount === 0) return
-        const range = selection.getRangeAt(0)
-        setSelected({ start: range.startOffset, end: range.endOffset })
-    }
+    const commandRef = useRef<HTMLParagraphElement>(null)
+    useEffect(() => {
+        const handleSelectionChange = () => {
+            if (!commandRef.current) return
+
+            const selection = window.getSelection()
+
+            if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+                return
+            }
+
+            const range = selection.getRangeAt(0)
+
+            // Ignore selections outside command text
+            if (!commandRef.current.contains(range.commonAncestorContainer)) {
+                return
+            }
+
+            setSelected({
+                start: range.startOffset,
+                end: range.endOffset,
+            })
+        }
+
+        document.addEventListener(
+            "selectionchange",
+            handleSelectionChange
+        )
+
+        return () => {
+            document.removeEventListener(
+                "selectionchange",
+                handleSelectionChange
+            )
+        }
+    }, [])
 
     const [saving, setSaving] = useState(false)
 
@@ -275,7 +304,7 @@ function ManualEditForm({ setPreview, previewModalState }: { previewModalState: 
             setSaving(true)
             const result = await datasetService.save(form.form)
             navigate(`/datasets/${result.resultData}`)
-        } catch(e) {
+        } catch (e) {
             console.log(e)
             console.log("Something wrong.")
         } finally {
@@ -303,7 +332,7 @@ function ManualEditForm({ setPreview, previewModalState }: { previewModalState: 
                             {errors.command && <span>{errors.command}</span>}
                         </>
                     )}
-                    {editCommand || <p onMouseUp={onSelected} className="form-control p-3">{form.form.command}</p>}
+                    {editCommand || <p ref={commandRef} className="form-control p-3">{form.form.command}</p>}
                     <SelectIntentForm selected={selected} className="mt-3" form={formUtils} />
                 </div>
 

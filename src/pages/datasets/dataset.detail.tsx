@@ -5,7 +5,7 @@ import { ArrowRightIcon, Calendar1Icon, CheckIcon, Edit2Icon, InfoIcon, TagIcon,
 import { iconSize } from "../../_utils/constants"
 import type { ActionCallback, DatasetDetail, DatasetDetailIntent, DatasetDetailResult, DatasetInfo, ModificationResult, NextDatasetResult } from "../../_models/outputs"
 import { AppJsonView } from "../../_components/app-jsonview"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { formateDate } from "../../_utils/date-formats"
 import * as datasetService from "../../services/dataset.service"
 import { useNavigate, useParams } from "react-router-dom"
@@ -62,7 +62,7 @@ export default function DatasetDetailPage() {
     }
 
     const handlers = { onApproved, onMovedToBin, onRestored, onDeleted }
-    const onNext = (result:NextDatasetResult) => {
+    const onNext = (result: NextDatasetResult) => {
         setDetailResult(undefined)
         setLoading(true)
         setTimeout(() => {
@@ -75,7 +75,7 @@ export default function DatasetDetailPage() {
             <Tabs defaultActiveKey="info-view">
                 <Tab eventKey="info-view" title="Information View">
                     {loading && <LoadingCard />}
-                    {detailResult && <DefaultDatasetView onNext={onNext} handlers={handlers} detailResult={detailResult} onSaved={detail => setDetailResult({...detailResult, dataset: detail})} />}
+                    {detailResult && <DefaultDatasetView onNext={onNext} handlers={handlers} detailResult={detailResult} onSaved={detail => setDetailResult({ ...detailResult, dataset: detail })} />}
                 </Tab>
                 <Tab eventKey="json-view" title="Json View">
                     {loading && <LoadingCard />}
@@ -92,7 +92,7 @@ const LoadingCard = () => {
     )
 }
 
-function JsonDatasetView({ detailResult: { info, dataset }, handlers, onNext }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler, onNext?:ActionCallback<NextDatasetResult> }) {
+function JsonDatasetView({ detailResult: { info, dataset }, handlers, onNext }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler, onNext?: ActionCallback<NextDatasetResult> }) {
     return (
         <Container className="p-2">
             <Row className="row-gap-3">
@@ -112,19 +112,49 @@ function JsonDatasetView({ detailResult: { info, dataset }, handlers, onNext }: 
     )
 }
 
-function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved, onNext }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler, onSaved?:ActionCallback<DatasetDetail>, onNext?:ActionCallback<NextDatasetResult> }) {
+function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved, onNext }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler, onSaved?: ActionCallback<DatasetDetail>, onNext?: ActionCallback<NextDatasetResult> }) {
 
     const [selected, setSelected] = useState<{ start: number, end: number }>()
-    const onSelected = () => {
-        const selection = window.getSelection()
-        if (!selection || selection.rangeCount === 0) return
-        const range = selection.getRangeAt(0)
-        setSelected({ start: range.startOffset, end: range.endOffset })
-    }
 
     const [isEdit, setIsEdit] = useState(false)
     const editForm = useForms<DatasetDetail>(dataset)
     const [saving, setSaving] = useState(false)
+
+    const textRef = useRef<HTMLParagraphElement>(null);
+
+    useEffect(() => {
+        const handleSelectionChange = () => {
+            if (!textRef.current) return;
+
+            const selection = window.getSelection();
+
+            if (!selection || selection.rangeCount === 0) return;
+
+            const range = selection.getRangeAt(0);
+
+            // Ignore selection outside your text area
+            if (!textRef.current.contains(range.commonAncestorContainer)) {
+                return;
+            }
+
+            setSelected({
+                start: range.startOffset,
+                end: range.endOffset,
+            });
+        };
+
+        document.addEventListener(
+            "selectionchange",
+            handleSelectionChange
+        );
+
+        return () => {
+            document.removeEventListener(
+                "selectionchange",
+                handleSelectionChange
+            );
+        };
+    }, []);
 
     return (
         <Container className="p-3">
@@ -146,7 +176,7 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved
                                             } finally {
                                                 setSaving(false)
                                             }
-                                            
+
                                         }}>{saving ? "Saving..." : <CheckIcon size={iconSize} />}</Button>}
                                     </>
                                 )}
@@ -156,7 +186,7 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved
                             </div>
                         </div>
                         <hr />
-                        <p onMouseUp={onSelected} className="p-2 mt-2">{dataset.text}</p>
+                        <p ref={textRef} className="p-2 mt-2">{dataset.text}</p>
                     </div>
                     <IntentDetailList isEdit={isEdit} editForm={editForm} intents={dataset.intents} className="mt-3" />
                 </div>
@@ -188,12 +218,12 @@ function MetadataCard(
     const [restoring, setRestoring] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [removing, setRemoving] = useState(false)
-    
+
     const [alertMessage, setAlertMessage] = useState<string>()
 
     const goToNext = async () => {
         const result = await datasetService.nextDataset(info.datasetId)
-        if(!result.nextDatasetId) {
+        if (!result.nextDatasetId) {
             setAlertMessage("No pending datasets.")
             setTimeout(() => setAlertMessage(undefined), 3000)
         } else {
@@ -311,7 +341,7 @@ function MetadataCard(
                     </Modal>
                 )}
             </RolePermit>
-            
+
             <Button onClick={goToNext} className="w-100 mt-3" variant="outline-secondary"><ArrowRightIcon size={iconSize} /></Button>
         </>
     )
@@ -331,16 +361,18 @@ function IntentDetailList(
 
     }) {
 
-    const onIntentIndexChange = (datasetintentId:number, indexType:"start" | "end", index:number) => {
+    const onIntentIndexChange = (datasetintentId: number, indexType: "start" | "end", index: number) => {
         const form = editForm.form
-        editForm.setForm({...form, intents: form.intents.map(i => i.datasetintentId === datasetintentId ? {...i, [`${indexType}Index`]: index}: i)})
+        editForm.setForm({ ...form, intents: form.intents.map(i => i.datasetintentId === datasetintentId ? { ...i, [`${indexType}Index`]: index } : i) })
     }
 
-    const onNerIndexChange = (datasetintentId:number, datasetintentnerId:number, indexType:"start" | "end", index:number) => {
+    const onNerIndexChange = (datasetintentId: number, datasetintentnerId: number, indexType: "start" | "end", index: number) => {
         const form = editForm.form
-        editForm.setForm({...form, intents: form.intents.map(i => (
-            i.datasetintentId === datasetintentId ? 
-            {...i, entities: i.entities.map(ent => ent.datasetintentnerId === datasetintentnerId ? {...ent, [`${indexType}Index`]: index} : ent)} : i))})
+        editForm.setForm({
+            ...form, intents: form.intents.map(i => (
+                i.datasetintentId === datasetintentId ?
+                    { ...i, entities: i.entities.map(ent => ent.datasetintentnerId === datasetintentnerId ? { ...ent, [`${indexType}Index`]: index } : ent) } : i))
+        })
     }
 
 
@@ -364,16 +396,16 @@ function IntentDetailList(
                                         <div className="col-2 px-0">
                                             <Form.Control onClick={e => {
                                                 e.stopPropagation()
-                                            }} placeholder="Start" 
-                                            defaultValue={i.startIndex}
-                                            onChange={(e) => onIntentIndexChange(i.datasetintentId, "start", Number(e.target.value))} />
+                                            }} placeholder="Start"
+                                                defaultValue={i.startIndex}
+                                                onChange={(e) => onIntentIndexChange(i.datasetintentId, "start", Number(e.target.value))} />
                                         </div>
                                         <div className="col-2 px-0">
                                             <Form.Control onClick={e => {
                                                 e.stopPropagation()
-                                            }} placeholder="End" 
-                                            defaultValue={i.endIndex}
-                                            onChange={(e) => onIntentIndexChange(i.datasetintentId, "end", Number(e.target.value))} />
+                                            }} placeholder="End"
+                                                defaultValue={i.endIndex}
+                                                onChange={(e) => onIntentIndexChange(i.datasetintentId, "end", Number(e.target.value))} />
                                         </div>
                                     </>
                                 )}
@@ -392,16 +424,16 @@ function IntentDetailList(
                                         <div className="col-2 px-0 align-self-end">
                                             <Form.Control onClick={e => {
                                                 e.stopPropagation()
-                                            }} placeholder="Start" 
-                                            defaultValue={i.startIndex}
-                                            onChange={(e) => onIntentIndexChange(i.datasetintentId, "start", Number(e.target.value))} />
+                                            }} placeholder="Start"
+                                                defaultValue={i.startIndex}
+                                                onChange={(e) => onIntentIndexChange(i.datasetintentId, "start", Number(e.target.value))} />
                                         </div>
                                         <div className="col-2 px-0 align-self-end">
                                             <Form.Control onClick={e => {
                                                 e.stopPropagation()
-                                            }} placeholder="End" 
-                                            defaultValue={i.endIndex}
-                                            onChange={(e) => onIntentIndexChange(i.datasetintentId, "end", Number(e.target.value))}/>
+                                            }} placeholder="End"
+                                                defaultValue={i.endIndex}
+                                                onChange={(e) => onIntentIndexChange(i.datasetintentId, "end", Number(e.target.value))} />
                                         </div>
                                     </>
                                 )}
@@ -425,16 +457,16 @@ function IntentDetailList(
                                                 <div className="col-2 px-0 align-self-end">
                                                     <Form.Control onClick={e => {
                                                         e.stopPropagation()
-                                                    }} placeholder="Start" 
-                                                    defaultValue={item.startIndex}
-                                                    onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "start", Number(e.target.value))} />
+                                                    }} placeholder="Start"
+                                                        defaultValue={item.startIndex}
+                                                        onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "start", Number(e.target.value))} />
                                                 </div>
                                                 <div className="col-2 px-0 align-self-end">
                                                     <Form.Control onClick={e => {
                                                         e.stopPropagation()
-                                                    }} placeholder="End" 
-                                                    defaultValue={item.endIndex}
-                                                    onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "end", Number(e.target.value))} />
+                                                    }} placeholder="End"
+                                                        defaultValue={item.endIndex}
+                                                        onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "end", Number(e.target.value))} />
                                                 </div>
                                             </>
                                         )}
@@ -453,16 +485,16 @@ function IntentDetailList(
                                                 <div className="col-2 px-0 align-self-end">
                                                     <Form.Control onClick={e => {
                                                         e.stopPropagation()
-                                                    }} placeholder="Start" 
-                                                    defaultValue={item.startIndex}
-                                                    onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "start", Number(e.target.value))} />
+                                                    }} placeholder="Start"
+                                                        defaultValue={item.startIndex}
+                                                        onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "start", Number(e.target.value))} />
                                                 </div>
                                                 <div className="col-2 px-0 align-self-end">
                                                     <Form.Control onClick={e => {
                                                         e.stopPropagation()
-                                                    }} placeholder="End" 
-                                                    defaultValue={item.endIndex}
-                                                    onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "end", Number(e.target.value))} />
+                                                    }} placeholder="End"
+                                                        defaultValue={item.endIndex}
+                                                        onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "end", Number(e.target.value))} />
                                                 </div>
                                             </>
                                         )}
