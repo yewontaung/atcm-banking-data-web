@@ -1,9 +1,9 @@
 import MainContentDecorator from "../../_components/decorators/main-content"
-import { Accordion, Badge, Button, Container, Form, Modal, Row, Tab, Tabs } from "react-bootstrap"
+import { Accordion, Alert, Badge, Button, Container, Form, Modal, Row, Tab, Tabs } from "react-bootstrap"
 import { GroupLabelInfo, LabelInfo } from "../../_components/label-info"
-import { Calendar1Icon, CheckIcon, Edit2Icon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
+import { ArrowRightIcon, Calendar1Icon, CheckIcon, Edit2Icon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
 import { iconSize } from "../../_utils/constants"
-import type { ActionCallback, DatasetDetail, DatasetDetailIntent, DatasetDetailResult, DatasetInfo, ModificationResult } from "../../_models/outputs"
+import type { ActionCallback, DatasetDetail, DatasetDetailIntent, DatasetDetailResult, DatasetInfo, ModificationResult, NextDatasetResult } from "../../_models/outputs"
 import { AppJsonView } from "../../_components/app-jsonview"
 import { useEffect, useState } from "react"
 import { formateDate } from "../../_utils/date-formats"
@@ -62,17 +62,24 @@ export default function DatasetDetailPage() {
     }
 
     const handlers = { onApproved, onMovedToBin, onRestored, onDeleted }
+    const onNext = (result:NextDatasetResult) => {
+        setDetailResult(undefined)
+        setLoading(true)
+        setTimeout(() => {
+            navigate(`/datasets/${result.nextDatasetId}`)
+        }, 500)
+    }
 
     return (
         <MainContentDecorator title="Dataset Detail">
             <Tabs defaultActiveKey="info-view">
                 <Tab eventKey="info-view" title="Information View">
                     {loading && <LoadingCard />}
-                    {detailResult && <DefaultDatasetView handlers={handlers} detailResult={detailResult} onSaved={detail => setDetailResult({...detailResult, dataset: detail})} />}
+                    {detailResult && <DefaultDatasetView onNext={onNext} handlers={handlers} detailResult={detailResult} onSaved={detail => setDetailResult({...detailResult, dataset: detail})} />}
                 </Tab>
                 <Tab eventKey="json-view" title="Json View">
                     {loading && <LoadingCard />}
-                    {detailResult && <JsonDatasetView handlers={handlers} detailResult={detailResult} />}
+                    {detailResult && <JsonDatasetView onNext={onNext} handlers={handlers} detailResult={detailResult} />}
                 </Tab>
             </Tabs>
         </MainContentDecorator>
@@ -85,7 +92,7 @@ const LoadingCard = () => {
     )
 }
 
-function JsonDatasetView({ detailResult: { info, dataset }, handlers }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler }) {
+function JsonDatasetView({ detailResult: { info, dataset }, handlers, onNext }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler, onNext?:ActionCallback<NextDatasetResult> }) {
     return (
         <Container className="p-2">
             <Row className="row-gap-3">
@@ -98,14 +105,14 @@ function JsonDatasetView({ detailResult: { info, dataset }, handlers }: { detail
                     </div>
                 </div>
                 <div className="col-auto flex-grow-1">
-                    <MetadataCard {...handlers} info={info} />
+                    <MetadataCard onNext={onNext} {...handlers} info={info} />
                 </div>
             </Row>
         </Container>
     )
 }
 
-function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler, onSaved?:ActionCallback<DatasetDetail> }) {
+function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved, onNext }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler, onSaved?:ActionCallback<DatasetDetail>, onNext?:ActionCallback<NextDatasetResult> }) {
 
     const [selected, setSelected] = useState<{ start: number, end: number }>()
     const onSelected = () => {
@@ -154,7 +161,7 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved
                     <IntentDetailList isEdit={isEdit} editForm={editForm} intents={dataset.intents} className="mt-3" />
                 </div>
                 <div className="col-auto flex-grow-1">
-                    <MetadataCard {...handlers} info={info} />
+                    <MetadataCard onNext={onNext} {...handlers} info={info} />
                 </div>
             </Row>
         </Container>
@@ -162,13 +169,14 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved
 }
 
 function MetadataCard(
-    { info, onApproved, onRestored, onDeleted, onMovedToBin }
+    { info, onApproved, onRestored, onDeleted, onMovedToBin, onNext }
         : {
             info: DatasetInfo,
             onApproved?: (result: ModificationResult<number>) => void,
             onRestored?: (result: ModificationResult<number>) => void,
             onDeleted?: (result: ModificationResult<number>) => void,
             onMovedToBin?: (result: ModificationResult<number>) => void,
+            onNext?: ActionCallback<NextDatasetResult>,
         }) {
 
     const approveModal = useModals()
@@ -180,9 +188,22 @@ function MetadataCard(
     const [restoring, setRestoring] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [removing, setRemoving] = useState(false)
+    
+    const [alertMessage, setAlertMessage] = useState<string>()
+
+    const goToNext = async () => {
+        const result = await datasetService.nextDataset(info.datasetId)
+        if(!result.nextDatasetId) {
+            setAlertMessage("No pending datasets.")
+            setTimeout(() => setAlertMessage(undefined), 3000)
+        } else {
+            onNext?.(result)
+        }
+    }
 
     return (
         <>
+            {alertMessage && <Alert variant="info">{alertMessage}</Alert>}
             <div className="border p-3 d-flex flex-column row-gap-3">
                 <div><User2Icon size={iconSize} className="me-3" /> {info.memberName}</div>
                 <div><TagIcon size={iconSize} className="me-3" /> {info.memberRole}</div>
@@ -222,6 +243,7 @@ function MetadataCard(
 
                 {/* Move to bin section */}
                 {!info.deleted && <Button onClick={binModal.openModal} variant="outline-danger" className="w-100 mt-3">Move to bin</Button>}
+
                 {!info.deleted && (
                     <Modal size="sm" animation={false} show={binModal.isOpen} onHide={binModal.closeModal}>
                         <Modal.Body>
@@ -289,7 +311,8 @@ function MetadataCard(
                     </Modal>
                 )}
             </RolePermit>
-
+            
+            <Button onClick={goToNext} className="w-100 mt-3" variant="outline-secondary"><ArrowRightIcon size={iconSize} /></Button>
         </>
     )
 }

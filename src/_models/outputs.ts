@@ -79,6 +79,10 @@ export type DatasetDetailResult = {
     dataset: DatasetDetail
 }
 
+export type NextDatasetResult = {
+    nextDatasetId:number
+}
+
 // binding backend
 
 export type ModificationResult<T> = {

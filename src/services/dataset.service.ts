@@ -1,4 +1,4 @@
-import type { DatasetAnalysis, DatasetDetail, DatasetDetailResult, DatasetListItem, DatasetType, ModificationResult, PaginationResult } from "../_models/outputs";
+import type { DatasetAnalysis, DatasetDetail, DatasetDetailResult, DatasetListItem, DatasetType, ModificationResult, NextDatasetResult, PaginationResult } from "../_models/outputs";
 import type { DatasetForm } from "../_models/schemas";
 import type { DatasetSearch } from "../_models/searches";
 import { queryParam } from "../_utils/param.utils";
@@ -109,3 +109,9 @@ export async function edit(datasetId: number, form: DatasetDetail) {
 
     return (await response.json()) as ModificationResult<number>
 }
+export async function nextDataset(current:number) {
+    const response = await protectedRequest(`datasets/next?current=${current}`)
+
+    return (await response.json()) as NextDatasetResult
+}
+
