@@ -1,4 +1,4 @@
-import type { DatasetAnalysis, DatasetDetailResult, DatasetListItem, DatasetType, ModificationResult, PaginationResult } from "../_models/outputs";
+import type { DatasetAnalysis, DatasetDetail, DatasetDetailResult, DatasetListItem, DatasetType, ModificationResult, PaginationResult } from "../_models/outputs";
 import type { DatasetForm } from "../_models/schemas";
 import type { DatasetSearch } from "../_models/searches";
 import { queryParam } from "../_utils/param.utils";
@@ -100,3 +100,12 @@ export async function download(datasetType: DatasetType) {
     URL.revokeObjectURL(url)
 }
 
+
+export async function edit(datasetId: number, form: DatasetDetail) {
+    const response = await protectedRequest(`datasets/${datasetId}`, {
+        method: "PUT",
+        body: JSON.stringify(form)
+    })
+
+    return (await response.json()) as ModificationResult<number>
+}

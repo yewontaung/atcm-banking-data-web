@@ -41,6 +41,7 @@ export type DatasetListItem = {
 // dataset detail
 
 export type DatasetDetailIntentEntity = {
+    datasetintentnerId:number
     nerId:number
     label:string
     startIndex:number
@@ -48,6 +49,7 @@ export type DatasetDetailIntentEntity = {
 }
 
 export type DatasetDetailIntent = {
+    datasetintentId:number,
     intentId: number,
     label: string,
     startIndex: number,

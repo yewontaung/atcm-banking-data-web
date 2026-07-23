@@ -1,9 +1,9 @@
 import MainContentDecorator from "../../_components/decorators/main-content"
-import { Accordion, Badge, Button, Container, Modal, Row, Tab, Tabs } from "react-bootstrap"
+import { Accordion, Badge, Button, Container, Form, Modal, Row, Tab, Tabs } from "react-bootstrap"
 import { GroupLabelInfo, LabelInfo } from "../../_components/label-info"
-import { Calendar1Icon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
+import { Calendar1Icon, CheckIcon, Edit2Icon, InfoIcon, TagIcon, TriangleAlertIcon, User2Icon } from "lucide-react"
 import { iconSize } from "../../_utils/constants"
-import type { DatasetDetailIntent, DatasetDetailResult, DatasetInfo, ModificationResult } from "../../_models/outputs"
+import type { ActionCallback, DatasetDetail, DatasetDetailIntent, DatasetDetailResult, DatasetInfo, ModificationResult } from "../../_models/outputs"
 import { AppJsonView } from "../../_components/app-jsonview"
 import { useEffect, useState } from "react"
 import { formateDate } from "../../_utils/date-formats"
@@ -12,6 +12,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useModals } from "../../_hooks/use-modals"
 import RolePermit from "../../_components/role-permit"
 import CopyBtn from "../../_components/copy-btn"
+import { useForms, type FormsUtils } from "../../_hooks/use-forms"
 
 type DatasetActionHandler = {
     onApproved?: (result: ModificationResult<number>) => void,
@@ -67,7 +68,7 @@ export default function DatasetDetailPage() {
             <Tabs defaultActiveKey="info-view">
                 <Tab eventKey="info-view" title="Information View">
                     {loading && <LoadingCard />}
-                    {detailResult && <DefaultDatasetView handlers={handlers} detailResult={detailResult} />}
+                    {detailResult && <DefaultDatasetView handlers={handlers} detailResult={detailResult} onSaved={detail => setDetailResult({...detailResult, dataset: detail})} />}
                 </Tab>
                 <Tab eventKey="json-view" title="Json View">
                     {loading && <LoadingCard />}
@@ -104,7 +105,7 @@ function JsonDatasetView({ detailResult: { info, dataset }, handlers }: { detail
     )
 }
 
-function DefaultDatasetView({ detailResult: { info, dataset }, handlers }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler }) {
+function DefaultDatasetView({ detailResult: { info, dataset }, handlers, onSaved }: { detailResult: DatasetDetailResult, handlers?: DatasetActionHandler, onSaved?:ActionCallback<DatasetDetail> }) {
 
     const [selected, setSelected] = useState<{ start: number, end: number }>()
     const onSelected = () => {
@@ -114,6 +115,10 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers }: { det
         setSelected({ start: range.startOffset, end: range.endOffset })
     }
 
+    const [isEdit, setIsEdit] = useState(false)
+    const editForm = useForms<DatasetDetail>(dataset)
+    const [saving, setSaving] = useState(false)
+
     return (
         <Container className="p-3">
             <Row className="row-gap-3">
@@ -122,6 +127,23 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers }: { det
                         <div className="d-flex justify-content-between align-items-center">
                             <label>User Command</label>
                             <div className="d-flex gap-2">
+                                {!info.deleted && (
+                                    <>
+                                        {isEdit || <Button variant="outline-primary" onClick={() => setIsEdit(true)}><Edit2Icon size={iconSize} /></Button>}
+                                        {isEdit && <Button variant="outline-primary" onClick={async () => {
+                                            try {
+                                                setSaving(true)
+                                                await datasetService.edit(dataset.datasetId, editForm.form)
+                                                onSaved?.(editForm.form)
+                                                setIsEdit(false)
+                                            } finally {
+                                                setSaving(false)
+                                            }
+                                            
+                                        }}>{saving ? "Saving..." : <CheckIcon size={iconSize} />}</Button>}
+                                    </>
+                                )}
+
                                 <GroupLabelInfo label="Start" info={selected?.start ?? 0} />
                                 <GroupLabelInfo label="End" info={selected?.end ?? 0} />
                             </div>
@@ -129,7 +151,7 @@ function DefaultDatasetView({ detailResult: { info, dataset }, handlers }: { det
                         <hr />
                         <p onMouseUp={onSelected} className="p-2 mt-2">{dataset.text}</p>
                     </div>
-                    <IntentDetailList intents={dataset.intents} className="mt-3" />
+                    <IntentDetailList isEdit={isEdit} editForm={editForm} intents={dataset.intents} className="mt-3" />
                 </div>
                 <div className="col-auto flex-grow-1">
                     <MetadataCard {...handlers} info={info} />
@@ -272,7 +294,33 @@ function MetadataCard(
     )
 }
 
-function IntentDetailList({ className, intents }: { className?: string, intents: DatasetDetailIntent[] }) {
+function IntentDetailList(
+    {
+        isEdit,
+        editForm,
+        className,
+        intents
+    }: {
+        isEdit: boolean,
+        editForm: FormsUtils<DatasetDetail>,
+        className?: string,
+        intents: DatasetDetailIntent[]
+
+    }) {
+
+    const onIntentIndexChange = (datasetintentId:number, indexType:"start" | "end", index:number) => {
+        const form = editForm.form
+        editForm.setForm({...form, intents: form.intents.map(i => i.datasetintentId === datasetintentId ? {...i, [`${indexType}Index`]: index}: i)})
+    }
+
+    const onNerIndexChange = (datasetintentId:number, datasetintentnerId:number, indexType:"start" | "end", index:number) => {
+        const form = editForm.form
+        editForm.setForm({...form, intents: form.intents.map(i => (
+            i.datasetintentId === datasetintentId ? 
+            {...i, entities: i.entities.map(ent => ent.datasetintentnerId === datasetintentnerId ? {...ent, [`${indexType}Index`]: index} : ent)} : i))})
+    }
+
+
     return (
         <Accordion className={className}>
             {intents.map((i, idx) => (
@@ -281,31 +329,123 @@ function IntentDetailList({ className, intents }: { className?: string, intents:
                         <Container fluid className="position-relative">
                             <Row className="gap-1 d-md-flex d-none">
                                 <GroupLabelInfo label="Intent" className="col-6 px-0 flex-shrink-0" info={i.label} />
-                                <GroupLabelInfo label="Start" className="col-2 px-0 flex-shrink-0" info={i.startIndex} />
-                                <GroupLabelInfo label="End" className="col-2 px-0 flex-shrink-0" info={i.endIndex} />
+                                {isEdit || (
+                                    <>
+                                        <GroupLabelInfo label="Start" className="col-2 px-0 flex-shrink-0" info={i.startIndex} />
+                                        <GroupLabelInfo label="End" className="col-2 px-0 flex-shrink-0" info={i.endIndex} />
+                                    </>
+                                )}
+
+                                {isEdit && (
+                                    <>
+                                        <div className="col-2 px-0">
+                                            <Form.Control onClick={e => {
+                                                e.stopPropagation()
+                                            }} placeholder="Start" 
+                                            defaultValue={i.startIndex}
+                                            onChange={(e) => onIntentIndexChange(i.datasetintentId, "start", Number(e.target.value))} />
+                                        </div>
+                                        <div className="col-2 px-0">
+                                            <Form.Control onClick={e => {
+                                                e.stopPropagation()
+                                            }} placeholder="End" 
+                                            defaultValue={i.endIndex}
+                                            onChange={(e) => onIntentIndexChange(i.datasetintentId, "end", Number(e.target.value))} />
+                                        </div>
+                                    </>
+                                )}
+
                             </Row>
                             <Row className="gap-1 d-md-flex d-md-none">
                                 <LabelInfo label="Intent" className="col-6 px-0 flex-shrink-0" info={i.label} />
-                                <LabelInfo label="Start" className="col-2 px-0 flex-shrink-0" info={i.startIndex} />
-                                <LabelInfo label="End" className="col-2 px-0 flex-shrink-0" info={i.endIndex} />
+                                {isEdit || (
+                                    <>
+                                        <LabelInfo label="Start" className="col-2 px-0 flex-shrink-0" info={i.startIndex} />
+                                        <LabelInfo label="End" className="col-2 px-0 flex-shrink-0" info={i.endIndex} />
+                                    </>
+                                )}
+                                {isEdit && (
+                                    <>
+                                        <div className="col-2 px-0 align-self-end">
+                                            <Form.Control onClick={e => {
+                                                e.stopPropagation()
+                                            }} placeholder="Start" 
+                                            defaultValue={i.startIndex}
+                                            onChange={(e) => onIntentIndexChange(i.datasetintentId, "start", Number(e.target.value))} />
+                                        </div>
+                                        <div className="col-2 px-0 align-self-end">
+                                            <Form.Control onClick={e => {
+                                                e.stopPropagation()
+                                            }} placeholder="End" 
+                                            defaultValue={i.endIndex}
+                                            onChange={(e) => onIntentIndexChange(i.datasetintentId, "end", Number(e.target.value))}/>
+                                        </div>
+                                    </>
+                                )}
                             </Row>
                         </Container>
                     </Accordion.Header>
                     <Accordion.Body>
                         <Container fluid>
-                            {i.entities.map((item) => (
-                                <>
-                                    <Row key={item.nerId} className="gap-1 d-md-flex d-none mt-2">
+                            {i.entities.map((item, idx) => (
+                                <div key={idx}>
+                                    <Row className="gap-1 d-md-flex d-none mt-2">
                                         <GroupLabelInfo label="Ner" className="col-5 px-0" info={item.label} />
-                                        <GroupLabelInfo label="Start" className="col-2 px-0" info={item.startIndex} />
-                                        <GroupLabelInfo label="End" className="col-2 px-0" info={item.endIndex} />
+                                        {isEdit || (
+                                            <>
+                                                <GroupLabelInfo label="Start" className="col-2 px-0" info={item.startIndex} />
+                                                <GroupLabelInfo label="End" className="col-2 px-0" info={item.endIndex} />
+                                            </>
+                                        )}
+                                        {isEdit && (
+                                            <>
+                                                <div className="col-2 px-0 align-self-end">
+                                                    <Form.Control onClick={e => {
+                                                        e.stopPropagation()
+                                                    }} placeholder="Start" 
+                                                    defaultValue={item.startIndex}
+                                                    onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "start", Number(e.target.value))} />
+                                                </div>
+                                                <div className="col-2 px-0 align-self-end">
+                                                    <Form.Control onClick={e => {
+                                                        e.stopPropagation()
+                                                    }} placeholder="End" 
+                                                    defaultValue={item.endIndex}
+                                                    onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "end", Number(e.target.value))} />
+                                                </div>
+                                            </>
+                                        )}
+
                                     </Row>
-                                    <Row key={item.nerId} className="gap-1 d-md-flex d-md-none">
-                                        <LabelInfo  className="col-5 px-0" info={item.label} />
-                                        <LabelInfo className="col-2 px-0" info={item.startIndex} />
-                                        <LabelInfo  className="col-2 px-0" info={item.endIndex} />
+                                    <Row className="gap-1 d-md-flex d-md-none">
+                                        <LabelInfo className="col-5 px-0" info={item.label} />
+                                        {isEdit || (
+                                            <>
+                                                <LabelInfo className="col-2 px-0" info={item.startIndex} />
+                                                <LabelInfo className="col-2 px-0" info={item.endIndex} />
+                                            </>
+                                        )}
+                                        {isEdit && (
+                                            <>
+                                                <div className="col-2 px-0 align-self-end">
+                                                    <Form.Control onClick={e => {
+                                                        e.stopPropagation()
+                                                    }} placeholder="Start" 
+                                                    defaultValue={item.startIndex}
+                                                    onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "start", Number(e.target.value))} />
+                                                </div>
+                                                <div className="col-2 px-0 align-self-end">
+                                                    <Form.Control onClick={e => {
+                                                        e.stopPropagation()
+                                                    }} placeholder="End" 
+                                                    defaultValue={item.endIndex}
+                                                    onChange={(e) => onNerIndexChange(i.datasetintentId, item.datasetintentnerId, "end", Number(e.target.value))} />
+                                                </div>
+                                            </>
+                                        )}
+
                                     </Row>
-                                </>
+                                </div>
                             ))}
                         </Container>
                     </Accordion.Body>

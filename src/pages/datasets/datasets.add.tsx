@@ -85,8 +85,6 @@ function SelectIntentForm({ form, className, selected }: { className?: string, s
             ...intentForm.data, ners: nerForm.data
         })
 
-        console.log(form.form)
-
         intentForm.reset()
         nerForm.reset()
     }
