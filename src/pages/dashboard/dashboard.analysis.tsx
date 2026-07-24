@@ -26,7 +26,7 @@ export default function DashboardAnalysisPage() {
 
     }, [])
 
-    const {datasetMeta, datasetAnalysis, todayCollectRate, yesterdayCollectRate} = dashboard ?? {}
+    const {datasetMeta, datasetAnalysis, alltimeCollectRate, todayCollectRate, yesterdayCollectRate} = dashboard ?? {}
 
     return (
         <MainContentDecorator title="Dashboard">
@@ -41,7 +41,7 @@ export default function DashboardAnalysisPage() {
             <Container className="mt-3">
                 <div className="row gap-3">
                     <div className="col-12 col-md-5 px-0">
-                        <CollectRate todayRate={todayCollectRate ?? []} loading={loading} yesterdayRate={yesterdayCollectRate ?? []}/>
+                        <CollectRateSection alltimeRate={alltimeCollectRate ?? []} todayRate={todayCollectRate ?? []} loading={loading} yesterdayRate={yesterdayCollectRate ?? []}/>
                     </div>
                     <div className="col-12 col-md-5 px-0">
                         <DatasetAnalysisSection analysis={datasetAnalysis} />
@@ -78,15 +78,16 @@ function DatasetAnalysisSection({className, analysis}:{className?:string, analys
     )
 }
 
-function CollectRate({className, todayRate, yesterdayRate, loading}:{className?:string, todayRate:CollectRate[], yesterdayRate:CollectRate[], loading?:boolean}) {
+function CollectRateSection({className, todayRate, yesterdayRate, alltimeRate, loading}:{className?:string, todayRate:CollectRate[], yesterdayRate:CollectRate[], alltimeRate:CollectRate[], loading?:boolean}) {
 
-    const [filter, setFilter] = useState<"today" | "yesterday">("today")
+    const [filter, setFilter] = useState<"today" | "yesterday" | "alltime">("today")
 
     return (
         <div className={`border p-3 ${className}`}>
             <div className="d-flex justify-content-between">
                 <h5>Collect Rate</h5>
                 <Form.Select value={filter} onChange={e => setFilter(e.target.value as "today" | "yesterday")} size="sm" className="w-auto align-self-start">
+                    <option value="alltime">All Time</option>
                     <option value="today">Today</option>
                     <option value="yesterday">Yesterday</option>
                 </Form.Select>
@@ -99,6 +100,17 @@ function CollectRate({className, todayRate, yesterdayRate, loading}:{className?:
                     </ListGroup.Item>
 
                     {loading && <div className="text-center p-4 rounded">Loading...</div>}
+
+                    {filter === "alltime" && alltimeRate.map(i => (
+                        <ListGroup.Item key={i.memberId} className="d-flex justify-content-between align-items-center">
+                            <div>
+                                <AppProfile img={resolveProfileImage(i.memberProfile)} />
+                                <span className="ms-3">{i.memberName}</span>
+                            </div>
+                            <Badge bg="success">{i.collectedData}</Badge>
+                        </ListGroup.Item>
+                    ))}
+
 
                     {filter === "today" && todayRate.map(i => (
                         <ListGroup.Item key={i.memberId} className="d-flex justify-content-between align-items-center">

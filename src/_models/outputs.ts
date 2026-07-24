@@ -164,4 +164,5 @@ export type DashboardAnalysis = {
     datasetAnalysis: DatasetAnalysis
     todayCollectRate: CollectRate[]
     yesterdayCollectRate: CollectRate[]
+    alltimeCollectRate: CollectRate[]
 }

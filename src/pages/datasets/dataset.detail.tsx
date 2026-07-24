@@ -223,6 +223,7 @@ function MetadataCard(
     const binModal = useModals()
 
     const [approving, setApproving] = useState(false)
+    const [allowApprove, setAllowApprove] = useState(true)
     const [restoring, setRestoring] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [removing, setRemoving] = useState(false)
@@ -257,7 +258,7 @@ function MetadataCard(
 
             <RolePermit roles={["Admin", "Supervisor"]}>
                 {/* Approve section */}
-                {!info.approved && !info.deleted && <Button onClick={approveModal.openModal} variant="success" className="w-100 mt-3" disabled={approving}>{approving ? "Approving" : "Approve Dataset"}</Button>}
+                {!info.approved && !info.deleted && <Button onClick={approveModal.openModal} variant="success" className="w-100 mt-3" disabled={approving || !allowApprove}>{approving ? "Approving" : "Approve Dataset"}</Button>}
                 {!info.approved && !info.deleted && (
                     <Modal size="sm" animation={false} show={approveModal.isOpen} onHide={approveModal.closeModal}>
                         <Modal.Body>
@@ -270,6 +271,12 @@ function MetadataCard(
                                         const result = await datasetService.approve(info.datasetId)
                                         approveModal.closeModal()
                                         onApproved?.(result)
+                                    } catch (e){
+                                        if (e instanceof Error) {
+                                            setAlertMessage(e.message)
+                                            approveModal.closeModal()
+                                            setAllowApprove(false)
+                                        }
                                     } finally {
                                         setApproving(false)
                                     }
